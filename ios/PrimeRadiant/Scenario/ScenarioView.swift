@@ -11,13 +11,7 @@ struct ScenarioView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            CanvasView(
-                radiant: store.radiant,
-                interactive: true,
-                callbacks: CanvasCallbacks(
-                    onSelect: { store.select($0) },
-                    holdIntent: { store.holdIntent(for: $0) },
-                    onHoldCompleted: { id, intent in store.completeHold(id: id, intent: intent) }))
+            canvas
                 .ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 14) {
@@ -62,6 +56,33 @@ struct ScenarioView: View {
                 .presentationBackground(Tokens.Role.background)
         }
         .errorToast($store.lastError)
+    }
+
+    private var canvas: CanvasView {
+        var canvas = CanvasView(
+            radiant: store.radiant,
+            interactive: true,
+            callbacks: CanvasCallbacks(
+                onSelect: { store.select($0) },
+                holdIntent: { store.holdIntent(for: $0) },
+                onHoldCompleted: { id, intent in store.completeHold(id: id, intent: intent) }))
+        #if DEBUG
+            // UI-test hooks (§8): per-node accessibility elements + canvas state,
+            // only under `-PRUITestHooks` (mirrors -PRDebugSample gating).
+            if UITestHooks.enabled {
+                let store = self.store
+                canvas.hooksState = {
+                    var labels: [String: String] = [:]
+                    Tree.forEach(store.scenario.tree) { labels[$0.id] = $0.label }
+                    return CanvasHooksState(
+                        nodeLabels: labels,
+                        stateValue:
+                            "selected=\(store.selectedNodeId ?? "none") reached=\(store.scenario.realizedPath.count)"
+                    )
+                }
+            }
+        #endif
+        return canvas
     }
 }
 

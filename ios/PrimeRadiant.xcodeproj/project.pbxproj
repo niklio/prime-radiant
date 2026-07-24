@@ -23,11 +23,14 @@
 		33E06850E9BA0A59DE7A8E52 /* ScenarioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562E18F0812B9898F3748E81 /* ScenarioView.swift */; };
 		3BB895D23E65C9F50A12FBF2 /* RadiantLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994B5DF398123C0EB4120671 /* RadiantLayoutTests.swift */; };
 		486C88023E6BED9C460A2B6B /* Speech.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 274D12991C44E91B7906879C /* Speech.framework */; };
+		4CB38C58403F94C73E2A07EB /* CanvasPicking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFDFE521EBF82EAFE5D856A /* CanvasPicking.swift */; };
+		4DE2EEF1409A0CE8BF4DFE80 /* CameraFit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77833EAA87F852143F7B04CC /* CameraFit.swift */; };
 		4F00A6E30DB1508516DE93B7 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161D21FCD361C395B9CBD97E /* Haptics.swift */; };
 		58DEC6180D27FEDD686EB36E /* SceneKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3146A0FB2DE4182D72EF23B1 /* SceneKit.framework */; };
 		61F6E681DCFDBB83A23D0E5D /* StoredScenario.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0599D2C616060D29A8DFC853 /* StoredScenario.swift */; };
 		64A7FFEA64EFC143B0F46524 /* AuthenticationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 485B32ADC5EBD5A01AD39673 /* AuthenticationServices.framework */; };
 		709DF9F29CAA44C3B5895AEB /* ContextAssemblyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13D609B2A2E0278BAD9F6A07 /* ContextAssemblyTests.swift */; };
+		7297C02FC9E5190693DDA3C7 /* CanvasInteractionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B68B76370B20E6A1E48157 /* CanvasInteractionTests.swift */; };
 		74DB23BCC0A4236ED13EAD64 /* RadiantLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED910D89C4E729A441436022 /* RadiantLayout.swift */; };
 		78D0E08A978FE7A20AF17AF3 /* BreadcrumbView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EA458F34E725A614282BCBC /* BreadcrumbView.swift */; };
 		7B88047E2F0E3B6D023099F8 /* PrimeRadiantCore in Frameworks */ = {isa = PBXBuildFile; productRef = 09725AE442F6D36090823A14 /* PrimeRadiantCore */; };
@@ -90,10 +93,12 @@
 		54626A2E911752E75FC94409 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		562E18F0812B9898F3748E81 /* ScenarioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenarioView.swift; sourceTree = "<group>"; };
 		56BEA7941BA61159C6B45373 /* PrimeRadiant.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PrimeRadiant.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DFDFE521EBF82EAFE5D856A /* CanvasPicking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasPicking.swift; sourceTree = "<group>"; };
 		63687E03D7573C66894D0B58 /* model-turn.schema.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "model-turn.schema.json"; path = "../shared/schema/model-turn.schema.json"; sourceTree = "<group>"; };
 		69BDFDC1E77706FB8F866E06 /* PrimeRadiantCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PrimeRadiantCore; path = PrimeRadiantCore; sourceTree = SOURCE_ROOT; };
 		6BC27CCE7A55791C876224A0 /* ContextAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextAssembly.swift; sourceTree = "<group>"; };
 		702DE2558C657B4727284484 /* PrimeRadiantUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PrimeRadiantUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		77833EAA87F852143F7B04CC /* CameraFit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraFit.swift; sourceTree = "<group>"; };
 		932C942D3E92D518FDA984EB /* InputPillView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputPillView.swift; sourceTree = "<group>"; };
 		957A4E7EBF866DA78829D678 /* PrimeRadiantUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimeRadiantUITests.swift; sourceTree = "<group>"; };
 		994B5DF398123C0EB4120671 /* RadiantLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadiantLayoutTests.swift; sourceTree = "<group>"; };
@@ -112,6 +117,7 @@
 		E0889F43C299527CCA44D517 /* SayStreamExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SayStreamExtractorTests.swift; sourceTree = "<group>"; };
 		E1C3D53FCA17C15D7ED58973 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		E31159CB287B790ECDCE727A /* ScenarioStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenarioStore.swift; sourceTree = "<group>"; };
+		E3B68B76370B20E6A1E48157 /* CanvasInteractionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasInteractionTests.swift; sourceTree = "<group>"; };
 		E7DA64FB13CEFB0B36F37F59 /* SpeechInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechInput.swift; sourceTree = "<group>"; };
 		EB7EE0ACCECDEF92822BA04B /* ModelClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelClient.swift; sourceTree = "<group>"; };
 		EBBF6D5A995DAF3F989EC948 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
@@ -187,6 +193,8 @@
 		4437C1C1C02B5D05AB3433A4 /* Canvas */ = {
 			isa = PBXGroup;
 			children = (
+				77833EAA87F852143F7B04CC /* CameraFit.swift */,
+				5DFDFE521EBF82EAFE5D856A /* CanvasPicking.swift */,
 				4BC21474799566D1B9C94503 /* CanvasView.swift */,
 				ED910D89C4E729A441436022 /* RadiantLayout.swift */,
 				A145CFA9B39E22C229826BF0 /* RadiantMaterials.swift */,
@@ -239,6 +247,7 @@
 		8F46415C48A7F526CB11FCB0 /* PrimeRadiantTests */ = {
 			isa = PBXGroup;
 			children = (
+				E3B68B76370B20E6A1E48157 /* CanvasInteractionTests.swift */,
 				13D609B2A2E0278BAD9F6A07 /* ContextAssemblyTests.swift */,
 				994B5DF398123C0EB4120671 /* RadiantLayoutTests.swift */,
 				E0889F43C299527CCA44D517 /* SayStreamExtractorTests.swift */,
@@ -473,6 +482,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7297C02FC9E5190693DDA3C7 /* CanvasInteractionTests.swift in Sources */,
 				709DF9F29CAA44C3B5895AEB /* ContextAssemblyTests.swift in Sources */,
 				3BB895D23E65C9F50A12FBF2 /* RadiantLayoutTests.swift in Sources */,
 				EE3EAB130AEBAC21C2A847FF /* SayStreamExtractorTests.swift in Sources */,
@@ -484,6 +494,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				78D0E08A978FE7A20AF17AF3 /* BreadcrumbView.swift in Sources */,
+				4DE2EEF1409A0CE8BF4DFE80 /* CameraFit.swift in Sources */,
+				4CB38C58403F94C73E2A07EB /* CanvasPicking.swift in Sources */,
 				E6561A8E5129D4F76D214F4D /* CanvasView.swift in Sources */,
 				E0B59712270BD3883A20ED56 /* ChatSurfaceView.swift in Sources */,
 				2070AD9EEE8D257C247084B7 /* ConstellationView.swift in Sources */,

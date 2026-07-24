@@ -22,6 +22,7 @@ struct NodeFooterView: View {
                 .font(Tokens.Fonts.display(28))
                 .foregroundStyle(Tokens.Role.displayText)
                 .lineLimit(2)
+                .accessibilityIdentifier("footer.title")
 
             // The node's move — one sentence, nothing else.
             if let move = node.move {
@@ -29,6 +30,7 @@ struct NodeFooterView: View {
                     .font(Tokens.Fonts.mono(13))
                     .foregroundStyle(Tokens.Role.displayText.opacity(0.8))
                     .lineLimit(2)
+                    .accessibilityIdentifier("footer.move")
             }
 
             HStack(spacing: 16) {
@@ -37,6 +39,7 @@ struct NodeFooterView: View {
                     Text(evLine)
                         .font(Tokens.Fonts.mono(15, medium: true))
                         .foregroundStyle(Tokens.Role.payoffPositive)
+                        .accessibilityIdentifier("footer.ev")
                 }
 
                 distributionToggle
@@ -69,6 +72,7 @@ struct NodeFooterView: View {
         }
         .disabled(bins.isEmpty)
         .opacity(bins.isEmpty ? 0.3 : 1)
+        .accessibilityIdentifier("footer.distribution.toggle")
     }
 
     private var openInChatButton: some View {
@@ -86,6 +90,7 @@ struct NodeFooterView: View {
                             Capsule().strokeBorder(
                                 Tokens.Role.secondaryInfo.opacity(0.35), lineWidth: 1)))
         }
+        .accessibilityIdentifier("footer.openInChat")
     }
 
     private var tag: String {
@@ -150,9 +155,12 @@ private struct DistributionHistogram: View {
             Text(caption)
                 .font(Tokens.Fonts.mono(11))
                 .foregroundStyle(Tokens.Role.displayText.opacity(0.5))
+                .accessibilityIdentifier("footer.distribution.caption")
         }
         .contentShape(Rectangle())
         .onTapGesture(perform: onCollapse)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("footer.distribution.histogram")
     }
 
     private var totalMass: Double {

@@ -59,6 +59,8 @@ struct InputPillView: View {
                         Tokens.Role.secondaryInfo.opacity(speech.isListening ? 0.6 : 0.18),
                         lineWidth: 1))
         )
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("input.pill")
     }
 
     private var micButton: some View {

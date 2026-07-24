@@ -26,5 +26,6 @@ struct LegendView: View {
             }
         }
         .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("canvas.legend")
     }
 }

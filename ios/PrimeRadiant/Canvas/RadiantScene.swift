@@ -127,7 +127,7 @@ final class RadiantScene: NSObject, @unchecked Sendable {
         // Reflow targets.
         let targets = layout.mapValues { SCNVector3($0.x, $0.y, $0.z) }
         // Keep every reflow target in the viewport (§8 gentle-pan invariant).
-        fitCamera(to: targets)
+        fitCamera(to: layout)
         selectionActive = selectedId != nil
         if animated && !reduceMotion {
             fromPositions = visuals.mapValues { $0.container.position }
@@ -299,30 +299,28 @@ final class RadiantScene: NSObject, @unchecked Sendable {
         cameraNode.position.z = Float(cameraDistance)
     }
 
-    /// Frame the whole tree: pull the camera back until the layout's bounding box
-    /// fits both axes, keeping x centered (root at bottom-center, §3). No-op after
+    /// Frame the whole tree so every reflow target stays inside the viewport
+    /// (§8 gentle-pan invariant). Pure math lives in `CameraFit` so the
+    /// invariant is unit-testable; this only applies the result. No-op after
     /// the user has pinched.
-    private func fitCamera(to targets: [String: SCNVector3]) {
-        guard !userZoomed, !targets.isEmpty, let camera = cameraNode.camera else { return }
-        var minY = Float.greatestFiniteMagnitude
-        var maxY = -Float.greatestFiniteMagnitude
-        var maxAbsX: Float = 0
-        var maxZ = -Float.greatestFiniteMagnitude
-        for position in targets.values {
-            minY = min(minY, position.y)
-            maxY = max(maxY, position.y)
-            maxAbsX = max(maxAbsX, abs(position.x))
-            maxZ = max(maxZ, position.z)
-        }
-        let margin: Float = 1.1  // glow halos extend well past node centers
-        let halfHeight = Double((maxY - minY) / 2 + margin)
-        let halfWidth = Double(maxAbsX + margin)
-        let tanVertical = tan(camera.fieldOfView / 2 * .pi / 180)
-        let tanHorizontal = tanVertical * viewportAspect
-        let needed = max(halfHeight / tanVertical, halfWidth / tanHorizontal) + Double(maxZ)
-        cameraDistance = max(3, min(20, needed))
+    private func fitCamera(to layout: [String: RadiantLayout.Vector3]) {
+        guard !userZoomed, let camera = cameraNode.camera,
+            let framing = CameraFit.framing(
+                positions: Array(layout.values),
+                fovDegrees: Double(camera.fieldOfView),
+                viewportAspect: viewportAspect)
+        else { return }
+        cameraDistance = framing.distance
         cameraNode.position.z = Float(cameraDistance)
-        pitchRig.position.y = (minY + maxY) / 2
+        pitchRig.position.y = Float(framing.centerY)
+    }
+
+    /// Called by the hosting view on layout so camera-fit math uses the real
+    /// viewport aspect instead of the compact-portrait default (§8 gentle pan
+    /// on non-iPhone-portrait geometries).
+    func setViewportSize(_ size: CGSize) {
+        guard size.width > 0, size.height > 0 else { return }
+        viewportAspect = size.width / size.height
     }
 
     func setListening(_ value: Bool) {
