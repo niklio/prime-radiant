@@ -47,6 +47,11 @@ final class RadiantScene: NSObject, @unchecked Sendable {
     private var lastFrameTime: TimeInterval?
 
     private var cameraDistance: Double = 7.5
+    /// Once the user pinches, their framing wins; auto-fit stops (§2.3 — the
+    /// camera restores per-scenario from cameraState, not from our guesses).
+    private var userZoomed = false
+    /// width/height of the hosting view, for horizontal-fit math (vertical FOV camera).
+    var viewportAspect: Double = 0.47
 
     init(reduceMotion: Bool) {
         self.reduceMotion = reduceMotion
@@ -66,6 +71,9 @@ final class RadiantScene: NSObject, @unchecked Sendable {
         camera.zFar = 60
         camera.fieldOfView = 55
         camera.wantsHDR = true  // exposureOffset drives the listening brighten
+        // Fixed exposure: auto-adaptation on a near-black scene cranks gain,
+        // washing the void to indigo and amber filaments to white.
+        camera.wantsExposureAdaptation = false
         cameraNode.camera = camera
         cameraNode.position = SCNVector3(0, 0, Float(cameraDistance))
         // Root at bottom-center of the frame: aim slightly above the root.
@@ -118,6 +126,8 @@ final class RadiantScene: NSObject, @unchecked Sendable {
 
         // Reflow targets.
         let targets = layout.mapValues { SCNVector3($0.x, $0.y, $0.z) }
+        // Keep every reflow target in the viewport (§8 gentle-pan invariant).
+        fitCamera(to: targets)
         selectionActive = selectedId != nil
         if animated && !reduceMotion {
             fromPositions = visuals.mapValues { $0.container.position }
@@ -284,8 +294,35 @@ final class RadiantScene: NSObject, @unchecked Sendable {
 
     func zoom(scale: Double) {
         noteInteraction()
+        userZoomed = true
         cameraDistance = max(3, min(16, cameraDistance / scale))
         cameraNode.position.z = Float(cameraDistance)
+    }
+
+    /// Frame the whole tree: pull the camera back until the layout's bounding box
+    /// fits both axes, keeping x centered (root at bottom-center, §3). No-op after
+    /// the user has pinched.
+    private func fitCamera(to targets: [String: SCNVector3]) {
+        guard !userZoomed, !targets.isEmpty, let camera = cameraNode.camera else { return }
+        var minY = Float.greatestFiniteMagnitude
+        var maxY = -Float.greatestFiniteMagnitude
+        var maxAbsX: Float = 0
+        var maxZ = -Float.greatestFiniteMagnitude
+        for position in targets.values {
+            minY = min(minY, position.y)
+            maxY = max(maxY, position.y)
+            maxAbsX = max(maxAbsX, abs(position.x))
+            maxZ = max(maxZ, position.z)
+        }
+        let margin: Float = 1.1  // glow halos extend well past node centers
+        let halfHeight = Double((maxY - minY) / 2 + margin)
+        let halfWidth = Double(maxAbsX + margin)
+        let tanVertical = tan(camera.fieldOfView / 2 * .pi / 180)
+        let tanHorizontal = tanVertical * viewportAspect
+        let needed = max(halfHeight / tanVertical, halfWidth / tanHorizontal) + Double(maxZ)
+        cameraDistance = max(3, min(20, needed))
+        cameraNode.position.z = Float(cameraDistance)
+        pitchRig.position.y = (minY + maxY) / 2
     }
 
     func setListening(_ value: Bool) {
