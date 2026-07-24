@@ -39,10 +39,9 @@ struct RootView: View {
 
     var body: some View {
         Group {
-            switch auth.state {
-            case .signedIn:
+            if isSignedIn || Self.debugSampleMode {
                 home
-            case .signedOut, .linking, .unavailable:
+            } else {
                 // Revocation/unlink lands back here — the ignition screen (§2.1).
                 IgnitionView(auth: auth)
             }
@@ -54,9 +53,36 @@ struct RootView: View {
                 Task { await pullOnOpen() }
             } else {
                 sync = nil
-                openStore = nil
+                if !Self.debugSampleMode { openStore = nil }
             }
         }
+        .task { seedDebugSampleIfNeeded() }
+    }
+
+    /// Dev-only canvas entry (M1): `-PRDebugSample` seeds the bundled sample
+    /// scenario and opens it directly, skipping auth. Chat and sync stay dark —
+    /// this exists so canvas work and UI tests don't need a live OAuth client.
+    /// Never compiled into release builds; no fallback auth mode exists (§2.1).
+    static var debugSampleMode: Bool {
+        #if DEBUG
+            ProcessInfo.processInfo.arguments.contains("-PRDebugSample")
+        #else
+            false
+        #endif
+    }
+
+    private func seedDebugSampleIfNeeded() {
+        #if DEBUG
+            guard Self.debugSampleMode, openStore == nil else { return }
+            guard let url = Bundle.main.url(forResource: "job-offer", withExtension: "json"),
+                let data = try? Data(contentsOf: url)
+            else { return }
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            guard let sample = try? decoder.decode(Scenario.self, from: data) else { return }
+            persist(sample)
+            openStore = makeStore(for: sample)
+        #endif
     }
 
     private var isSignedIn: Bool {
