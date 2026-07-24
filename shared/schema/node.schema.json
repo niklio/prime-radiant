@@ -20,7 +20,10 @@
       "maximum": 1,
       "description": "Conditional probability among siblings. The root's p is 1."
     },
-    "actor": { "enum": ["user", "counterpart", "chance"] },
+    "actor": {
+      "enum": ["user", "counterpart", "chance"],
+      "description": "Who moves AT this node — whose options the children are (standard game-tree convention). `user` nodes take the max-EV child under backward induction; `counterpart` nodes weight by p or optimize their stated payoffs; `chance` nodes weight by p. Vestigial on terminals."
+    },
     "move": {
       "type": "string",
       "description": "The recommended action / what this branch means, one sentence."

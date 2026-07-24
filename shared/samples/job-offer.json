@@ -1,15 +1,18 @@
 {
-  "$comment": "Generic sample scenario (handoff §10): a job-offer negotiation. Used by the canvas engine (M1 static render), unit tests, and snapshot tests. 3+ levels, all three actor kinds, component payoffs off (scalar USD-thousands).",
-  "id": "01J0PRSAMPLE00000000000001",
+  "$comment": "Generic sample scenario (handoff \u00a710): a job-offer negotiation. Used by the canvas engine (M1 static render), unit tests, and snapshot tests. 3+ levels, all three actor kinds, component payoffs off (scalar USD-thousands).",
+  "id": "01J0PRSAMPSCENAR0000000000",
   "title": "counter the offer?",
   "createdAt": "2026-01-05T14:00:00Z",
   "updatedAt": "2026-01-05T14:30:00Z",
-  "payoffUnit": { "kind": "currency", "label": "USD (k, yr-1 delta)" },
+  "payoffUnit": {
+    "kind": "currency",
+    "label": "USD (k, yr-1 delta)"
+  },
   "status": "modeling",
   "realizedPath": [],
   "transcript": [],
   "tree": {
-    "id": "01J0PRSAMPLEROOT0000000000",
+    "id": "01J0PRSAMPR00T000000000001",
     "label": "offer in hand",
     "sub": "base 165k, respond by friday",
     "p": 1,
@@ -17,7 +20,7 @@
     "move": "Choose how to respond to the written offer.",
     "children": [
       {
-        "id": "01J0PRSAMPLEACCEPT00000000",
+        "id": "01J0PRSAMPACCEPT0000000002",
         "label": "accept as-is",
         "p": 0.2,
         "actor": "user",
@@ -26,15 +29,15 @@
         "confidence": "user_set"
       },
       {
-        "id": "01J0PRSAMPLECOUNTER0000000",
+        "id": "01J0PRSAMPC0NTR00000000003",
         "label": "counter at 185k",
         "sub": "cite competing range",
         "p": 0.65,
-        "actor": "user",
+        "actor": "counterpart",
         "move": "Counter with 185k base plus the same equity.",
         "children": [
           {
-            "id": "01J0PRSAMPLECACCEPT0000000",
+            "id": "01J0PRSAMPCACCEPT000000004",
             "label": "they accept",
             "p": 0.35,
             "actor": "counterpart",
@@ -43,14 +46,14 @@
             "confidence": "estimated"
           },
           {
-            "id": "01J0PRSAMPLECMEET000000000",
+            "id": "01J0PRSAMPCMEET00000000005",
             "label": "they meet in middle",
             "p": 0.45,
-            "actor": "counterpart",
+            "actor": "user",
             "move": "Comes back near 175k.",
             "children": [
               {
-                "id": "01J0PRSAMPLECMTAKE00000000",
+                "id": "01J0PRSAMPCMTAKE0000000006",
                 "label": "take 175k",
                 "p": 0.8,
                 "actor": "user",
@@ -59,14 +62,14 @@
                 "confidence": "user_set"
               },
               {
-                "id": "01J0PRSAMPLECMPUSH00000000",
+                "id": "01J0PRSAMPCMPSH00000000007",
                 "label": "push once more",
                 "p": 0.2,
-                "actor": "user",
+                "actor": "chance",
                 "move": "Hold at 182k, signal flexibility on start date.",
                 "children": [
                   {
-                    "id": "01J0PRSAMPLECMPWIN00000000",
+                    "id": "01J0PRSAMPCMPWN00000000008",
                     "label": "they stretch",
                     "p": 0.4,
                     "actor": "chance",
@@ -75,7 +78,7 @@
                     "confidence": "assumed"
                   },
                   {
-                    "id": "01J0PRSAMPLECMPHOLD0000000",
+                    "id": "01J0PRSAMPCMPHD00000000009",
                     "label": "they hold at 175k",
                     "p": 0.6,
                     "actor": "chance",
@@ -88,7 +91,7 @@
             ]
           },
           {
-            "id": "01J0PRSAMPLECRESCIND000000",
+            "id": "01J0PRSAMPCRSCND000000000A",
             "label": "offer rescinded",
             "p": 0.2,
             "actor": "counterpart",
@@ -100,23 +103,23 @@
         ]
       },
       {
-        "id": "01J0PRSAMPLEDECLINE0000000",
+        "id": "01J0PRSAMPDECN00000000000B",
         "label": "decline, keep looking",
         "p": 0.15,
-        "actor": "user",
+        "actor": "chance",
         "move": "Pass and continue the search.",
         "children": [
           {
-            "id": "01J0PRSAMPLEDBETTER0000000",
+            "id": "01J0PRSAMPDBETTER00000000C",
             "label": "better offer lands",
             "p": 0.5,
             "actor": "chance",
-            "move": "Search yields ≥185k within two months.",
+            "move": "Search yields \u2265185k within two months.",
             "payoff": 15,
             "confidence": "assumed"
           },
           {
-            "id": "01J0PRSAMPLEDWORSE00000000",
+            "id": "01J0PRSAMPDW0RSE000000000D",
             "label": "market cools",
             "p": 0.5,
             "actor": "chance",

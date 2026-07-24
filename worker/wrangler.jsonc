@@ -1,0 +1,30 @@
+// Prime Radiant sync backend — scenario sync ONLY. Chat traffic never touches
+// this Worker (device talks to OpenAI directly; see docs/handoff.md §2.1/§6).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "prime-radiant-sync",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-01",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "prime-radiant",
+      "database_id": "1de4b674-86d8-46bc-a3fa-8c5ad12ab75f",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "SESSIONS",
+      "id": "2ff25b6591944946a0dccf90ec4a417a"
+    }
+  ],
+  "triggers": {
+    // Daily purge of soft-deleted scenarios older than 30 days (06:17 UTC).
+    "crons": ["17 6 * * *"]
+  },
+  // Operational metrics only; request/response bodies are never logged.
+  "observability": {
+    "enabled": true
+  }
+}
