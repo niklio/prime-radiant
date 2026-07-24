@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="844" viewBox="0 0 390 844">
+<title>Home — constellation</title>
+<defs>
+  <radialGradient id="glow"><stop offset="0%" stop-color="#fff" stop-opacity=".95"/><stop offset="30%" stop-color="#FFD98A" stop-opacity=".5"/><stop offset="100%" stop-color="#FFD98A" stop-opacity="0"/></radialGradient>
+  <radialGradient id="glowB"><stop offset="0%" stop-color="#fff" stop-opacity=".9"/><stop offset="30%" stop-color="#6DB8FF" stop-opacity=".5"/><stop offset="100%" stop-color="#6DB8FF" stop-opacity="0"/></radialGradient>
+  <radialGradient id="glowE"><stop offset="0%" stop-color="#fff" stop-opacity=".9"/><stop offset="30%" stop-color="#FF6B5E" stop-opacity=".5"/><stop offset="100%" stop-color="#FF6B5E" stop-opacity="0"/></radialGradient>
+  <linearGradient id="gauge" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#FF6B5E"/><stop offset="50%" stop-color="#E8A33D"/><stop offset="100%" stop-color="#6DB8FF"/></linearGradient>
+</defs>
+<rect width="390" height="844" fill="#050510"/>
+<circle cx="354" cy="17" r="0.6" fill="#9FB4E8" opacity="0.12"/>
+<circle cx="32" cy="745" r="0.6" fill="#9FB4E8" opacity="0.18"/>
+<circle cx="203" cy="46" r="0.7" fill="#9FB4E8" opacity="0.10"/>
+<circle cx="16" cy="127" r="0.8" fill="#9FB4E8" opacity="0.07"/>
+<circle cx="122" cy="358" r="0.8" fill="#9FB4E8" opacity="0.08"/>
+<circle cx="276" cy="220" r="0.9" fill="#9FB4E8" opacity="0.17"/>
+<circle cx="57" cy="173" r="0.6" fill="#9FB4E8" opacity="0.17"/>
+<circle cx="158" cy="326" r="1.0" fill="#9FB4E8" opacity="0.10"/>
+<circle cx="114" cy="291" r="0.6" fill="#9FB4E8" opacity="0.07"/>
+<circle cx="10" cy="532" r="0.8" fill="#9FB4E8" opacity="0.19"/>
+<circle cx="380" cy="252" r="0.9" fill="#9FB4E8" opacity="0.21"/>
+<circle cx="84" cy="582" r="0.9" fill="#9FB4E8" opacity="0.21"/>
+<circle cx="339" cy="198" r="0.8" fill="#9FB4E8" opacity="0.07"/>
+<circle cx="167" cy="331" r="0.4" fill="#9FB4E8" opacity="0.12"/>
+<circle cx="128" cy="420" r="0.6" fill="#9FB4E8" opacity="0.09"/>
+<circle cx="157" cy="401" r="0.5" fill="#9FB4E8" opacity="0.17"/>
+<circle cx="94" cy="79" r="0.6" fill="#9FB4E8" opacity="0.13"/>
+<circle cx="59" cy="492" r="0.9" fill="#9FB4E8" opacity="0.15"/>
+<circle cx="273" cy="19" r="0.7" fill="#9FB4E8" opacity="0.12"/>
+<circle cx="25" cy="341" r="0.4" fill="#9FB4E8" opacity="0.14"/>
+<circle cx="228" cy="396" r="0.6" fill="#9FB4E8" opacity="0.10"/>
+<circle cx="9" cy="293" r="1.0" fill="#9FB4E8" opacity="0.15"/>
+<circle cx="102" cy="564" r="0.5" fill="#9FB4E8" opacity="0.14"/>
+<circle cx="240" cy="806" r="0.7" fill="#9FB4E8" opacity="0.15"/>
+<circle cx="368" cy="651" r="0.8" fill="#9FB4E8" opacity="0.16"/>
+<circle cx="160" cy="351" r="0.6" fill="#9FB4E8" opacity="0.19"/>
+<circle cx="343" cy="322" r="1.0" fill="#9FB4E8" opacity="0.07"/>
+<circle cx="53" cy="428" r="0.6" fill="#9FB4E8" opacity="0.12"/>
+<circle cx="381" cy="126" r="0.5" fill="#9FB4E8" opacity="0.10"/>
+<circle cx="265" cy="198" r="0.4" fill="#9FB4E8" opacity="0.15"/>
+<circle cx="154" cy="202" r="0.7" fill="#9FB4E8" opacity="0.16"/>
+<circle cx="214" cy="527" r="0.8" fill="#9FB4E8" opacity="0.19"/>
+<circle cx="378" cy="281" r="0.6" fill="#9FB4E8" opacity="0.20"/>
+<circle cx="122" cy="604" r="0.9" fill="#9FB4E8" opacity="0.17"/>
+<circle cx="376" cy="696" r="0.5" fill="#9FB4E8" opacity="0.16"/>
+<circle cx="191" cy="476" r="0.7" fill="#9FB4E8" opacity="0.11"/>
+<circle cx="292" cy="451" r="0.6" fill="#9FB4E8" opacity="0.10"/>
+<circle cx="127" cy="150" r="0.8" fill="#9FB4E8" opacity="0.08"/>
+<circle cx="25" cy="58" r="0.5" fill="#9FB4E8" opacity="0.17"/>
+<circle cx="44" cy="381" r="0.9" fill="#9FB4E8" opacity="0.14"/>
+<circle cx="63" cy="731" r="1.0" fill="#9FB4E8" opacity="0.07"/>
+<circle cx="99" cy="428" r="1.0" fill="#9FB4E8" opacity="0.12"/>
+<text x="26" y="60" font-family="Menlo, 'SF Mono', 'Courier New', monospace" font-size="9.5" fill="rgba(232,163,61,.85)" letter-spacing="3" text-anchor="start" font-weight="normal" opacity="1">YOUR FUTURES</text>
+<text x="366" y="62" font-family="Menlo, 'SF Mono', 'Courier New', monospace" font-size="17" fill="#FFD98A" letter-spacing="0" text-anchor="middle" font-weight="normal" opacity="1">+</text>
+<path d="M120 305.1 Q110 274 79.5 261.9" stroke="#E8A33D" stroke-width="1.4850000000000003" fill="none" opacity="0.55" stroke-linecap="round"/>
+<path d="M79.5 261.9 Q83 242 66.76508087666592 230.01406764190648" stroke="#E8A33D" stroke-width="1.08" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="66.76508087666592" cy="230.01406764190648" r="7.776000000000001" fill="url(#glow)" opacity="0.70"/><circle cx="66.76508087666592" cy="230.01406764190648" r="2.43" fill="#FFD98A" opacity="0.80"/>
+<path d="M79.5 261.9 Q87 243 73.17982109423666 228.8859112705319" stroke="#E8A33D" stroke-width="1.08" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="73.17982109423666" cy="228.8859112705319" r="7.776000000000001" fill="url(#glow)" opacity="0.70"/><circle cx="73.17982109423666" cy="228.8859112705319" r="2.43" fill="#FFD98A" opacity="0.80"/>
+<circle cx="79.5" cy="261.9" r="10.368000000000002" fill="url(#glow)" opacity="0.85"/><circle cx="79.5" cy="261.9" r="3.24" fill="#FFD98A" opacity="0.95"/>
+<path d="M120 305.1 Q129 272 111.9 243.0" stroke="#E8A33D" stroke-width="1.4850000000000003" fill="none" opacity="0.55" stroke-linecap="round"/>
+<path d="M111.9 243.0 Q125 234 118.01000677965143 220.16150456036752" stroke="#E8A33D" stroke-width="1.08" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="118.01000677965143" cy="220.16150456036752" r="7.776000000000001" fill="url(#glow)" opacity="0.70"/><circle cx="118.01000677965143" cy="220.16150456036752" r="2.43" fill="#FFD98A" opacity="0.80"/>
+<path d="M111.9 243.0 Q109 219 88.2399643895669 205.5718343483769" stroke="#E8A33D" stroke-width="1.08" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="88.2399643895669" cy="205.5718343483769" r="7.776000000000001" fill="url(#glow)" opacity="0.70"/><circle cx="88.2399643895669" cy="205.5718343483769" r="2.43" fill="#FFD98A" opacity="0.80"/>
+<circle cx="111.9" cy="243.0" r="10.368000000000002" fill="url(#glow)" opacity="0.85"/><circle cx="111.9" cy="243.0" r="3.24" fill="#FFD98A" opacity="0.95"/>
+<path d="M120 305.1 Q146 288 149.7 256.5" stroke="#E8A33D" stroke-width="1.4850000000000003" fill="none" opacity="0.55" stroke-linecap="round"/>
+<path d="M149.7 256.5 Q154 239 138.00460509634115 230.47114483621743" stroke="#E8A33D" stroke-width="1.08" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="138.00460509634115" cy="230.47114483621743" r="7.776000000000001" fill="url(#glow)" opacity="0.70"/><circle cx="138.00460509634115" cy="230.47114483621743" r="2.43" fill="#FFD98A" opacity="0.80"/>
+<path d="M149.7 256.5 Q170 248 173.7883390058085 226.01201970782574" stroke="#E8A33D" stroke-width="1.08" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="173.7883390058085" cy="226.01201970782574" r="7.776000000000001" fill="url(#glow)" opacity="0.70"/><circle cx="173.7883390058085" cy="226.01201970782574" r="2.43" fill="#FFD98A" opacity="0.80"/>
+<circle cx="149.7" cy="256.5" r="10.368000000000002" fill="url(#glow)" opacity="0.85"/><circle cx="149.7" cy="256.5" r="3.24" fill="#FFD98A" opacity="0.95"/>
+<circle cx="120" cy="305.1" r="13.824000000000002" fill="url(#glow)" opacity="1.00"/><circle cx="120" cy="305.1" r="4.32" fill="#FFD98A" opacity="1.00"/>
+<text x="120" y="340" font-family="Georgia, 'Times New Roman', serif" font-size="13" fill="#F3ECD8" letter-spacing="0.4" text-anchor="middle" font-weight="normal" opacity="1">Vendor renewal</text>
+<text x="120" y="356" font-family="Menlo, 'SF Mono', 'Courier New', monospace" font-size="8" fill="rgba(232,163,61,.8)" letter-spacing="1" text-anchor="middle" font-weight="normal" opacity="1">◐ in progress · 2h</text>
+<path d="M280 454.7 Q273 433 251.5 424.3" stroke="#E8A33D" stroke-width="1.045" fill="none" opacity="0.55" stroke-linecap="round"/>
+<path d="M251.5 424.3 Q261 413 255.7032379652278 399.23423304283233" stroke="#E8A33D" stroke-width="0.76" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="255.7032379652278" cy="399.23423304283233" r="5.472" fill="url(#glow)" opacity="0.70"/><circle cx="255.7032379652278" cy="399.23423304283233" r="1.71" fill="#FFD98A" opacity="0.80"/>
+<path d="M251.5 424.3 Q264 413 261.59561994234684 396.5654112257653" stroke="#E8A33D" stroke-width="0.76" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="261.59561994234684" cy="396.5654112257653" r="5.472" fill="url(#glow)" opacity="0.70"/><circle cx="261.59561994234684" cy="396.5654112257653" r="1.71" fill="#FFD98A" opacity="0.80"/>
+<circle cx="251.5" cy="424.3" r="7.295999999999999" fill="url(#glow)" opacity="0.85"/><circle cx="251.5" cy="424.3" r="2.28" fill="#FFD98A" opacity="0.95"/>
+<path d="M280 454.7 Q287 432 274.3 411.0" stroke="#E8A33D" stroke-width="1.045" fill="none" opacity="0.55" stroke-linecap="round"/>
+<path d="M274.3 411.0 Q286 399 282.5045312561056 383.53307754434996" stroke="#E8A33D" stroke-width="0.76" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="282.5045312561056" cy="383.53307754434996" r="5.472" fill="url(#glow)" opacity="0.70"/><circle cx="282.5045312561056" cy="383.53307754434996" r="1.71" fill="#FFD98A" opacity="0.80"/>
+<path d="M274.3 411.0 Q272 396 258.1919788072996 389.6072186967712" stroke="#E8A33D" stroke-width="0.76" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="258.1919788072996" cy="389.6072186967712" r="5.472" fill="url(#glow)" opacity="0.70"/><circle cx="258.1919788072996" cy="389.6072186967712" r="1.71" fill="#FFD98A" opacity="0.80"/>
+<circle cx="274.3" cy="411.0" r="7.295999999999999" fill="url(#glow)" opacity="0.85"/><circle cx="274.3" cy="411.0" r="2.28" fill="#FFD98A" opacity="0.95"/>
+<path d="M280 454.7 Q299 443 300.9 420.5" stroke="#E8A33D" stroke-width="1.045" fill="none" opacity="0.55" stroke-linecap="round"/>
+<path d="M300.9 420.5 Q315 413 316.0627997213423 396.6686384432789" stroke="#E8A33D" stroke-width="0.76" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="316.0627997213423" cy="396.6686384432789" r="5.472" fill="url(#glow)" opacity="0.70"/><circle cx="316.0627997213423" cy="396.6686384432789" r="1.71" fill="#FFD98A" opacity="0.80"/>
+<path d="M300.9 420.5 Q314 417 314.6107968178713 403.7943606701132" stroke="#E8A33D" stroke-width="0.76" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="314.6107968178713" cy="403.7943606701132" r="5.472" fill="url(#glow)" opacity="0.70"/><circle cx="314.6107968178713" cy="403.7943606701132" r="1.71" fill="#FFD98A" opacity="0.80"/>
+<circle cx="300.9" cy="420.5" r="7.295999999999999" fill="url(#glow)" opacity="0.85"/><circle cx="300.9" cy="420.5" r="2.28" fill="#FFD98A" opacity="0.95"/>
+<circle cx="280" cy="454.7" r="9.728000000000002" fill="url(#glow)" opacity="1.00"/><circle cx="280" cy="454.7" r="3.04" fill="#FFD98A" opacity="1.00"/>
+<text x="280" y="486" font-family="Georgia, 'Times New Roman', serif" font-size="12" fill="#F3ECD8" letter-spacing="0.4" text-anchor="middle" font-weight="normal" opacity="1">Job offer — Berlin</text>
+<text x="280" y="501" font-family="Menlo, 'SF Mono', 'Courier New', monospace" font-size="8" fill="rgba(220,224,240,.5)" letter-spacing="1" text-anchor="middle" font-weight="normal" opacity="1">○ modeling · yesterday</text>
+<path d="M120 610.8 Q114 593 96.0 585.2" stroke="#E8A33D" stroke-width="0.8800000000000001" fill="none" opacity="0.55" stroke-linecap="round"/>
+<path d="M96.0 585.2 Q102 576 94.93461190507261 568.2189063683755" stroke="#E8A33D" stroke-width="0.6400000000000001" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="94.93461190507261" cy="568.2189063683755" r="4.6080000000000005" fill="url(#glowB)" opacity="0.70"/><circle cx="94.93461190507261" cy="568.2189063683755" r="1.4400000000000002" fill="#6DB8FF" opacity="0.80"/>
+<path d="M96.0 585.2 Q97 571 85.58993508041631 562.6945072801531" stroke="#E8A33D" stroke-width="0.6400000000000001" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="85.58993508041631" cy="562.6945072801531" r="4.6080000000000005" fill="url(#glowB)" opacity="0.70"/><circle cx="85.58993508041631" cy="562.6945072801531" r="1.4400000000000002" fill="#6DB8FF" opacity="0.80"/>
+<circle cx="96.0" cy="585.2" r="6.144" fill="url(#glow)" opacity="0.85"/><circle cx="96.0" cy="585.2" r="1.92" fill="#FFD98A" opacity="0.95"/>
+<path d="M120 610.8 Q126 591 115.2 574.0" stroke="#E8A33D" stroke-width="0.8800000000000001" fill="none" opacity="0.55" stroke-linecap="round"/>
+<path d="M115.2 574.0 Q113 561 100.98532955753635 555.5688407034153" stroke="#E8A33D" stroke-width="0.6400000000000001" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="100.98532955753635" cy="555.5688407034153" r="4.6080000000000005" fill="url(#glowB)" opacity="0.70"/><circle cx="100.98532955753635" cy="555.5688407034153" r="1.4400000000000002" fill="#6DB8FF" opacity="0.80"/>
+<path d="M115.2 574.0 Q126 571 126.67098153691983 560.2948759515504" stroke="#E8A33D" stroke-width="0.6400000000000001" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="126.67098153691983" cy="560.2948759515504" r="4.6080000000000005" fill="url(#glowB)" opacity="0.70"/><circle cx="126.67098153691983" cy="560.2948759515504" r="1.4400000000000002" fill="#6DB8FF" opacity="0.80"/>
+<circle cx="115.2" cy="574.0" r="6.144" fill="url(#glow)" opacity="0.85"/><circle cx="115.2" cy="574.0" r="1.92" fill="#FFD98A" opacity="0.95"/>
+<path d="M120 610.8 Q136 601 137.6 582.0" stroke="#E8A33D" stroke-width="0.8800000000000001" fill="none" opacity="0.55" stroke-linecap="round"/>
+<path d="M137.6 582.0 Q145 573 139.16298948353463 562.2935195219435" stroke="#E8A33D" stroke-width="0.6400000000000001" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="139.16298948353463" cy="562.2935195219435" r="4.6080000000000005" fill="url(#glowB)" opacity="0.70"/><circle cx="139.16298948353463" cy="562.2935195219435" r="1.4400000000000002" fill="#6DB8FF" opacity="0.80"/>
+<path d="M137.6 582.0 Q136 570 124.37779804596256 564.9549804307711" stroke="#E8A33D" stroke-width="0.6400000000000001" fill="none" opacity="0.40" stroke-linecap="round"/>
+<circle cx="124.37779804596256" cy="564.9549804307711" r="4.6080000000000005" fill="url(#glowB)" opacity="0.70"/><circle cx="124.37779804596256" cy="564.9549804307711" r="1.4400000000000002" fill="#6DB8FF" opacity="0.80"/>
+<circle cx="137.6" cy="582.0" r="6.144" fill="url(#glow)" opacity="0.85"/><circle cx="137.6" cy="582.0" r="1.92" fill="#FFD98A" opacity="0.95"/>
+<circle cx="120" cy="610.8" r="8.192000000000002" fill="url(#glow)" opacity="1.00"/><circle cx="120" cy="610.8" r="2.5600000000000005" fill="#FFD98A" opacity="1.00"/>
+<text x="120" y="640" font-family="Georgia, 'Times New Roman', serif" font-size="11.5" fill="#F3ECD8" letter-spacing="0.4" text-anchor="middle" font-weight="normal" opacity="1">Launch timing</text>
+<text x="120" y="655" font-family="Menlo, 'SF Mono', 'Courier New', monospace" font-size="8" fill="#6DB8FF" letter-spacing="1" text-anchor="middle" font-weight="normal" opacity="1">● resolved · +$8k vs est.</text>
+<path d="M150 300 Q170 382 250 410" stroke="#E8A33D" stroke-width="0.5" fill="none" opacity="0.08" stroke-linecap="round"/>
+<path d="M250 455 Q170 486 150 570" stroke="#E8A33D" stroke-width="0.5" fill="none" opacity="0.08" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://primeradiant.app/schema/patch.schema.json",
+  "title": "PatchOp",
+  "description": "A single tree-mutation operation emitted by the model. Applied transactionally by the app; any invalid op rolls back the whole patch.",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["op", "tree"],
+      "properties": {
+        "op": { "const": "replace_tree" },
+        "tree": { "$ref": "node.schema.json" }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["op", "parentId", "node"],
+      "properties": {
+        "op": { "const": "upsert_node" },
+        "parentId": { "type": "string" },
+        "node": { "$ref": "node.schema.json" }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["op", "id", "fields"],
+      "properties": {
+        "op": { "const": "update_node" },
+        "id": { "type": "string" },
+        "fields": {
+          "type": "object",
+          "description": "Partial<Node> minus id/children — structural changes go through upsert/remove.",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "label": { "type": "string" },
+            "sub": { "type": "string" },
+            "p": { "type": "number", "minimum": 0, "maximum": 1 },
+            "actor": { "enum": ["user", "counterpart", "chance"] },
+            "move": { "type": "string" },
+            "note": { "type": "string" },
+            "payoff": {
+              "oneOf": [
+                { "type": "number" },
+                { "type": "object", "minProperties": 1, "additionalProperties": { "type": "number" } }
+              ]
+            },
+            "confidence": { "enum": ["estimated", "user_set", "assumed"] }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["op", "id"],
+      "properties": {
+        "op": { "const": "remove_node" },
+        "id": { "type": "string" }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["op", "id"],
+      "properties": {
+        "op": { "const": "mark_reached" },
+        "id": { "type": "string" }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["op", "payoffUnit"],
+      "properties": {
+        "op": { "const": "set_unit" },
+        "payoffUnit": { "$ref": "scenario.schema.json#/$defs/payoffUnit" }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["op", "title"],
+      "properties": {
+        "op": { "const": "retitle_scenario" },
+        "title": { "type": "string" }
+      }
+    }
+  ]
+}

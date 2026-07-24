@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="844" viewBox="0 0 390 844">
+<defs><radialGradient id="g"><stop offset="0%" stop-color="#E8EAEE" stop-opacity=".95"/><stop offset="35%" stop-color="#8B9096" stop-opacity=".45"/><stop offset="100%" stop-color="#8B9096" stop-opacity="0"/></radialGradient>
+<radialGradient id="ga"><stop offset="0%" stop-color="#E8EAEE" stop-opacity=".95"/><stop offset="35%" stop-color="#FF4433" stop-opacity=".5"/><stop offset="100%" stop-color="#FF4433" stop-opacity="0"/></radialGradient></defs>
+<rect width="390" height="844" fill="#060608"/>
+<text x="26" y="54" font-family="Helvetica, Arial, sans-serif" font-size="21" fill="#D9DCE1" letter-spacing="4" text-anchor="start" opacity="1">SIGNAL</text>
+<text x="26" y="76" font-family="Menlo, 'SF Mono', monospace" font-size="9" fill="#FF4433" letter-spacing="1.6" text-anchor="start" opacity="1">mission control · Teenage Engineering</text>
+<rect x="26" y="96" rx="6" width="56" height="30" fill="#060608" stroke="#D9DCE1" stroke-opacity=".25"/><text x="26" y="140" font-family="Menlo, 'SF Mono', monospace" font-size="6.5" fill="#D9DCE1" letter-spacing="1" text-anchor="start" opacity="0.6">VOID</text>
+<text x="26" y="151" font-family="Menlo, 'SF Mono', monospace" font-size="6.5" fill="#D9DCE1" letter-spacing="0.4" text-anchor="start" opacity="0.4">#060608</text>
+<rect x="96" y="96" rx="6" width="56" height="30" fill="#8B9096" stroke="none" stroke-opacity=".25"/><text x="96" y="140" font-family="Menlo, 'SF Mono', monospace" font-size="6.5" fill="#D9DCE1" letter-spacing="1" text-anchor="start" opacity="0.6">FILAMENT</text>
+<text x="96" y="151" font-family="Menlo, 'SF Mono', monospace" font-size="6.5" fill="#D9DCE1" letter-spacing="0.4" text-anchor="start" opacity="0.4">#8B9096</text>
+<rect x="166" y="96" rx="6" width="56" height="30" fill="#E8EAEE" stroke="none" stroke-opacity=".25"/><text x="166" y="140" font-family="Menlo, 'SF Mono', monospace" font-size="6.5" fill="#D9DCE1" letter-spacing="1" text-anchor="start" opacity="0.6">HOT</text>
+<text x="166" y="151" font-family="Menlo, 'SF Mono', monospace" font-size="6.5" fill="#D9DCE1" letter-spacing="0.4" text-anchor="start" opacity="0.4">#E8EAEE</text>
+<rect x="236" y="96" rx="6" width="56" height="30" fill="#2A2C30" stroke="none" stroke-opacity=".25"/><text x="236" y="140" font-family="Menlo, 'SF Mono', monospace" font-size="6.5" fill="#D9DCE1" letter-spacing="1" text-anchor="start" opacity="0.6">DIM</text>
+<text x="236" y="151" font-family="Menlo, 'SF Mono', monospace" font-size="6.5" fill="#D9DCE1" letter-spacing="0.4" text-anchor="start" opacity="0.4">#2A2C30</text>
+<rect x="306" y="96" rx="6" width="56" height="30" fill="#FF4433" stroke="none" stroke-opacity=".25"/><text x="306" y="140" font-family="Menlo, 'SF Mono', monospace" font-size="6.5" fill="#D9DCE1" letter-spacing="1" text-anchor="start" opacity="0.6">ACCENT</text>
+<text x="306" y="151" font-family="Menlo, 'SF Mono', monospace" font-size="6.5" fill="#D9DCE1" letter-spacing="0.4" text-anchor="start" opacity="0.4">#FF4433</text>
+<text x="26" y="186" font-family="Helvetica, Arial, sans-serif" font-size="17" fill="#D9DCE1" letter-spacing="0.3" text-anchor="start" opacity="1">She accepts the terms</text>
+<text x="26" y="205" font-family="Menlo, 'SF Mono', monospace" font-size="7.5" fill="#D9DCE1" letter-spacing="0.8" text-anchor="start" opacity="0.5">Helvetica Now / SF (medium)  ·  SF Mono</text>
+<line x1="26" y1="222" x2="364" y2="222" stroke="#D9DCE1" stroke-opacity=".12" stroke-width=".6"/><path d="M195 650 Q151 590 88 550" stroke="#FF4433" stroke-width="2.4" fill="none" opacity="0.95" stroke-linecap="round"/>
+<path d="M88 550 Q83 492 52 442" stroke="#FF4433" stroke-width="2.0" fill="none" opacity="0.9" stroke-linecap="round"/>
+<circle cx="52" cy="442" r="9" fill="url(#ga)" opacity="1.00"/><circle cx="52" cy="442" r="3" fill="#FF4433" opacity="1.00"/>
+<path d="M88 550 Q118 493 120 428" stroke="#8B9096" stroke-width="1.0" fill="none" opacity="0.35" stroke-linecap="round"/>
+<circle cx="120" cy="428" r="9" fill="url(#g)" opacity="0.70"/><circle cx="120" cy="428" r="3" fill="#8B9096" opacity="0.80"/>
+<circle cx="88" cy="550" r="13.200000000000001" fill="url(#ga)" opacity="1.00"/><circle cx="88" cy="550" r="4.4" fill="#FF4433" opacity="1.00"/>
+<path d="M195 650 Q191 586 160 530" stroke="#8B9096" stroke-width="1.3" fill="none" opacity="0.4" stroke-linecap="round"/>
+<path d="M160 530 Q169 469 150 410" stroke="#8B9096" stroke-width="1.0" fill="none" opacity="0.35" stroke-linecap="round"/>
+<circle cx="150" cy="410" r="9" fill="url(#g)" opacity="0.70"/><circle cx="150" cy="410" r="3" fill="#8B9096" opacity="0.80"/>
+<path d="M160 530 Q192 481 198 422" stroke="#8B9096" stroke-width="1.0" fill="none" opacity="0.35" stroke-linecap="round"/>
+<circle cx="198" cy="422" r="9" fill="url(#g)" opacity="0.70"/><circle cx="198" cy="422" r="3" fill="#8B9096" opacity="0.80"/>
+<circle cx="160" cy="530" r="13.200000000000001" fill="url(#g)" opacity="0.80"/><circle cx="160" cy="530" r="4.4" fill="#8B9096" opacity="0.90"/>
+<path d="M195 650 Q235 600 250 538" stroke="#8B9096" stroke-width="1.3" fill="none" opacity="0.4" stroke-linecap="round"/>
+<path d="M250 538 Q262 479 246 420" stroke="#8B9096" stroke-width="1.0" fill="none" opacity="0.35" stroke-linecap="round"/>
+<circle cx="246" cy="420" r="9" fill="url(#g)" opacity="0.70"/><circle cx="246" cy="420" r="3" fill="#8B9096" opacity="0.80"/>
+<path d="M250 538 Q284 492 292 436" stroke="#8B9096" stroke-width="1.0" fill="none" opacity="0.35" stroke-linecap="round"/>
+<circle cx="292" cy="436" r="9" fill="url(#g)" opacity="0.70"/><circle cx="292" cy="436" r="3" fill="#8B9096" opacity="0.80"/>
+<circle cx="250" cy="538" r="13.200000000000001" fill="url(#g)" opacity="0.80"/><circle cx="250" cy="538" r="4.4" fill="#8B9096" opacity="0.90"/>
+<path d="M195 650 Q264 617 316 562" stroke="#8B9096" stroke-width="1.3" fill="none" opacity="0.4" stroke-linecap="round"/>
+<path d="M316 562 Q337 513 330 460" stroke="#8B9096" stroke-width="1.0" fill="none" opacity="0.35" stroke-linecap="round"/>
+<circle cx="330" cy="460" r="9" fill="url(#g)" opacity="0.70"/><circle cx="330" cy="460" r="3" fill="#8B9096" opacity="0.80"/>
+<circle cx="316" cy="562" r="13.200000000000001" fill="url(#g)" opacity="0.80"/><circle cx="316" cy="562" r="4.4" fill="#8B9096" opacity="0.90"/>
+<circle cx="195" cy="650" r="18" fill="url(#g)" opacity="1.00"/><circle cx="195" cy="650" r="6" fill="#8B9096" opacity="1.00"/>
+<text x="26" y="702" font-family="Menlo, 'SF Mono', monospace" font-size="7.5" fill="#FF4433" letter-spacing="3" text-anchor="start" opacity="1">DECISION</text>
+<text x="26" y="724" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#D9DCE1" letter-spacing="0.3" text-anchor="start" opacity="1">She accepts the terms</text>
+<text x="26" y="744" font-family="Menlo, 'SF Mono', monospace" font-size="9.5" fill="#D9DCE1" letter-spacing="0.3" text-anchor="start" opacity="0.8">Confirm scope in writing before the kickoff call.</text>
+<text x="26" y="766" font-family="Menlo, 'SF Mono', monospace" font-size="12" fill="#FF4433" letter-spacing="1" text-anchor="start" opacity="1">EV ≈ +$12k</text>
+<text x="118" y="766" font-family="Menlo, 'SF Mono', monospace" font-size="8" fill="#D9DCE1" letter-spacing="1.6" text-anchor="start" opacity="0.45">▸ DISTRIBUTION</text>
+<text x="26" y="790" font-family="Menlo, 'SF Mono', monospace" font-size="7.6" fill="#D9DCE1" letter-spacing="0.4" text-anchor="start" opacity="0.55">Graphite silver tree on true black; the single red exists only</text>
+<text x="26" y="802" font-family="Menlo, 'SF Mono', monospace" font-size="7.6" fill="#D9DCE1" letter-spacing="0.4" text-anchor="start" opacity="0.55">for reality — realized branches and the mark ring. Everything</text>
+<text x="26" y="814" font-family="Menlo, 'SF Mono', monospace" font-size="7.6" fill="#D9DCE1" letter-spacing="0.4" text-anchor="start" opacity="0.55">else grayscale. Severity as luxury.</text>
+</svg>

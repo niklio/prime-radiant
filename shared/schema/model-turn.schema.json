@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://primeradiant.app/schema/model-turn.schema.json",
+  "title": "ModelTurn",
+  "description": "The structured output contract for every model turn: prose for the human, an optional patch for the machine. The client enforces this with OpenAI structured outputs (strict schema derived from this file — strict mode requires all keys present, so `patch` becomes nullable there) and retries up to 2x on validation failure with the validator error in-context. Free text never touches the tree.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["say"],
+  "properties": {
+    "say": { "type": "string", "description": "Plain prose for the human. Never describes JSON." },
+    "patch": {
+      "type": "array",
+      "items": { "$ref": "patch.schema.json" }
+    }
+  }
+}

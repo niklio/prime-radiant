@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# Xcode / Swift
+ios/**/xcuserdata/
+ios/**/*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+ios/**/.build/
+ios/**/DerivedData/
+*.ipa
+*.dSYM.zip
+
+# Node / Worker
+node_modules/
+worker/.wrangler/
+worker/dist/
+
+# Secrets — never commit credentials of any kind
+*.p8
+*.key
+.env
+.env.*
+.dev.vars

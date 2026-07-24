@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://primeradiant.app/schema/scenario.schema.json",
+  "title": "Scenario",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title", "createdAt", "updatedAt", "payoffUnit", "status", "tree", "realizedPath", "transcript"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[0-7][0-9A-HJKMNP-TV-Z]{25}$" },
+    "title": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "payoffUnit": { "$ref": "#/$defs/payoffUnit" },
+    "status": { "enum": ["modeling", "in_progress", "resolved"] },
+    "tree": { "$ref": "node.schema.json" },
+    "realizedPath": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Ordered node ids, root-first; empty until first mark."
+    },
+    "resolvedPayoff": { "type": "number" },
+    "transcript": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/message" }
+    },
+    "cameraState": {
+      "type": "object",
+      "description": "Last framing, per device class. Opaque to the server.",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "payoffUnit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "label"],
+      "properties": {
+        "kind": { "enum": ["currency", "utils", "scale"] },
+        "label": { "type": "string" },
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "weight"],
+            "properties": {
+              "name": { "type": "string" },
+              "weight": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    "message": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "content", "timestamp"],
+      "properties": {
+        "role": { "enum": ["user", "assistant"] },
+        "content": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "patchApplied": { "type": "string", "description": "PatchId, when this turn carried a patch." }
+      }
+    }
+  }
+}

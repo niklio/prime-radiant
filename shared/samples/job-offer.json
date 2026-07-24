@@ -1,0 +1,131 @@
+{
+  "$comment": "Generic sample scenario (handoff §10): a job-offer negotiation. Used by the canvas engine (M1 static render), unit tests, and snapshot tests. 3+ levels, all three actor kinds, component payoffs off (scalar USD-thousands).",
+  "id": "01J0PRSAMPLE00000000000001",
+  "title": "counter the offer?",
+  "createdAt": "2026-01-05T14:00:00Z",
+  "updatedAt": "2026-01-05T14:30:00Z",
+  "payoffUnit": { "kind": "currency", "label": "USD (k, yr-1 delta)" },
+  "status": "modeling",
+  "realizedPath": [],
+  "transcript": [],
+  "tree": {
+    "id": "01J0PRSAMPLEROOT0000000000",
+    "label": "offer in hand",
+    "sub": "base 165k, respond by friday",
+    "p": 1,
+    "actor": "user",
+    "move": "Choose how to respond to the written offer.",
+    "children": [
+      {
+        "id": "01J0PRSAMPLEACCEPT00000000",
+        "label": "accept as-is",
+        "p": 0.2,
+        "actor": "user",
+        "move": "Sign at 165k; done this week.",
+        "payoff": 0,
+        "confidence": "user_set"
+      },
+      {
+        "id": "01J0PRSAMPLECOUNTER0000000",
+        "label": "counter at 185k",
+        "sub": "cite competing range",
+        "p": 0.65,
+        "actor": "user",
+        "move": "Counter with 185k base plus the same equity.",
+        "children": [
+          {
+            "id": "01J0PRSAMPLECACCEPT0000000",
+            "label": "they accept",
+            "p": 0.35,
+            "actor": "counterpart",
+            "move": "Recruiter approves the number without escalation.",
+            "payoff": 20,
+            "confidence": "estimated"
+          },
+          {
+            "id": "01J0PRSAMPLECMEET000000000",
+            "label": "they meet in middle",
+            "p": 0.45,
+            "actor": "counterpart",
+            "move": "Comes back near 175k.",
+            "children": [
+              {
+                "id": "01J0PRSAMPLECMTAKE00000000",
+                "label": "take 175k",
+                "p": 0.8,
+                "actor": "user",
+                "move": "Accept the split.",
+                "payoff": 10,
+                "confidence": "user_set"
+              },
+              {
+                "id": "01J0PRSAMPLECMPUSH00000000",
+                "label": "push once more",
+                "p": 0.2,
+                "actor": "user",
+                "move": "Hold at 182k, signal flexibility on start date.",
+                "children": [
+                  {
+                    "id": "01J0PRSAMPLECMPWIN00000000",
+                    "label": "they stretch",
+                    "p": 0.4,
+                    "actor": "chance",
+                    "move": "Approval comes through at 182k.",
+                    "payoff": 17,
+                    "confidence": "assumed"
+                  },
+                  {
+                    "id": "01J0PRSAMPLECMPHOLD0000000",
+                    "label": "they hold at 175k",
+                    "p": 0.6,
+                    "actor": "chance",
+                    "move": "Final answer 175k; accept it.",
+                    "payoff": 10,
+                    "confidence": "estimated"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "01J0PRSAMPLECRESCIND000000",
+            "label": "offer rescinded",
+            "p": 0.2,
+            "actor": "counterpart",
+            "move": "They walk; back to the market.",
+            "payoff": -40,
+            "confidence": "estimated",
+            "note": "Rare for a written offer, nonzero at this delta."
+          }
+        ]
+      },
+      {
+        "id": "01J0PRSAMPLEDECLINE0000000",
+        "label": "decline, keep looking",
+        "p": 0.15,
+        "actor": "user",
+        "move": "Pass and continue the search.",
+        "children": [
+          {
+            "id": "01J0PRSAMPLEDBETTER0000000",
+            "label": "better offer lands",
+            "p": 0.5,
+            "actor": "chance",
+            "move": "Search yields ≥185k within two months.",
+            "payoff": 15,
+            "confidence": "assumed"
+          },
+          {
+            "id": "01J0PRSAMPLEDWORSE00000000",
+            "label": "market cools",
+            "p": 0.5,
+            "actor": "chance",
+            "move": "Settle for comparable or worse later.",
+            "payoff": -25,
+            "confidence": "assumed"
+          }
+        ]
+      }
+    ]
+  }
+}

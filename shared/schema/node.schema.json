@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://primeradiant.app/schema/node.schema.json",
+  "title": "Node",
+  "description": "A node in the decision tree. `p` is the conditional probability among siblings (siblings sum ~1; the app renormalizes). Payoffs appear on terminal nodes only. Cumulative probability, EV, distributions, conditioning, and optimal-policy annotation are computed client-side and are never part of this schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "label", "p", "actor"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Stable ULID, minted client-side.",
+      "pattern": "^[0-7][0-9A-HJKMNP-TV-Z]{25}$"
+    },
+    "label": { "type": "string", "description": "≤6-word title." },
+    "sub": { "type": "string", "description": "≤8-word descriptor." },
+    "p": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Conditional probability among siblings. The root's p is 1."
+    },
+    "actor": { "enum": ["user", "counterpart", "chance"] },
+    "move": {
+      "type": "string",
+      "description": "The recommended action / what this branch means, one sentence."
+    },
+    "note": { "type": "string", "description": "Rationale, ≤2 sentences." },
+    "payoff": {
+      "description": "Terminal nodes only. Scalar in the scenario's unit, or named components (weighted scalar derived client-side).",
+      "oneOf": [
+        { "type": "number" },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "type": "number" }
+        }
+      ]
+    },
+    "confidence": { "enum": ["estimated", "user_set", "assumed"] },
+    "reached": { "type": "boolean" },
+    "children": {
+      "type": "array",
+      "items": { "$ref": "#" }
+    }
+  }
+}
