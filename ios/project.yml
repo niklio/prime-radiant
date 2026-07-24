@@ -101,6 +101,8 @@ targets:
   PrimeRadiantTests:
     type: bundle.unit-test
     platform: iOS
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
     sources:
       - path: PrimeRadiantTests
     dependencies:
@@ -111,6 +113,8 @@ targets:
   PrimeRadiantUITests:
     type: bundle.ui-testing
     platform: iOS
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
     sources:
       - path: PrimeRadiantUITests
     dependencies:
