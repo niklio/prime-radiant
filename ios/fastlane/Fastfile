@@ -1,0 +1,32 @@
+# Fastlane beta lane (handoff §7): build, sign via App Store Connect API key,
+# upload to TestFlight, release notes from CHANGELOG.
+# Blocked until the Apple developer account exists; secrets arrive via CI env
+# (ASC_KEY_ID / ASC_ISSUER_ID / ASC_KEY_P8). Bundle id + team are set then.
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Build and upload to TestFlight"
+  lane :beta do
+    api_key = app_store_connect_api_key(
+      key_id: ENV.fetch("ASC_KEY_ID"),
+      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+      key_content: ENV.fetch("ASC_KEY_P8"),
+      is_key_content_base64: true
+    )
+
+    build_app(
+      project: "PrimeRadiant.xcodeproj",
+      scheme: "PrimeRadiant",
+      export_method: "app-store"
+    )
+
+    changelog = File.read("../../CHANGELOG.md")[/## Unreleased\n(.*?)(\n## |\z)/m, 1].to_s.strip
+
+    upload_to_testflight(
+      api_key: api_key,
+      changelog: changelog,
+      distribute_external: false
+    )
+  end
+end

@@ -1,0 +1,37 @@
+name: release
+
+# On tag: Fastlane beta lane — build, sign via App Store Connect API key,
+# upload to TestFlight, release notes from CHANGELOG (handoff §7).
+# Requires repo secrets: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8,
+# MATCH_OR_CERT_SECRETS as chosen when the Apple developer account is wired up.
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  beta:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Guard — signing secrets present
+        run: |
+          if [ -z "${{ secrets.ASC_KEY_ID }}" ]; then
+            echo "::error::App Store Connect API key secrets are not configured yet (M0 blocker: Apple developer account)."
+            exit 1
+          fi
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+          working-directory: ios
+      - name: Generate Xcode project
+        run: |
+          brew install xcodegen
+          cd ios && xcodegen generate
+      - name: Fastlane beta
+        working-directory: ios
+        run: bundle exec fastlane beta
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}

@@ -1,0 +1,12 @@
+included:
+  - ios
+excluded:
+  - ios/PrimeRadiantCore/.build
+  - ios/PrimeRadiantCore/Tests
+line_length:
+  warning: 120
+  error: 160
+identifier_name:
+  min_length: 1 # p is the schema's name for probability
+disabled_rules:
+  - todo # TODO(M2) doc-verification markers are load-bearing until M2
