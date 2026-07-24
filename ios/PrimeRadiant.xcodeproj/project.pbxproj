@@ -1,0 +1,815 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		00D63D08A0E8AD283CA2F775 /* SyncClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51237BAA666161EDCA9CA2EB /* SyncClient.swift */; };
+		00E5933041461DDB6B67FAF9 /* InputPillView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 932C942D3E92D518FDA984EB /* InputPillView.swift */; };
+		05A4EABC913BEB29C166BDCE /* PrimeRadiantCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5988FCD82EF1E95785B0A494 /* PrimeRadiantCore */; };
+		0820A407EE1690E929A40285 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D583682E56E8D00AD5E70153 /* Assets.xcassets */; };
+		0DEC1CAD5C97BC9D1D80225D /* ReduceMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092AE78E09D2C677306E5490 /* ReduceMotion.swift */; };
+		0E9C3D9FDEA9841B56FD103E /* node.schema.json in Resources */ = {isa = PBXBuildFile; fileRef = 310F5B52F0340BB751FAD8F9 /* node.schema.json */; };
+		13DCCFD9DEDD74849C1C0273 /* Tokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4098AA8D2E700F0C542B467 /* Tokens.swift */; };
+		1AAAFE12A11E5B6B8F73FE16 /* PrimeRadiantApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE108F30337AC5BC1EC552F2 /* PrimeRadiantApp.swift */; };
+		1C707118DF44F51F245D9EEA /* ModelTurnSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B329E4B20A3D7B6598879F6 /* ModelTurnSchema.swift */; };
+		2070AD9EEE8D257C247084B7 /* ConstellationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38F8556A413526E2D2350C73 /* ConstellationView.swift */; };
+		23EF2C9A135CB7F79B49CA23 /* RadiantScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C1B20EAEAA65CD5EA79FCD /* RadiantScene.swift */; };
+		33AC68935400D86C6060AD23 /* EVFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9D52DE6BE71BC333E41671 /* EVFormatter.swift */; };
+		33C382EDA6B163725B8FB569 /* RemoteConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB7275930A892C61B97A81E /* RemoteConfig.swift */; };
+		33E06850E9BA0A59DE7A8E52 /* ScenarioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562E18F0812B9898F3748E81 /* ScenarioView.swift */; };
+		3BB895D23E65C9F50A12FBF2 /* RadiantLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994B5DF398123C0EB4120671 /* RadiantLayoutTests.swift */; };
+		486C88023E6BED9C460A2B6B /* Speech.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 274D12991C44E91B7906879C /* Speech.framework */; };
+		4F00A6E30DB1508516DE93B7 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161D21FCD361C395B9CBD97E /* Haptics.swift */; };
+		58DEC6180D27FEDD686EB36E /* SceneKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3146A0FB2DE4182D72EF23B1 /* SceneKit.framework */; };
+		61F6E681DCFDBB83A23D0E5D /* StoredScenario.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0599D2C616060D29A8DFC853 /* StoredScenario.swift */; };
+		64A7FFEA64EFC143B0F46524 /* AuthenticationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 485B32ADC5EBD5A01AD39673 /* AuthenticationServices.framework */; };
+		709DF9F29CAA44C3B5895AEB /* ContextAssemblyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13D609B2A2E0278BAD9F6A07 /* ContextAssemblyTests.swift */; };
+		74DB23BCC0A4236ED13EAD64 /* RadiantLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED910D89C4E729A441436022 /* RadiantLayout.swift */; };
+		78D0E08A978FE7A20AF17AF3 /* BreadcrumbView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EA458F34E725A614282BCBC /* BreadcrumbView.swift */; };
+		7B88047E2F0E3B6D023099F8 /* PrimeRadiantCore in Frameworks */ = {isa = PBXBuildFile; productRef = 09725AE442F6D36090823A14 /* PrimeRadiantCore */; };
+		7C2293221464A7E689ED60A9 /* ContextAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BC27CCE7A55791C876224A0 /* ContextAssembly.swift */; };
+		7E65D59FD49470E1DF349E5D /* model-turn.schema.json in Resources */ = {isa = PBXBuildFile; fileRef = 63687E03D7573C66894D0B58 /* model-turn.schema.json */; };
+		892D8501593EED1379B69ECC /* ModelClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7EE0ACCECDEF92822BA04B /* ModelClient.swift */; };
+		99922AF79B468C30FD440997 /* RadiantMaterials.swift in Sources */ = {isa = PBXBuildFile; fileRef = A145CFA9B39E22C229826BF0 /* RadiantMaterials.swift */; };
+		A1EB01495C93386BB86810C8 /* PrimeRadiantUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957A4E7EBF866DA78829D678 /* PrimeRadiantUITests.swift */; };
+		A77AEA8FBCB2F6E2C195CF89 /* OpenAIAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0736564DDA136F538ED12D /* OpenAIAuth.swift */; };
+		AA9C90B548364DEDA69A2B7D /* system.md in Resources */ = {isa = PBXBuildFile; fileRef = 0AD91E7C6C5FE49D538B2733 /* system.md */; };
+		AD9CA52CBBC42457CED8B6D2 /* job-offer.json in Resources */ = {isa = PBXBuildFile; fileRef = 5009613027508EE8861D5C25 /* job-offer.json */; };
+		B863E0539A461AF1207261FE /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBBF6D5A995DAF3F989EC948 /* KeychainStore.swift */; };
+		C907CE40FB6E4333104091C5 /* patch.schema.json in Resources */ = {isa = PBXBuildFile; fileRef = A058163C35F025B285A4FF49 /* patch.schema.json */; };
+		CBA8C5D3B759A3E6A76420C6 /* ScenarioStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31159CB287B790ECDCE727A /* ScenarioStore.swift */; };
+		CBD977560BEE726183D08D4A /* SpeechInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7DA64FB13CEFB0B36F37F59 /* SpeechInput.swift */; };
+		DC17568124177D3D02DEA89C /* NodeFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21BA54E701103F9F73037F0 /* NodeFooterView.swift */; };
+		E0B59712270BD3883A20ED56 /* ChatSurfaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018B46963919E1421001AEEE /* ChatSurfaceView.swift */; };
+		E4D60127572F9A6AF5357BA7 /* LegendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3650B3FE3819B8809CA69 /* LegendView.swift */; };
+		E6561A8E5129D4F76D214F4D /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC21474799566D1B9C94503 /* CanvasView.swift */; };
+		EB600EBB8A7F013D5D2C54E5 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1C3D53FCA17C15D7ED58973 /* AVFoundation.framework */; };
+		EE3EAB130AEBAC21C2A847FF /* SayStreamExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0889F43C299527CCA44D517 /* SayStreamExtractorTests.swift */; };
+		F56C26A71FE33B9418318022 /* IgnitionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86305E2A3E78CB163690C5B /* IgnitionView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4B6F6287C4EE08D10D12CAA8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F6617899B4D5C09BC1ED6BA1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E16095B668F08F63D28882AB;
+			remoteInfo = PrimeRadiant;
+		};
+		56A7987320FB79D9F7A09743 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F6617899B4D5C09BC1ED6BA1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E16095B668F08F63D28882AB;
+			remoteInfo = PrimeRadiant;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		018B46963919E1421001AEEE /* ChatSurfaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSurfaceView.swift; sourceTree = "<group>"; };
+		0599D2C616060D29A8DFC853 /* StoredScenario.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredScenario.swift; sourceTree = "<group>"; };
+		092AE78E09D2C677306E5490 /* ReduceMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReduceMotion.swift; sourceTree = "<group>"; };
+		0AD91E7C6C5FE49D538B2733 /* system.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = system.md; path = ../shared/prompts/system.md; sourceTree = "<group>"; };
+		13D609B2A2E0278BAD9F6A07 /* ContextAssemblyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextAssemblyTests.swift; sourceTree = "<group>"; };
+		161D21FCD361C395B9CBD97E /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
+		1EA458F34E725A614282BCBC /* BreadcrumbView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreadcrumbView.swift; sourceTree = "<group>"; };
+		232C40616B80E5E41A3AB709 /* PrimeRadiantTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PrimeRadiantTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		274D12991C44E91B7906879C /* Speech.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Speech.framework; path = System/Library/Frameworks/Speech.framework; sourceTree = SDKROOT; };
+		310F5B52F0340BB751FAD8F9 /* node.schema.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = node.schema.json; path = ../shared/schema/node.schema.json; sourceTree = "<group>"; };
+		3146A0FB2DE4182D72EF23B1 /* SceneKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SceneKit.framework; path = System/Library/Frameworks/SceneKit.framework; sourceTree = SDKROOT; };
+		38F8556A413526E2D2350C73 /* ConstellationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstellationView.swift; sourceTree = "<group>"; };
+		485B32ADC5EBD5A01AD39673 /* AuthenticationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AuthenticationServices.framework; path = System/Library/Frameworks/AuthenticationServices.framework; sourceTree = SDKROOT; };
+		4B9D52DE6BE71BC333E41671 /* EVFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EVFormatter.swift; sourceTree = "<group>"; };
+		4BC21474799566D1B9C94503 /* CanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasView.swift; sourceTree = "<group>"; };
+		5009613027508EE8861D5C25 /* job-offer.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "job-offer.json"; path = "../shared/samples/job-offer.json"; sourceTree = "<group>"; };
+		51237BAA666161EDCA9CA2EB /* SyncClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncClient.swift; sourceTree = "<group>"; };
+		54626A2E911752E75FC94409 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		562E18F0812B9898F3748E81 /* ScenarioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenarioView.swift; sourceTree = "<group>"; };
+		56BEA7941BA61159C6B45373 /* PrimeRadiant.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PrimeRadiant.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		63687E03D7573C66894D0B58 /* model-turn.schema.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "model-turn.schema.json"; path = "../shared/schema/model-turn.schema.json"; sourceTree = "<group>"; };
+		69BDFDC1E77706FB8F866E06 /* PrimeRadiantCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PrimeRadiantCore; path = PrimeRadiantCore; sourceTree = SOURCE_ROOT; };
+		6BC27CCE7A55791C876224A0 /* ContextAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextAssembly.swift; sourceTree = "<group>"; };
+		702DE2558C657B4727284484 /* PrimeRadiantUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PrimeRadiantUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		932C942D3E92D518FDA984EB /* InputPillView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputPillView.swift; sourceTree = "<group>"; };
+		957A4E7EBF866DA78829D678 /* PrimeRadiantUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimeRadiantUITests.swift; sourceTree = "<group>"; };
+		994B5DF398123C0EB4120671 /* RadiantLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadiantLayoutTests.swift; sourceTree = "<group>"; };
+		9B329E4B20A3D7B6598879F6 /* ModelTurnSchema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTurnSchema.swift; sourceTree = "<group>"; };
+		A058163C35F025B285A4FF49 /* patch.schema.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = patch.schema.json; path = ../shared/schema/patch.schema.json; sourceTree = "<group>"; };
+		A145CFA9B39E22C229826BF0 /* RadiantMaterials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadiantMaterials.swift; sourceTree = "<group>"; };
+		A1F3650B3FE3819B8809CA69 /* LegendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegendView.swift; sourceTree = "<group>"; };
+		A4098AA8D2E700F0C542B467 /* Tokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tokens.swift; sourceTree = "<group>"; };
+		A7C1B20EAEAA65CD5EA79FCD /* RadiantScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadiantScene.swift; sourceTree = "<group>"; };
+		A86305E2A3E78CB163690C5B /* IgnitionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IgnitionView.swift; sourceTree = "<group>"; };
+		AE108F30337AC5BC1EC552F2 /* PrimeRadiantApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimeRadiantApp.swift; sourceTree = "<group>"; };
+		AEB7275930A892C61B97A81E /* RemoteConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteConfig.swift; sourceTree = "<group>"; };
+		B21BA54E701103F9F73037F0 /* NodeFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeFooterView.swift; sourceTree = "<group>"; };
+		BA0736564DDA136F538ED12D /* OpenAIAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIAuth.swift; sourceTree = "<group>"; };
+		D583682E56E8D00AD5E70153 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E0889F43C299527CCA44D517 /* SayStreamExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SayStreamExtractorTests.swift; sourceTree = "<group>"; };
+		E1C3D53FCA17C15D7ED58973 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		E31159CB287B790ECDCE727A /* ScenarioStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenarioStore.swift; sourceTree = "<group>"; };
+		E7DA64FB13CEFB0B36F37F59 /* SpeechInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechInput.swift; sourceTree = "<group>"; };
+		EB7EE0ACCECDEF92822BA04B /* ModelClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelClient.swift; sourceTree = "<group>"; };
+		EBBF6D5A995DAF3F989EC948 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		ED910D89C4E729A441436022 /* RadiantLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadiantLayout.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		08D633297818A71A5B940901 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				05A4EABC913BEB29C166BDCE /* PrimeRadiantCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BAB66EEE026392BF8B9FFD58 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7B88047E2F0E3B6D023099F8 /* PrimeRadiantCore in Frameworks */,
+				58DEC6180D27FEDD686EB36E /* SceneKit.framework in Frameworks */,
+				486C88023E6BED9C460A2B6B /* Speech.framework in Frameworks */,
+				EB600EBB8A7F013D5D2C54E5 /* AVFoundation.framework in Frameworks */,
+				64A7FFEA64EFC143B0F46524 /* AuthenticationServices.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		33BE0A5DC637A608880EA4C8 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				EBBF6D5A995DAF3F989EC948 /* KeychainStore.swift */,
+				BA0736564DDA136F538ED12D /* OpenAIAuth.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		39A45EAF4286A0F605950D1E /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				018B46963919E1421001AEEE /* ChatSurfaceView.swift */,
+				6BC27CCE7A55791C876224A0 /* ContextAssembly.swift */,
+				EB7EE0ACCECDEF92822BA04B /* ModelClient.swift */,
+				9B329E4B20A3D7B6598879F6 /* ModelTurnSchema.swift */,
+				AEB7275930A892C61B97A81E /* RemoteConfig.swift */,
+			);
+			path = Chat;
+			sourceTree = "<group>";
+		};
+		3C6B28E1854D07A9749EA052 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				AE108F30337AC5BC1EC552F2 /* PrimeRadiantApp.swift */,
+				0599D2C616060D29A8DFC853 /* StoredScenario.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		42C4FFFD882237F33F93658F /* SharedResources */ = {
+			isa = PBXGroup;
+			children = (
+				5009613027508EE8861D5C25 /* job-offer.json */,
+				63687E03D7573C66894D0B58 /* model-turn.schema.json */,
+				310F5B52F0340BB751FAD8F9 /* node.schema.json */,
+				A058163C35F025B285A4FF49 /* patch.schema.json */,
+				0AD91E7C6C5FE49D538B2733 /* system.md */,
+			);
+			name = SharedResources;
+			sourceTree = "<group>";
+		};
+		4437C1C1C02B5D05AB3433A4 /* Canvas */ = {
+			isa = PBXGroup;
+			children = (
+				4BC21474799566D1B9C94503 /* CanvasView.swift */,
+				ED910D89C4E729A441436022 /* RadiantLayout.swift */,
+				A145CFA9B39E22C229826BF0 /* RadiantMaterials.swift */,
+				A7C1B20EAEAA65CD5EA79FCD /* RadiantScene.swift */,
+			);
+			path = Canvas;
+			sourceTree = "<group>";
+		};
+		4512FA827864BBF89B64D2E6 = {
+			isa = PBXGroup;
+			children = (
+				EDE380EE39C2DD0C1B160AE7 /* Packages */,
+				AC2D25D82A6922F7C4EEF81A /* PrimeRadiant */,
+				8F46415C48A7F526CB11FCB0 /* PrimeRadiantTests */,
+				A19F5911D4578EC29B1C1142 /* PrimeRadiantUITests */,
+				42C4FFFD882237F33F93658F /* SharedResources */,
+				511FC3D4FD281FD166E20FCF /* Frameworks */,
+				CF5BA5A39E91CC6F4C21D895 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		506D120C062E01B7771BE5FE /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D583682E56E8D00AD5E70153 /* Assets.xcassets */,
+				54626A2E911752E75FC94409 /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		511FC3D4FD281FD166E20FCF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				485B32ADC5EBD5A01AD39673 /* AuthenticationServices.framework */,
+				E1C3D53FCA17C15D7ED58973 /* AVFoundation.framework */,
+				3146A0FB2DE4182D72EF23B1 /* SceneKit.framework */,
+				274D12991C44E91B7906879C /* Speech.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		63F25ADCBEB36E436AA1CB1C /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				A4098AA8D2E700F0C542B467 /* Tokens.swift */,
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		8F46415C48A7F526CB11FCB0 /* PrimeRadiantTests */ = {
+			isa = PBXGroup;
+			children = (
+				13D609B2A2E0278BAD9F6A07 /* ContextAssemblyTests.swift */,
+				994B5DF398123C0EB4120671 /* RadiantLayoutTests.swift */,
+				E0889F43C299527CCA44D517 /* SayStreamExtractorTests.swift */,
+			);
+			path = PrimeRadiantTests;
+			sourceTree = "<group>";
+		};
+		95C96BE7306232BEAD3CC737 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				38F8556A413526E2D2350C73 /* ConstellationView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		A19F5911D4578EC29B1C1142 /* PrimeRadiantUITests */ = {
+			isa = PBXGroup;
+			children = (
+				957A4E7EBF866DA78829D678 /* PrimeRadiantUITests.swift */,
+			);
+			path = PrimeRadiantUITests;
+			sourceTree = "<group>";
+		};
+		AC2D25D82A6922F7C4EEF81A /* PrimeRadiant */ = {
+			isa = PBXGroup;
+			children = (
+				3C6B28E1854D07A9749EA052 /* App */,
+				33BE0A5DC637A608880EA4C8 /* Auth */,
+				4437C1C1C02B5D05AB3433A4 /* Canvas */,
+				39A45EAF4286A0F605950D1E /* Chat */,
+				63F25ADCBEB36E436AA1CB1C /* DesignSystem */,
+				95C96BE7306232BEAD3CC737 /* Home */,
+				FBCB9C331776FFB0C91F9FDE /* Onboarding */,
+				506D120C062E01B7771BE5FE /* Resources */,
+				F71908226D6F784081C037F5 /* Scenario */,
+				CCB69970719D909A14C8177A /* Support */,
+				D3ED17983186975ABA63EEAD /* Sync */,
+			);
+			path = PrimeRadiant;
+			sourceTree = "<group>";
+		};
+		CCB69970719D909A14C8177A /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				161D21FCD361C395B9CBD97E /* Haptics.swift */,
+				092AE78E09D2C677306E5490 /* ReduceMotion.swift */,
+				E7DA64FB13CEFB0B36F37F59 /* SpeechInput.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		CF5BA5A39E91CC6F4C21D895 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				56BEA7941BA61159C6B45373 /* PrimeRadiant.app */,
+				232C40616B80E5E41A3AB709 /* PrimeRadiantTests.xctest */,
+				702DE2558C657B4727284484 /* PrimeRadiantUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D3ED17983186975ABA63EEAD /* Sync */ = {
+			isa = PBXGroup;
+			children = (
+				51237BAA666161EDCA9CA2EB /* SyncClient.swift */,
+			);
+			path = Sync;
+			sourceTree = "<group>";
+		};
+		EDE380EE39C2DD0C1B160AE7 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				69BDFDC1E77706FB8F866E06 /* PrimeRadiantCore */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		F71908226D6F784081C037F5 /* Scenario */ = {
+			isa = PBXGroup;
+			children = (
+				1EA458F34E725A614282BCBC /* BreadcrumbView.swift */,
+				4B9D52DE6BE71BC333E41671 /* EVFormatter.swift */,
+				932C942D3E92D518FDA984EB /* InputPillView.swift */,
+				A1F3650B3FE3819B8809CA69 /* LegendView.swift */,
+				B21BA54E701103F9F73037F0 /* NodeFooterView.swift */,
+				E31159CB287B790ECDCE727A /* ScenarioStore.swift */,
+				562E18F0812B9898F3748E81 /* ScenarioView.swift */,
+			);
+			path = Scenario;
+			sourceTree = "<group>";
+		};
+		FBCB9C331776FFB0C91F9FDE /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				A86305E2A3E78CB163690C5B /* IgnitionView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		01D3078F1E08B7FC7680D848 /* PrimeRadiantUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3803B642D9BB645A6B3E072F /* Build configuration list for PBXNativeTarget "PrimeRadiantUITests" */;
+			buildPhases = (
+				65C9966A4AB4015196CF560D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				395E5370DD0DE921F33F6199 /* PBXTargetDependency */,
+			);
+			name = PrimeRadiantUITests;
+			packageProductDependencies = (
+			);
+			productName = PrimeRadiantUITests;
+			productReference = 702DE2558C657B4727284484 /* PrimeRadiantUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		C62AD75F2CEE7EBA4793C8C9 /* PrimeRadiantTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8AED1BA4844DEE58CAE90981 /* Build configuration list for PBXNativeTarget "PrimeRadiantTests" */;
+			buildPhases = (
+				6981A75F3B482E24E05955A2 /* Sources */,
+				08D633297818A71A5B940901 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2EA6AD0E5B371E7D1CC65F46 /* PBXTargetDependency */,
+			);
+			name = PrimeRadiantTests;
+			packageProductDependencies = (
+				5988FCD82EF1E95785B0A494 /* PrimeRadiantCore */,
+			);
+			productName = PrimeRadiantTests;
+			productReference = 232C40616B80E5E41A3AB709 /* PrimeRadiantTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E16095B668F08F63D28882AB /* PrimeRadiant */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 828CE90F84A7149F612E45C3 /* Build configuration list for PBXNativeTarget "PrimeRadiant" */;
+			buildPhases = (
+				75E1297956AF4D8D0F6A7CB9 /* Sources */,
+				B136061BCD8D8B52EEBB082A /* Resources */,
+				BAB66EEE026392BF8B9FFD58 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PrimeRadiant;
+			packageProductDependencies = (
+				09725AE442F6D36090823A14 /* PrimeRadiantCore */,
+			);
+			productName = PrimeRadiant;
+			productReference = 56BEA7941BA61159C6B45373 /* PrimeRadiant.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F6617899B4D5C09BC1ED6BA1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					01D3078F1E08B7FC7680D848 = {
+						ProvisioningStyle = Automatic;
+						TestTargetID = E16095B668F08F63D28882AB;
+					};
+					C62AD75F2CEE7EBA4793C8C9 = {
+						ProvisioningStyle = Automatic;
+					};
+					E16095B668F08F63D28882AB = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 5AE6B12050F3138ECD6D9D6B /* Build configuration list for PBXProject "PrimeRadiant" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 4512FA827864BBF89B64D2E6;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				31EC1E84DD15885DBEA98155 /* XCLocalSwiftPackageReference "PrimeRadiantCore" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = CF5BA5A39E91CC6F4C21D895 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E16095B668F08F63D28882AB /* PrimeRadiant */,
+				C62AD75F2CEE7EBA4793C8C9 /* PrimeRadiantTests */,
+				01D3078F1E08B7FC7680D848 /* PrimeRadiantUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B136061BCD8D8B52EEBB082A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0820A407EE1690E929A40285 /* Assets.xcassets in Resources */,
+				AD9CA52CBBC42457CED8B6D2 /* job-offer.json in Resources */,
+				7E65D59FD49470E1DF349E5D /* model-turn.schema.json in Resources */,
+				0E9C3D9FDEA9841B56FD103E /* node.schema.json in Resources */,
+				C907CE40FB6E4333104091C5 /* patch.schema.json in Resources */,
+				AA9C90B548364DEDA69A2B7D /* system.md in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		65C9966A4AB4015196CF560D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1EB01495C93386BB86810C8 /* PrimeRadiantUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6981A75F3B482E24E05955A2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				709DF9F29CAA44C3B5895AEB /* ContextAssemblyTests.swift in Sources */,
+				3BB895D23E65C9F50A12FBF2 /* RadiantLayoutTests.swift in Sources */,
+				EE3EAB130AEBAC21C2A847FF /* SayStreamExtractorTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		75E1297956AF4D8D0F6A7CB9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				78D0E08A978FE7A20AF17AF3 /* BreadcrumbView.swift in Sources */,
+				E6561A8E5129D4F76D214F4D /* CanvasView.swift in Sources */,
+				E0B59712270BD3883A20ED56 /* ChatSurfaceView.swift in Sources */,
+				2070AD9EEE8D257C247084B7 /* ConstellationView.swift in Sources */,
+				7C2293221464A7E689ED60A9 /* ContextAssembly.swift in Sources */,
+				33AC68935400D86C6060AD23 /* EVFormatter.swift in Sources */,
+				4F00A6E30DB1508516DE93B7 /* Haptics.swift in Sources */,
+				F56C26A71FE33B9418318022 /* IgnitionView.swift in Sources */,
+				00E5933041461DDB6B67FAF9 /* InputPillView.swift in Sources */,
+				B863E0539A461AF1207261FE /* KeychainStore.swift in Sources */,
+				E4D60127572F9A6AF5357BA7 /* LegendView.swift in Sources */,
+				892D8501593EED1379B69ECC /* ModelClient.swift in Sources */,
+				1C707118DF44F51F245D9EEA /* ModelTurnSchema.swift in Sources */,
+				DC17568124177D3D02DEA89C /* NodeFooterView.swift in Sources */,
+				A77AEA8FBCB2F6E2C195CF89 /* OpenAIAuth.swift in Sources */,
+				1AAAFE12A11E5B6B8F73FE16 /* PrimeRadiantApp.swift in Sources */,
+				74DB23BCC0A4236ED13EAD64 /* RadiantLayout.swift in Sources */,
+				99922AF79B468C30FD440997 /* RadiantMaterials.swift in Sources */,
+				23EF2C9A135CB7F79B49CA23 /* RadiantScene.swift in Sources */,
+				0DEC1CAD5C97BC9D1D80225D /* ReduceMotion.swift in Sources */,
+				33C382EDA6B163725B8FB569 /* RemoteConfig.swift in Sources */,
+				CBA8C5D3B759A3E6A76420C6 /* ScenarioStore.swift in Sources */,
+				33E06850E9BA0A59DE7A8E52 /* ScenarioView.swift in Sources */,
+				CBD977560BEE726183D08D4A /* SpeechInput.swift in Sources */,
+				61F6E681DCFDBB83A23D0E5D /* StoredScenario.swift in Sources */,
+				00D63D08A0E8AD283CA2F775 /* SyncClient.swift in Sources */,
+				13DCCFD9DEDD74849C1C0273 /* Tokens.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2EA6AD0E5B371E7D1CC65F46 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E16095B668F08F63D28882AB /* PrimeRadiant */;
+			targetProxy = 56A7987320FB79D9F7A09743 /* PBXContainerItemProxy */;
+		};
+		395E5370DD0DE921F33F6199 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E16095B668F08F63D28882AB /* PrimeRadiant */;
+			targetProxy = 4B6F6287C4EE08D10D12CAA8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		23B70DFDA75B2947C7BE66FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.primeradiant.PrimeRadiantTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PrimeRadiant.app/PrimeRadiant";
+			};
+			name = Debug;
+		};
+		3227B7A34ACBCD5362352472 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		78A6F38184A7B00806B20A21 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = PrimeRadiant/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.primeradiant.PrimeRadiant;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D37881E6CFEDC98EB3A07F84 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.primeradiant.PrimeRadiantUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = PrimeRadiant;
+			};
+			name = Debug;
+		};
+		D595A5909ECEA4E7160D57B8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = PrimeRadiant/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.primeradiant.PrimeRadiant;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		E06ED4ED69EE8A2533BFECB2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.primeradiant.PrimeRadiantUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = PrimeRadiant;
+			};
+			name = Release;
+		};
+		EA2E419251166E61BDB4F81C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.primeradiant.PrimeRadiantTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PrimeRadiant.app/PrimeRadiant";
+			};
+			name = Release;
+		};
+		F9AF6BC8A66BCAA26E94129F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3803B642D9BB645A6B3E072F /* Build configuration list for PBXNativeTarget "PrimeRadiantUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D37881E6CFEDC98EB3A07F84 /* Debug */,
+				E06ED4ED69EE8A2533BFECB2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5AE6B12050F3138ECD6D9D6B /* Build configuration list for PBXProject "PrimeRadiant" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3227B7A34ACBCD5362352472 /* Debug */,
+				F9AF6BC8A66BCAA26E94129F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		828CE90F84A7149F612E45C3 /* Build configuration list for PBXNativeTarget "PrimeRadiant" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				78A6F38184A7B00806B20A21 /* Debug */,
+				D595A5909ECEA4E7160D57B8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8AED1BA4844DEE58CAE90981 /* Build configuration list for PBXNativeTarget "PrimeRadiantTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				23B70DFDA75B2947C7BE66FF /* Debug */,
+				EA2E419251166E61BDB4F81C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		31EC1E84DD15885DBEA98155 /* XCLocalSwiftPackageReference "PrimeRadiantCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = PrimeRadiantCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		09725AE442F6D36090823A14 /* PrimeRadiantCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PrimeRadiantCore;
+		};
+		5988FCD82EF1E95785B0A494 /* PrimeRadiantCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PrimeRadiantCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = F6617899B4D5C09BC1ED6BA1 /* Project object */;
+}

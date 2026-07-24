@@ -456,7 +456,7 @@ final class ConstellationController {
     /// The app's second signature moment (§2.2): the camera dives and the cluster
     /// grows into the full scenario canvas in one continuous zoom. The scenario
     /// canvas fades in over the final frames of this move.
-    func dive(to id: String, reduceMotion: Bool, completion: @escaping () -> Void) {
+    func dive(to id: String, reduceMotion: Bool, completion: @escaping @MainActor @Sendable () -> Void) {
         guard let anchor = anchors[id], !reduceMotion else {
             completion()
             return

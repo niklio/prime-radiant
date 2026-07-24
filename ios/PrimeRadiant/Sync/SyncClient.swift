@@ -193,10 +193,11 @@ extension JSONDecoder.DateDecodingStrategy {
     }
 }
 
-private let isoFormatter: ISO8601DateFormatter = {
+// ISO8601DateFormatter is documented thread-safe; Sendable annotation only lags.
+private nonisolated(unsafe) let isoFormatter: ISO8601DateFormatter = {
     let formatter = ISO8601DateFormatter()
     formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
     return formatter
 }()
 
-private let isoBasicFormatter = ISO8601DateFormatter()
+private nonisolated(unsafe) let isoBasicFormatter = ISO8601DateFormatter()
