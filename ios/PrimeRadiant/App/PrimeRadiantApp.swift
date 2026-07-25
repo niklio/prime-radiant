@@ -164,7 +164,8 @@ struct RootView: View {
                     onCreate: createScenario,
                     onArchive: { archive(id: $0) },
                     onDelete: { delete(id: $0) },
-                    onUndoDelete: { undoDelete(id: $0) })
+                    onUndoDelete: { undoDelete(id: $0) },
+                    onDescribe: { describeNewScenario($0) })
                     .transition(.opacity)
                     .overlay(alignment: .bottomTrailing) { settingsButton }
             }
@@ -266,6 +267,13 @@ struct RootView: View {
             overlaysVisible = true
             world.setScenarios(activeScenarios)
         }
+    }
+
+    /// Speech-first creation (ux-update §2): the first utterance seeds the
+    /// scenario; the engine's first patch names and draws it.
+    private func describeNewScenario(_ text: String) {
+        createScenario()
+        openStore?.send(text: text)
     }
 
     private func createScenario() {

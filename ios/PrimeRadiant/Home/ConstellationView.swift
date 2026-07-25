@@ -19,6 +19,10 @@ struct ConstellationView: View {
     var onArchive: (String) -> Void
     var onDelete: (String) -> Void
     var onUndoDelete: (String) -> Void
+    /// Home capsule submit: the described decision creates + seeds a scenario.
+    var onDescribe: (String) -> Void
+
+    @State private var speech = SpeechInput()
 
     @State private var screenPositions: [String: CGPoint] = [:]
     /// Cluster currently lifted under the finger (hold-and-drag management).
@@ -34,7 +38,7 @@ struct ConstellationView: View {
                     clusterOverlays
                 }
 
-                topBar
+                homeCapsule
                 if archivedCount > 0 {
                     archivedEdge
                 }
@@ -58,22 +62,23 @@ struct ConstellationView: View {
 
     // MARK: - Overlays
 
-    // No header text on home (mock 10): the constellations carry the screen;
-    // `+` stays until the creation pass replaces it with hold-to-birth.
-    private var topBar: some View {
+    /// Speech-first creation (ux-update §2): the home carries the same capsule
+    /// as every other screen; describing a decision creates a scenario. No `+`,
+    /// no header — the constellations carry the screen (mock 10).
+    private var homeCapsule: some View {
         VStack {
-            HStack {
-                Spacer()
-                Button(action: onCreate) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 20, weight: .light))
-                        .foregroundStyle(Tokens.Role.displayText)
-                }
-                .accessibilityLabel("begin a scenario")
-            }
-            .padding(.horizontal, 24)
-            .padding(.top, 8)
             Spacer()
+            ComposerCapsuleView(
+                context: nil,
+                isExpanded: nil,
+                speech: speech,
+                placeholder: "describe the decision…",
+                onOpenChat: {},
+                onSend: onDescribe,
+                typesInline: true,
+                statusLine: nil)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
         }
     }
 
@@ -160,7 +165,7 @@ struct ConstellationView: View {
                     .background(Capsule().fill(Tokens.Palette.void.opacity(0.92)))
                     .overlay(Capsule().strokeBorder(Tokens.Role.displayText.opacity(0.25), lineWidth: 1))
             }
-            .padding(.bottom, 24)
+            .padding(.bottom, 116)
             .task {
                 try? await Task.sleep(for: .seconds(5))
                 undoToastId = nil
@@ -250,12 +255,21 @@ private struct EmptyConstellation: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            Circle()
-                .fill(
-                    RadialGradient(
-                        colors: [Tokens.Role.selectedPath, .clear],
-                        center: .center, startRadius: 2, endRadius: 30))
-                .frame(width: 60, height: 60)
+            ZStack {
+                // The birth motif's faint rings (mock 2 / ux-update §2).
+                Circle()
+                    .strokeBorder(Tokens.Role.edgeNeutral.opacity(0.28), lineWidth: 1)
+                    .frame(width: 78, height: 78)
+                Circle()
+                    .strokeBorder(Tokens.Role.edgeNeutral.opacity(0.16), lineWidth: 1)
+                    .frame(width: 108, height: 108)
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [Tokens.Role.selectedPath, .clear],
+                            center: .center, startRadius: 2, endRadius: 30))
+                    .frame(width: 60, height: 60)
+            }
                 // ±20% glow radius over a ~2.4s period (motion tokens).
                 .scaleEffect(pulse ? 1 + Tokens.Motion.unbornPulseGlowDelta : 1 - Tokens.Motion.unbornPulseGlowDelta)
                 .animation(
@@ -264,10 +278,6 @@ private struct EmptyConstellation: View {
                         : .easeInOut(duration: Tokens.Motion.unbornPulsePeriodSeconds / 2)
                             .repeatForever(autoreverses: true),
                     value: pulse)
-            Text("begin a scenario")
-                .font(Tokens.Fonts.mono(13))
-                .tracking(1.5)
-                .foregroundStyle(Tokens.Role.displayText.opacity(0.6))
         }
         .contentShape(Rectangle())
         .onTapGesture(perform: onCreate)

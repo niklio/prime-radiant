@@ -38,11 +38,39 @@ enum WorldModel {
     /// A scenario's persistent shell direction, derived from its ULID alone so
     /// placement never depends on the set of scenarios present (golden-angle-
     /// style distribution: sqrt-uniform over the cap disc, uniform azimuth).
-    static func anchorDirection(ulid: String) -> SIMD3<Double> {
-        let radial = anchorCapRadians * hash01(ulid + "/r2").squareRoot()
-        let azimuth = 2 * .pi * hash01(ulid + "/a2")
+    static func anchorDirection(ulid: String, salt: Int = 0) -> SIMD3<Double> {
+        let key = salt == 0 ? ulid : ulid + "/s\(salt)"
+        let radial = anchorCapRadians * hash01(key + "/r2").squareRoot()
+        let azimuth = 2 * .pi * hash01(key + "/a2")
         let sinR = sin(radial)
         return SIMD3(sinR * cos(azimuth), sinR * sin(azimuth), cos(radial))
+    }
+
+    /// Set-aware anchors: hashed placement can clump when few scenarios exist
+    /// (labels collide — placement is part of the mock contract). Greedy in
+    /// ULID order (time-ordered, so existing placements stay put as new
+    /// scenarios arrive): re-salt any anchor closer than ~0.34×cap to an
+    /// earlier one, up to 8 tries, keeping determinism for a given set.
+    static func anchorDirections(ulids: [String]) -> [String: SIMD3<Double>] {
+        let minSeparation = anchorCapRadians * 0.55
+        var placed: [SIMD3<Double>] = []
+        var result: [String: SIMD3<Double>] = [:]
+        for ulid in ulids.sorted() {
+            var best = anchorDirection(ulid: ulid)
+            var bestClearance = -Double.infinity
+            for salt in 0..<16 {
+                let candidate = anchorDirection(ulid: ulid, salt: salt)
+                let clearance = placed.map { acos(max(-1, min(1, simd_dot(candidate, $0)))) }.min() ?? .infinity
+                if clearance > bestClearance {
+                    best = candidate
+                    bestClearance = clearance
+                }
+                if clearance >= minSeparation { break }
+            }
+            placed.append(best)
+            result[ulid] = best
+        }
+        return result
     }
 
     /// Tangent frame at a shell direction: `right`/`north` span the tangent
@@ -149,9 +177,17 @@ enum WorldModel {
         /// User orbit azimuth about the aim point's outward normal.
         var yaw: Double = 0
 
-        static func home() -> CameraState {
-            CameraState(
-                anchor: capAxis,
+        /// Home frames what actually exists: aim at the centroid of the live
+        /// anchors (hash placement can bunch azimuthally; a fixed cap-axis aim
+        /// then pushes every cluster off-center — mock 10 uses the full frame).
+        static func home(aims: [SIMD3<Double>] = []) -> CameraState {
+            var axis = capAxis
+            if !aims.isEmpty {
+                let sum = aims.reduce(SIMD3<Double>.zero, +)
+                if simd_length(sum) > 1e-9 { axis = simd_normalize(sum) }
+            }
+            return CameraState(
+                anchor: axis,
                 distance: Tokens.World.homeDistanceFactor * Tokens.World.shellRadius,
                 tilt: Tokens.World.homeTiltRadians)
         }

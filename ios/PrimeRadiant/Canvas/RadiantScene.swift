@@ -48,7 +48,7 @@ final class RadiantScene: NSObject, @unchecked Sendable {
     /// One scenario's constellation on the shell.
     private final class Cluster {
         let scenarioId: String
-        let anchor: SIMD3<Double>
+        var anchor: SIMD3<Double>
         var visuals: [String: NodeVisual] = [:]
         /// Filament + under-glow keyed by *child* id.
         var filaments: [String: FilamentGeometry] = [:]
@@ -82,6 +82,7 @@ final class RadiantScene: NSObject, @unchecked Sendable {
     }
 
     private var clusters: [String: Cluster] = [:]
+    private var pendingAnchors: [String: SIMD3<Double>] = [:]
 
     // MARK: - Shared render-thread state (guard with `lock`)
 
@@ -195,6 +196,16 @@ final class RadiantScene: NSObject, @unchecked Sendable {
             clusters.removeValue(forKey: id)
             lock.unlock()
         }
+        // Set-aware anchors keep clusters (and their labels) apart (mock 10).
+        let anchors = WorldModel.anchorDirections(ulids: scenarios.map(\.id))
+        lock.lock()
+        for (id, direction) in anchors { clusters[id]?.anchor = direction }
+        pendingAnchors = anchors
+        // Resting home camera re-frames the live constellation set.
+        if mode == .home, flightTo == nil, flightFrom == nil, cameraState.yaw == 0 {
+            cameraState = .home(aims: Array(anchors.values))
+        }
+        lock.unlock()
         for scenario in scenarios where scenario.id != focused {
             let analytics = TreeAnalytics(
                 tree: scenario.tree, realizedPath: scenario.realizedPath,
@@ -241,7 +252,8 @@ final class RadiantScene: NSObject, @unchecked Sendable {
         realizedPath: [String], selectedId: String?, unit: PayoffUnit,
         resolved: Bool, animated: Bool
     ) {
-        let cluster = clusters[scenarioId] ?? Cluster(scenarioId: scenarioId)
+        var cluster = clusters[scenarioId] ?? Cluster(scenarioId: scenarioId)
+        if let assigned = pendingAnchors[scenarioId] { cluster.anchor = assigned }
         lock.lock()
         clusters[scenarioId] = cluster
         lock.unlock()
@@ -536,13 +548,17 @@ final class RadiantScene: NSObject, @unchecked Sendable {
         lock.unlock()
     }
 
+    private func homeStateLocked() -> WorldModel.CameraState {
+        .home(aims: clusters.values.map(\.anchor))
+    }
+
     /// The reverse flight to the home state. Identical curve (notes §3).
     func flyHome(completion: (@MainActor @Sendable () -> Void)? = nil) {
         lock.lock()
         mode = .home
         focusedClusterId = nil
         selectionActive = false
-        beginFlightLocked(to: .home(), completion: completion)
+        beginFlightLocked(to: homeStateLocked(), completion: completion)
         lock.unlock()
     }
 
@@ -678,17 +694,32 @@ final class RadiantScene: NSObject, @unchecked Sendable {
         return clusterScreenPoints(in: hostView)
     }
 
-    /// Screen positions of every cluster's shell anchor (home overlays).
+    /// Label points for home overlays: the serif title hangs just beneath each
+    /// cluster's projected extent (mock 10), not at its shell anchor — the tree
+    /// spreads from the anchor plane, so the anchor is a poor label position.
     func clusterScreenPoints(in view: SCNView) -> [String: CGPoint] {
         lock.lock()
-        let anchors = clusters.mapValues(\.anchor)
+        let nodePositions = clusters.mapValues { cluster in
+            cluster.visuals.values.map(\.container.position)
+        }
         lock.unlock()
         var result: [String: CGPoint] = [:]
-        for (id, anchor) in anchors {
-            let world = anchor * Tokens.World.shellRadius
-            let projected = view.projectPoint(SCNVector3(world.x, world.y, world.z))
-            guard projected.z < 1 else { continue }
-            result[id] = CGPoint(x: CGFloat(projected.x), y: CGFloat(projected.y))
+        for (id, positions) in nodePositions {
+            var xs: [CGFloat] = []
+            var ys: [CGFloat] = []
+            for position in positions {
+                let projected = view.projectPoint(position)
+                guard projected.z < 1 else { continue }
+                xs.append(CGFloat(projected.x))
+                ys.append(CGFloat(projected.y))
+            }
+            guard !xs.isEmpty else { continue }
+            let centerX = xs.reduce(0, +) / CGFloat(xs.count)
+            // 85th-percentile Y: a lone depth-dimmed straggler must not drag
+            // the title away from the visible constellation (mock 10).
+            let sorted = ys.sorted()
+            let lowY = sorted[min(sorted.count - 1, Int(Double(sorted.count) * 0.85))]
+            result[id] = CGPoint(x: centerX, y: lowY + 24)
         }
         return result
     }
