@@ -442,7 +442,7 @@ final class RadiantScene: NSObject, @unchecked Sendable {
             let emphasis: Float = ignited ? 1.4 : 1.0
             cluster.filamentRadii[node.id] = (0.07 + 0.10 * Float(node.p)) * emphasis
             // Ignited path is a clean *straight* chord (notes §4).
-            cluster.filamentBows[node.id] = ignited ? 0 : 0.14
+            cluster.filamentBows[node.id] = 0
             // Soft under-glow belongs to the ignited selection only (§4).
             cluster.underglowAlpha[node.id] = onSelectionPath ? 0.10 : 0
             if let glow = cluster.underglows[node.id] {
@@ -902,7 +902,7 @@ final class RadiantScene: NSObject, @unchecked Sendable {
                         (depthScale(of: a, pose: pose, focusDepth: focusDepth)
                             + depthScale(of: b, pose: pose, focusDepth: focusDepth)) / 2)))
             let radius = (cluster.filamentRadii[childId] ?? 0.1) * widthFactor
-            let bow = cluster.filamentBows[childId] ?? 0.14
+            let bow = cluster.filamentBows[childId] ?? 0
             filament.update(from: a, to: b, radius: radius, bow: bow)
             cluster.underglows[childId]?.update(from: a, to: b, radius: radius * 2.4, bow: bow)
         }

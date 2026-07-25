@@ -164,7 +164,7 @@ final class FilamentGeometry {
     /// Writes vertices in place; on the Metal path SceneKit picks the new data up
     /// without any geometry allocation. `bow` curves the chord sideways; the
     /// ignited path passes 0 — a clean straight gold chord (notes §4).
-    func update(from start: SCNVector3, to end: SCNVector3, radius: Float, bow bowAmount: Float = 0.14) {
+    func update(from start: SCNVector3, to end: SCNVector3, radius: Float, bow bowAmount: Float = 0) {
         let p0 = SIMD3<Float>(start)
         let p2 = SIMD3<Float>(end)
         // Control point bows the filament sideways in the fan plane (§3 curved tubes).
