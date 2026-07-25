@@ -1,0 +1,19 @@
+{
+  "name": "prime-radiant-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "gen": "node scripts/gen-assets.mjs",
+    "build": "node scripts/gen-assets.mjs && node scripts/build.mjs",
+    "test": "npm run build && vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "ajv": "^8.17.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.8.0",
+    "vitest": "^4.1.0"
+  }
+}
