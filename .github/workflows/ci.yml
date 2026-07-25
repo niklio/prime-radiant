@@ -6,18 +6,18 @@ on:
     branches: [main]
 
 jobs:
-  worker:
+  server:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: worker
+        working-directory: server
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: worker/package-lock.json
+          cache-dependency-path: server/package-lock.json
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
@@ -37,5 +37,4 @@ jobs:
       - uses: norio-nomura/action-swiftlint@3.2.1
 
   # The app target (xcodebuild test: unit + snapshot + XCUITest) joins this matrix
-  # once ios/project.yml has been generated into a checked-in workflow with signing
-  # configured — blocked on the Apple developer account being wired up (M0 note).
+  # once signing is configured — blocked on the Apple developer account (M0 note).

@@ -25,7 +25,7 @@ local store — quietly.
 
 ```
 /ios      Xcode project (SwiftUI + SceneKit) and PrimeRadiantCore (tree math, SwiftPM)
-/worker   DEPRECATED — Cloudflare Worker from the pre-pivot architecture; teardown pending
+/server   App-provisioned gateway (plain node) + provision.sh — installed over SSH at pairing
 /shared   Single source of truth: JSON Schemas, sample trees, prompt files, design tokens, mocks
 ```
 
