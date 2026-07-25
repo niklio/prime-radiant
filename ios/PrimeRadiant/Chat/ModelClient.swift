@@ -1,16 +1,16 @@
 import Foundation
 import PrimeRadiantCore
 
-/// OpenAI Responses-API client (handoff §5). Calls go **directly device→OpenAI**
-/// with the user's OAuth token; no middleman ever touches conversation content
-/// (§2.1). Every turn is structured output `{say, patch}`; malformed turns are
-/// retried (≤2) with the validator error in-context — free text never corrupts
-/// the tree (§5.1).
+/// Model turn plumbing (pivot v3): every turn is strict `{say, patch}` JSON
+/// from `claude` running on the paired box (transport in ClaudeSSHBackend);
+/// malformed turns are retried (≤2) with the validator error in-context — free
+/// text never corrupts the tree (handoff §5.1). Prompt assembly stays entirely
+/// app-side (ContextAssembly + bundled shared/prompts/system.md).
 
 enum ModelStreamEvent: Sendable {
-    /// A fragment of the streamed structured-output text (raw JSON characters).
+    /// A fragment of the streamed model text (raw JSON characters).
     case outputTextDelta(String)
-    /// The full accumulated output text at stream end.
+    /// The full model text at turn end (code fences already stripped).
     case completed(String)
 }
 
@@ -24,117 +24,16 @@ protocol ModelBackend: Sendable {
     func stream(_ request: TurnRequest) async throws -> AsyncThrowingStream<ModelStreamEvent, Error>
 }
 
-enum ModelClientError: Error {
-    case notSignedIn
-    case httpStatus(Int, body: String)
+enum ModelClientError: Error, Equatable {
+    /// The box is beyond reach — the app rides read-only (pivot §3).
+    case boxUnreachable
+    /// The subscription's usage window is exhausted — "the radiant rests until
+    /// the cycle renews" (pivot §3).
+    case budgetExhausted
+    /// The CLI reported an error turn (message passed through for the log).
+    case turnFailed(String)
     case emptyResponse
     case invalidAfterRetries(String)
-}
-
-// MARK: - OpenAI Responses backend (SSE)
-
-final class OpenAIResponsesBackend: ModelBackend {
-    private let config: RemoteConfig.OpenAI
-    /// Fresh user token per request (proactive refresh lives in OpenAIAuth).
-    private let accessToken: @Sendable () async throws -> String
-    private let session: URLSession
-
-    init(
-        config: RemoteConfig.OpenAI,
-        accessToken: @escaping @Sendable () async throws -> String,
-        session: URLSession = .shared
-    ) {
-        self.config = config
-        self.accessToken = accessToken
-        self.session = session
-    }
-
-    func stream(_ request: TurnRequest) async throws -> AsyncThrowingStream<ModelStreamEvent, Error> {
-        let token = try await accessToken()
-        var urlRequest = URLRequest(
-            url: config.apiBaseURL.appending(path: config.responsesPath))
-        urlRequest.httpMethod = "POST"
-        urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest.setValue("text/event-stream", forHTTPHeaderField: "Accept")
-        urlRequest.httpBody = try requestBody(for: request)
-
-        let (bytes, response) = try await session.bytes(for: urlRequest)
-        if let http = response as? HTTPURLResponse, http.statusCode != 200 {
-            var body = ""
-            for try await line in bytes.lines {
-                body += line
-                if body.count > 2_000 { break }
-            }
-            throw ModelClientError.httpStatus(http.statusCode, body: body)
-        }
-
-        return AsyncThrowingStream { continuation in
-            let task = Task {
-                var accumulated = ""
-                do {
-                    for try await line in bytes.lines {
-                        guard line.hasPrefix("data:") else { continue }
-                        let payload = line.dropFirst(5).trimmingCharacters(in: .whitespaces)
-                        if payload == "[DONE]" { break }
-                        guard let data = payload.data(using: .utf8),
-                            let event = try? JSONSerialization.jsonObject(with: data)
-                                as? [String: Any],
-                            let type = event["type"] as? String
-                        else { continue }
-                        // TODO(M2): verify current Responses SSE event names/shapes
-                        // against OpenAI docs; these follow the documented
-                        // `response.output_text.delta` / `response.completed` pattern.
-                        switch type {
-                        case "response.output_text.delta":
-                            if let delta = event["delta"] as? String {
-                                accumulated += delta
-                                continuation.yield(.outputTextDelta(delta))
-                            }
-                        case "response.failed", "error":
-                            throw ModelClientError.httpStatus(
-                                200, body: String(describing: event))
-                        case "response.completed":
-                            break
-                        default:
-                            break
-                        }
-                    }
-                    continuation.yield(.completed(accumulated))
-                    continuation.finish()
-                } catch {
-                    continuation.finish(throwing: error)
-                }
-            }
-            continuation.onTermination = { _ in task.cancel() }
-        }
-    }
-
-    private func requestBody(for request: TurnRequest) throws -> Data {
-        // TODO(M2): verify the structured-output request shape (`text.format`,
-        // strict json_schema) on the current Responses API before ship.
-        let input: [[String: Any]] = request.context.map { item in
-            [
-                "role": item.role.rawValue,
-                "content": [["type": item.role == .assistant ? "output_text" : "input_text", "text": item.text]],
-            ]
-        }
-        let body: [String: Any] = [
-            "model": request.model,
-            "instructions": request.instructions,
-            "input": input,
-            "stream": true,
-            "text": [
-                "format": [
-                    "type": "json_schema",
-                    "name": "model_turn",
-                    "strict": true,
-                    "schema": ModelTurnSchema.strictSchema(),
-                ]
-            ],
-        ]
-        return try JSONSerialization.data(withJSONObject: body)
-    }
 }
 
 // MARK: - Streaming `say` extraction
@@ -208,9 +107,9 @@ struct SayStreamExtractor {
 /// in-context (§5.3).
 final class ModelSession: Sendable {
     private let backend: any ModelBackend
-    private let config: RemoteConfig.OpenAI
+    private let config: BoxConfig
 
-    init(backend: any ModelBackend, config: RemoteConfig.OpenAI) {
+    init(backend: any ModelBackend, config: BoxConfig) {
         self.backend = backend
         self.config = config
     }
@@ -232,7 +131,7 @@ final class ModelSession: Sendable {
         scenario: Scenario,
         userText: String?,
         focusedNodeId: String?,
-        useReasoningModel: Bool = false,
+        useRestructureModel: Bool = false,
         onSayDelta: @escaping @Sendable (String) -> Void
     ) async throws -> ModelTurn {
         var validatorFeedback: String?
@@ -266,7 +165,7 @@ final class ModelSession: Sendable {
             }
 
             let request = TurnRequest(
-                model: useReasoningModel ? config.reasoningModel : config.interactiveModel,
+                model: useRestructureModel ? config.restructureModel : config.interactiveModel,
                 instructions: Self.instructions,
                 context: context)
 

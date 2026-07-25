@@ -3,8 +3,9 @@ import SwiftUI
 
 /// The ignition screen (§2.1): a full-screen seamless loop of navigating the
 /// radiant in 3D. Over it: the wordmark small and one line — nothing else.
-/// Anywhere-tap starts OAuth. No buttons, no rings, no form furniture: the
-/// screen is a window into the instrument, and touching it wakes it.
+/// Anywhere-tap opens the pairing sheet (pivot v3 — pairing is the entirety
+/// of auth). No buttons, no rings, no form furniture: the screen is a window
+/// into the instrument, and touching it wakes it.
 ///
 /// Video asset: `IgnitionLoop.mp4` (bundle), produced later by scripting a
 /// camera path through a large generated tree in RadiantScene itself and
@@ -12,7 +13,8 @@ import SwiftUI
 /// (§2.1). Until it's captured (and always under Reduce Motion / Low Power
 /// Mode) the static poster/void stands in.
 struct IgnitionView: View {
-    @Bindable var auth: OpenAIAuth
+    @Bindable var session: BoxSession
+    @State private var showPairing = false
 
     var body: some View {
         ZStack {
@@ -37,7 +39,8 @@ struct IgnitionView: View {
                     .font(Tokens.Fonts.mono(14, medium: true))
                     .tracking(6)
                     .foregroundStyle(Tokens.Role.displayText)
-                Text(line)
+                    .accessibilityIdentifier("ignition.wordmark")
+                Text("touch to begin")
                     .font(Tokens.Fonts.mono(12))
                     .tracking(1.5)
                     .foregroundStyle(Tokens.Role.displayText.opacity(0.6))
@@ -46,23 +49,12 @@ struct IgnitionView: View {
         }
         .contentShape(Rectangle())
         .onTapGesture {
-            guard auth.state != .linking else { return }
-            Task { await auth.signIn() }
+            showPairing = true
+        }
+        .sheet(isPresented: $showPairing) {
+            PairingSheetView(session: session)
         }
         .statusBarHidden()
-    }
-
-    /// If OAuth is unavailable, the app says so here and waits (§2.1) — there is
-    /// no fallback auth mode.
-    private var line: String {
-        switch auth.state {
-        case .linking:
-            return "linking…"
-        case .unavailable(let message):
-            return message
-        default:
-            return "touch to begin · sign in with ChatGPT"
-        }
     }
 
     private static var loopURL: URL? {

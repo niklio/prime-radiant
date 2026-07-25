@@ -11,6 +11,10 @@ struct InputPillView: View {
     var onSend: (String) -> Void
     /// Chat surface docks the same pill but types inline instead of re-opening.
     var typesInline = false
+    /// Quiet state line (pivot §3): when set — "the radiant is beyond reach" /
+    /// "the radiant rests until the cycle renews" — it occupies the placeholder
+    /// slot and the composer disables. No dialogs, ever.
+    var statusLine: String?
 
     @State private var draft = ""
     @FocusState private var focused: Bool
@@ -26,7 +30,13 @@ struct InputPillView: View {
 
     private var pill: some View {
         HStack(spacing: 12) {
-            if typesInline {
+            if let statusLine {
+                Text(statusLine)
+                    .font(Tokens.Fonts.mono(13))
+                    .foregroundStyle(Tokens.Role.secondaryInfo.opacity(0.7))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityIdentifier("input.status")
+            } else if typesInline {
                 TextField(
                     "", text: $draft,
                     prompt: Text("speak or type to the radiant…")
@@ -46,8 +56,10 @@ struct InputPillView: View {
                     .onTapGesture(perform: onOpenChat)
             }
 
-            micButton
-            sendButton
+            if statusLine == nil {
+                micButton
+                sendButton
+            }
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 14)

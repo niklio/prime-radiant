@@ -7,28 +7,30 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00D63D08A0E8AD283CA2F775 /* SyncClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51237BAA666161EDCA9CA2EB /* SyncClient.swift */; };
 		00E5933041461DDB6B67FAF9 /* InputPillView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 932C942D3E92D518FDA984EB /* InputPillView.swift */; };
+		03E6680CE342B7F525FC9AF0 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F387607955F3D7282C593DA /* KeychainStore.swift */; };
 		05A4EABC913BEB29C166BDCE /* PrimeRadiantCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5988FCD82EF1E95785B0A494 /* PrimeRadiantCore */; };
 		0820A407EE1690E929A40285 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D583682E56E8D00AD5E70153 /* Assets.xcassets */; };
 		0DEC1CAD5C97BC9D1D80225D /* ReduceMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092AE78E09D2C677306E5490 /* ReduceMotion.swift */; };
 		0E9C3D9FDEA9841B56FD103E /* node.schema.json in Resources */ = {isa = PBXBuildFile; fileRef = 310F5B52F0340BB751FAD8F9 /* node.schema.json */; };
+		13D62AFC79D178F757EFEF85 /* FakeBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6443A100BBF2B43505B3465 /* FakeBox.swift */; };
 		13DCCFD9DEDD74849C1C0273 /* Tokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4098AA8D2E700F0C542B467 /* Tokens.swift */; };
 		1AAAFE12A11E5B6B8F73FE16 /* PrimeRadiantApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE108F30337AC5BC1EC552F2 /* PrimeRadiantApp.swift */; };
-		1C707118DF44F51F245D9EEA /* ModelTurnSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B329E4B20A3D7B6598879F6 /* ModelTurnSchema.swift */; };
 		2070AD9EEE8D257C247084B7 /* ConstellationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38F8556A413526E2D2350C73 /* ConstellationView.swift */; };
 		23EF2C9A135CB7F79B49CA23 /* RadiantScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C1B20EAEAA65CD5EA79FCD /* RadiantScene.swift */; };
 		33AC68935400D86C6060AD23 /* EVFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9D52DE6BE71BC333E41671 /* EVFormatter.swift */; };
-		33C382EDA6B163725B8FB569 /* RemoteConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB7275930A892C61B97A81E /* RemoteConfig.swift */; };
 		33E06850E9BA0A59DE7A8E52 /* ScenarioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562E18F0812B9898F3748E81 /* ScenarioView.swift */; };
+		3A05538E4CCCAF04885D7C19 /* PairingSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C74851D6AA2305020914D631 /* PairingSheetView.swift */; };
 		3BB895D23E65C9F50A12FBF2 /* RadiantLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994B5DF398123C0EB4120671 /* RadiantLayoutTests.swift */; };
 		486C88023E6BED9C460A2B6B /* Speech.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 274D12991C44E91B7906879C /* Speech.framework */; };
+		4A5DB52747FD02464CD3E816 /* PairingFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31B7C1666A9DBAF82D8F0B1 /* PairingFlowTests.swift */; };
 		4CB38C58403F94C73E2A07EB /* CanvasPicking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFDFE521EBF82EAFE5D856A /* CanvasPicking.swift */; };
 		4DE2EEF1409A0CE8BF4DFE80 /* CameraFit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77833EAA87F852143F7B04CC /* CameraFit.swift */; };
 		4F00A6E30DB1508516DE93B7 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161D21FCD361C395B9CBD97E /* Haptics.swift */; };
+		55185428A4EA0F3D647FDF4E /* SSHBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7EB1860A8302E2E936462A9 /* SSHBox.swift */; };
 		58DEC6180D27FEDD686EB36E /* SceneKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3146A0FB2DE4182D72EF23B1 /* SceneKit.framework */; };
+		58F7CAC4B90A5915A3176E99 /* BoxConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E83E125001C90ED7F0AA4D58 /* BoxConfig.swift */; };
 		61F6E681DCFDBB83A23D0E5D /* StoredScenario.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0599D2C616060D29A8DFC853 /* StoredScenario.swift */; };
-		64A7FFEA64EFC143B0F46524 /* AuthenticationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 485B32ADC5EBD5A01AD39673 /* AuthenticationServices.framework */; };
 		709DF9F29CAA44C3B5895AEB /* ContextAssemblyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13D609B2A2E0278BAD9F6A07 /* ContextAssemblyTests.swift */; };
 		7297C02FC9E5190693DDA3C7 /* CanvasInteractionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B68B76370B20E6A1E48157 /* CanvasInteractionTests.swift */; };
 		74DB23BCC0A4236ED13EAD64 /* RadiantLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED910D89C4E729A441436022 /* RadiantLayout.swift */; };
@@ -37,25 +39,32 @@
 		7C2293221464A7E689ED60A9 /* ContextAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BC27CCE7A55791C876224A0 /* ContextAssembly.swift */; };
 		7E65D59FD49470E1DF349E5D /* model-turn.schema.json in Resources */ = {isa = PBXBuildFile; fileRef = 63687E03D7573C66894D0B58 /* model-turn.schema.json */; };
 		892D8501593EED1379B69ECC /* ModelClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7EE0ACCECDEF92822BA04B /* ModelClient.swift */; };
+		8C6D8024CAC6AB80FA821523 /* ReadOnlyGatingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4790E5A8B0111644DEF36AA /* ReadOnlyGatingTests.swift */; };
 		94D06A525274993D17A1F89C /* WorldModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDBBF28E99A0DB87BC889B0E /* WorldModel.swift */; };
 		99922AF79B468C30FD440997 /* RadiantMaterials.swift in Sources */ = {isa = PBXBuildFile; fileRef = A145CFA9B39E22C229826BF0 /* RadiantMaterials.swift */; };
 		A1EB01495C93386BB86810C8 /* PrimeRadiantUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957A4E7EBF866DA78829D678 /* PrimeRadiantUITests.swift */; };
-		A77AEA8FBCB2F6E2C195CF89 /* OpenAIAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0736564DDA136F538ED12D /* OpenAIAuth.swift */; };
+		A1F5996AA746BCB8AD6D13CA /* BoxSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C5571E5BCB0619B654EE44 /* BoxSyncTests.swift */; };
 		AA9C90B548364DEDA69A2B7D /* system.md in Resources */ = {isa = PBXBuildFile; fileRef = 0AD91E7C6C5FE49D538B2733 /* system.md */; };
 		AB4823C5919FC8AD5DA8B6FB /* DepthVerificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C8062FD3922694FE778379 /* DepthVerificationTests.swift */; };
 		AD9CA52CBBC42457CED8B6D2 /* job-offer.json in Resources */ = {isa = PBXBuildFile; fileRef = 5009613027508EE8861D5C25 /* job-offer.json */; };
-		B863E0539A461AF1207261FE /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBBF6D5A995DAF3F989EC948 /* KeychainStore.swift */; };
+		ADA0C2388A29B2E42615A5D4 /* BoxSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5455CC4D131857013FAAB464 /* BoxSync.swift */; };
+		B9F62222C2C55EFD6A5EC605 /* ClaudeSSHBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC9EDF2CE759828E14A6FD76 /* ClaudeSSHBackend.swift */; };
 		C907CE40FB6E4333104091C5 /* patch.schema.json in Resources */ = {isa = PBXBuildFile; fileRef = A058163C35F025B285A4FF49 /* patch.schema.json */; };
 		CBA8C5D3B759A3E6A76420C6 /* ScenarioStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31159CB287B790ECDCE727A /* ScenarioStore.swift */; };
 		CBD977560BEE726183D08D4A /* SpeechInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7DA64FB13CEFB0B36F37F59 /* SpeechInput.swift */; };
+		CCDD077079DC62FFC76576D6 /* BoxPairing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BA72CCA50ED439CEF486DA /* BoxPairing.swift */; };
+		DBD13638F0D056096EEF0010 /* ClaudeSSHBackendTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2814A880F125FC5AD6CAE36F /* ClaudeSSHBackendTests.swift */; };
 		DC17568124177D3D02DEA89C /* NodeFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21BA54E701103F9F73037F0 /* NodeFooterView.swift */; };
+		DC8EF2A16449906A0DDAA8BD /* CitadelBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825E3AFBA06D1ECD8E463E74 /* CitadelBox.swift */; };
 		DEDB5C176D9AF194B8FE4F69 /* Nebula.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEE046B92FEE6BD949FEA745 /* Nebula.swift */; };
 		E0B59712270BD3883A20ED56 /* ChatSurfaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018B46963919E1421001AEEE /* ChatSurfaceView.swift */; };
 		E4D60127572F9A6AF5357BA7 /* LegendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3650B3FE3819B8809CA69 /* LegendView.swift */; };
 		E6561A8E5129D4F76D214F4D /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC21474799566D1B9C94503 /* CanvasView.swift */; };
+		EA76F1ACBB103183429AF68F /* Citadel in Frameworks */ = {isa = PBXBuildFile; productRef = 94540588E5BDD72A35D86B91 /* Citadel */; };
 		EB600EBB8A7F013D5D2C54E5 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1C3D53FCA17C15D7ED58973 /* AVFoundation.framework */; };
 		EE3EAB130AEBAC21C2A847FF /* SayStreamExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0889F43C299527CCA44D517 /* SayStreamExtractorTests.swift */; };
 		F56C26A71FE33B9418318022 /* IgnitionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86305E2A3E78CB163690C5B /* IgnitionView.swift */; };
+		F7DDC15B6D6477877C1E5842 /* PairingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7CDDC41CD2F9410DEF6EEC /* PairingUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +86,7 @@
 
 /* Begin PBXFileReference section */
 		018B46963919E1421001AEEE /* ChatSurfaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSurfaceView.swift; sourceTree = "<group>"; };
+		01BA72CCA50ED439CEF486DA /* BoxPairing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxPairing.swift; sourceTree = "<group>"; };
 		0599D2C616060D29A8DFC853 /* StoredScenario.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredScenario.swift; sourceTree = "<group>"; };
 		092AE78E09D2C677306E5490 /* ReduceMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReduceMotion.swift; sourceTree = "<group>"; };
 		0AD91E7C6C5FE49D538B2733 /* system.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = system.md; path = ../shared/prompts/system.md; sourceTree = "<group>"; };
@@ -85,15 +95,17 @@
 		1EA458F34E725A614282BCBC /* BreadcrumbView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreadcrumbView.swift; sourceTree = "<group>"; };
 		232C40616B80E5E41A3AB709 /* PrimeRadiantTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PrimeRadiantTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		274D12991C44E91B7906879C /* Speech.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Speech.framework; path = System/Library/Frameworks/Speech.framework; sourceTree = SDKROOT; };
+		2814A880F125FC5AD6CAE36F /* ClaudeSSHBackendTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeSSHBackendTests.swift; sourceTree = "<group>"; };
+		2F7CDDC41CD2F9410DEF6EEC /* PairingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingUITests.swift; sourceTree = "<group>"; };
 		310F5B52F0340BB751FAD8F9 /* node.schema.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = node.schema.json; path = ../shared/schema/node.schema.json; sourceTree = "<group>"; };
 		3146A0FB2DE4182D72EF23B1 /* SceneKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SceneKit.framework; path = System/Library/Frameworks/SceneKit.framework; sourceTree = SDKROOT; };
+		31C5571E5BCB0619B654EE44 /* BoxSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxSyncTests.swift; sourceTree = "<group>"; };
 		38F8556A413526E2D2350C73 /* ConstellationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstellationView.swift; sourceTree = "<group>"; };
-		485B32ADC5EBD5A01AD39673 /* AuthenticationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AuthenticationServices.framework; path = System/Library/Frameworks/AuthenticationServices.framework; sourceTree = SDKROOT; };
 		4B9D52DE6BE71BC333E41671 /* EVFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EVFormatter.swift; sourceTree = "<group>"; };
 		4BC21474799566D1B9C94503 /* CanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasView.swift; sourceTree = "<group>"; };
 		5009613027508EE8861D5C25 /* job-offer.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "job-offer.json"; path = "../shared/samples/job-offer.json"; sourceTree = "<group>"; };
-		51237BAA666161EDCA9CA2EB /* SyncClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncClient.swift; sourceTree = "<group>"; };
 		52C8062FD3922694FE778379 /* DepthVerificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthVerificationTests.swift; sourceTree = "<group>"; };
+		5455CC4D131857013FAAB464 /* BoxSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxSync.swift; sourceTree = "<group>"; };
 		54626A2E911752E75FC94409 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		562E18F0812B9898F3748E81 /* ScenarioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenarioView.swift; sourceTree = "<group>"; };
 		56BEA7941BA61159C6B45373 /* PrimeRadiant.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PrimeRadiant.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,12 +113,13 @@
 		63687E03D7573C66894D0B58 /* model-turn.schema.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "model-turn.schema.json"; path = "../shared/schema/model-turn.schema.json"; sourceTree = "<group>"; };
 		69BDFDC1E77706FB8F866E06 /* PrimeRadiantCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PrimeRadiantCore; path = PrimeRadiantCore; sourceTree = SOURCE_ROOT; };
 		6BC27CCE7A55791C876224A0 /* ContextAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextAssembly.swift; sourceTree = "<group>"; };
+		6F387607955F3D7282C593DA /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
 		702DE2558C657B4727284484 /* PrimeRadiantUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PrimeRadiantUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		77833EAA87F852143F7B04CC /* CameraFit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraFit.swift; sourceTree = "<group>"; };
+		825E3AFBA06D1ECD8E463E74 /* CitadelBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitadelBox.swift; sourceTree = "<group>"; };
 		932C942D3E92D518FDA984EB /* InputPillView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputPillView.swift; sourceTree = "<group>"; };
 		957A4E7EBF866DA78829D678 /* PrimeRadiantUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimeRadiantUITests.swift; sourceTree = "<group>"; };
 		994B5DF398123C0EB4120671 /* RadiantLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadiantLayoutTests.swift; sourceTree = "<group>"; };
-		9B329E4B20A3D7B6598879F6 /* ModelTurnSchema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTurnSchema.swift; sourceTree = "<group>"; };
 		A058163C35F025B285A4FF49 /* patch.schema.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = patch.schema.json; path = ../shared/schema/patch.schema.json; sourceTree = "<group>"; };
 		A145CFA9B39E22C229826BF0 /* RadiantMaterials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadiantMaterials.swift; sourceTree = "<group>"; };
 		A1F3650B3FE3819B8809CA69 /* LegendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegendView.swift; sourceTree = "<group>"; };
@@ -114,19 +127,23 @@
 		A7C1B20EAEAA65CD5EA79FCD /* RadiantScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadiantScene.swift; sourceTree = "<group>"; };
 		A86305E2A3E78CB163690C5B /* IgnitionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IgnitionView.swift; sourceTree = "<group>"; };
 		AE108F30337AC5BC1EC552F2 /* PrimeRadiantApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimeRadiantApp.swift; sourceTree = "<group>"; };
-		AEB7275930A892C61B97A81E /* RemoteConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteConfig.swift; sourceTree = "<group>"; };
 		B21BA54E701103F9F73037F0 /* NodeFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeFooterView.swift; sourceTree = "<group>"; };
-		BA0736564DDA136F538ED12D /* OpenAIAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIAuth.swift; sourceTree = "<group>"; };
+		C74851D6AA2305020914D631 /* PairingSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingSheetView.swift; sourceTree = "<group>"; };
 		CEE046B92FEE6BD949FEA745 /* Nebula.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nebula.swift; sourceTree = "<group>"; };
+		D4790E5A8B0111644DEF36AA /* ReadOnlyGatingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOnlyGatingTests.swift; sourceTree = "<group>"; };
 		D583682E56E8D00AD5E70153 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DC9EDF2CE759828E14A6FD76 /* ClaudeSSHBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeSSHBackend.swift; sourceTree = "<group>"; };
 		E0889F43C299527CCA44D517 /* SayStreamExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SayStreamExtractorTests.swift; sourceTree = "<group>"; };
 		E1C3D53FCA17C15D7ED58973 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		E31159CB287B790ECDCE727A /* ScenarioStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenarioStore.swift; sourceTree = "<group>"; };
+		E31B7C1666A9DBAF82D8F0B1 /* PairingFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingFlowTests.swift; sourceTree = "<group>"; };
 		E3B68B76370B20E6A1E48157 /* CanvasInteractionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasInteractionTests.swift; sourceTree = "<group>"; };
 		E7DA64FB13CEFB0B36F37F59 /* SpeechInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechInput.swift; sourceTree = "<group>"; };
+		E7EB1860A8302E2E936462A9 /* SSHBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHBox.swift; sourceTree = "<group>"; };
+		E83E125001C90ED7F0AA4D58 /* BoxConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxConfig.swift; sourceTree = "<group>"; };
 		EB7EE0ACCECDEF92822BA04B /* ModelClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelClient.swift; sourceTree = "<group>"; };
-		EBBF6D5A995DAF3F989EC948 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
 		ED910D89C4E729A441436022 /* RadiantLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadiantLayout.swift; sourceTree = "<group>"; };
+		F6443A100BBF2B43505B3465 /* FakeBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeBox.swift; sourceTree = "<group>"; };
 		FDBBF28E99A0DB87BC889B0E /* WorldModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -144,33 +161,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				7B88047E2F0E3B6D023099F8 /* PrimeRadiantCore in Frameworks */,
+				EA76F1ACBB103183429AF68F /* Citadel in Frameworks */,
 				58DEC6180D27FEDD686EB36E /* SceneKit.framework in Frameworks */,
 				486C88023E6BED9C460A2B6B /* Speech.framework in Frameworks */,
 				EB600EBB8A7F013D5D2C54E5 /* AVFoundation.framework in Frameworks */,
-				64A7FFEA64EFC143B0F46524 /* AuthenticationServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		33BE0A5DC637A608880EA4C8 /* Auth */ = {
-			isa = PBXGroup;
-			children = (
-				EBBF6D5A995DAF3F989EC948 /* KeychainStore.swift */,
-				BA0736564DDA136F538ED12D /* OpenAIAuth.swift */,
-			);
-			path = Auth;
-			sourceTree = "<group>";
-		};
 		39A45EAF4286A0F605950D1E /* Chat */ = {
 			isa = PBXGroup;
 			children = (
+				E83E125001C90ED7F0AA4D58 /* BoxConfig.swift */,
 				018B46963919E1421001AEEE /* ChatSurfaceView.swift */,
+				DC9EDF2CE759828E14A6FD76 /* ClaudeSSHBackend.swift */,
 				6BC27CCE7A55791C876224A0 /* ContextAssembly.swift */,
 				EB7EE0ACCECDEF92822BA04B /* ModelClient.swift */,
-				9B329E4B20A3D7B6598879F6 /* ModelTurnSchema.swift */,
-				AEB7275930A892C61B97A81E /* RemoteConfig.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -236,12 +244,21 @@
 		511FC3D4FD281FD166E20FCF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				485B32ADC5EBD5A01AD39673 /* AuthenticationServices.framework */,
 				E1C3D53FCA17C15D7ED58973 /* AVFoundation.framework */,
 				3146A0FB2DE4182D72EF23B1 /* SceneKit.framework */,
 				274D12991C44E91B7906879C /* Speech.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		602184099B92B79FCAE2E0A8 /* Pairing */ = {
+			isa = PBXGroup;
+			children = (
+				01BA72CCA50ED439CEF486DA /* BoxPairing.swift */,
+				6F387607955F3D7282C593DA /* KeychainStore.swift */,
+				C74851D6AA2305020914D631 /* PairingSheetView.swift */,
+			);
+			path = Pairing;
 			sourceTree = "<group>";
 		};
 		63F25ADCBEB36E436AA1CB1C /* DesignSystem */ = {
@@ -255,10 +272,15 @@
 		8F46415C48A7F526CB11FCB0 /* PrimeRadiantTests */ = {
 			isa = PBXGroup;
 			children = (
+				31C5571E5BCB0619B654EE44 /* BoxSyncTests.swift */,
 				E3B68B76370B20E6A1E48157 /* CanvasInteractionTests.swift */,
+				2814A880F125FC5AD6CAE36F /* ClaudeSSHBackendTests.swift */,
 				13D609B2A2E0278BAD9F6A07 /* ContextAssemblyTests.swift */,
 				52C8062FD3922694FE778379 /* DepthVerificationTests.swift */,
+				F6443A100BBF2B43505B3465 /* FakeBox.swift */,
+				E31B7C1666A9DBAF82D8F0B1 /* PairingFlowTests.swift */,
 				994B5DF398123C0EB4120671 /* RadiantLayoutTests.swift */,
+				D4790E5A8B0111644DEF36AA /* ReadOnlyGatingTests.swift */,
 				E0889F43C299527CCA44D517 /* SayStreamExtractorTests.swift */,
 			);
 			path = PrimeRadiantTests;
@@ -275,6 +297,7 @@
 		A19F5911D4578EC29B1C1142 /* PrimeRadiantUITests */ = {
 			isa = PBXGroup;
 			children = (
+				2F7CDDC41CD2F9410DEF6EEC /* PairingUITests.swift */,
 				957A4E7EBF866DA78829D678 /* PrimeRadiantUITests.swift */,
 			);
 			path = PrimeRadiantUITests;
@@ -284,16 +307,17 @@
 			isa = PBXGroup;
 			children = (
 				3C6B28E1854D07A9749EA052 /* App */,
-				33BE0A5DC637A608880EA4C8 /* Auth */,
 				4437C1C1C02B5D05AB3433A4 /* Canvas */,
 				39A45EAF4286A0F605950D1E /* Chat */,
 				63F25ADCBEB36E436AA1CB1C /* DesignSystem */,
 				95C96BE7306232BEAD3CC737 /* Home */,
 				FBCB9C331776FFB0C91F9FDE /* Onboarding */,
+				602184099B92B79FCAE2E0A8 /* Pairing */,
 				506D120C062E01B7771BE5FE /* Resources */,
 				F71908226D6F784081C037F5 /* Scenario */,
 				CCB69970719D909A14C8177A /* Support */,
 				D3ED17983186975ABA63EEAD /* Sync */,
+				D59E2818B4AC37FE96240809 /* Transport */,
 			);
 			path = PrimeRadiant;
 			sourceTree = "<group>";
@@ -321,9 +345,18 @@
 		D3ED17983186975ABA63EEAD /* Sync */ = {
 			isa = PBXGroup;
 			children = (
-				51237BAA666161EDCA9CA2EB /* SyncClient.swift */,
+				5455CC4D131857013FAAB464 /* BoxSync.swift */,
 			);
 			path = Sync;
+			sourceTree = "<group>";
+		};
+		D59E2818B4AC37FE96240809 /* Transport */ = {
+			isa = PBXGroup;
+			children = (
+				825E3AFBA06D1ECD8E463E74 /* CitadelBox.swift */,
+				E7EB1860A8302E2E936462A9 /* SSHBox.swift */,
+			);
+			path = Transport;
 			sourceTree = "<group>";
 		};
 		EDE380EE39C2DD0C1B160AE7 /* Packages */ = {
@@ -412,6 +445,7 @@
 			name = PrimeRadiant;
 			packageProductDependencies = (
 				09725AE442F6D36090823A14 /* PrimeRadiantCore */,
+				94540588E5BDD72A35D86B91 /* Citadel */,
 			);
 			productName = PrimeRadiant;
 			productReference = 56BEA7941BA61159C6B45373 /* PrimeRadiant.app */;
@@ -448,6 +482,7 @@
 			mainGroup = 4512FA827864BBF89B64D2E6;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				2C34359AEF177F4D7BD50059 /* XCRemoteSwiftPackageReference "Citadel" */,
 				31EC1E84DD15885DBEA98155 /* XCLocalSwiftPackageReference "PrimeRadiantCore" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -483,6 +518,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F7DDC15B6D6477877C1E5842 /* PairingUITests.swift in Sources */,
 				A1EB01495C93386BB86810C8 /* PrimeRadiantUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -491,10 +527,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1F5996AA746BCB8AD6D13CA /* BoxSyncTests.swift in Sources */,
 				7297C02FC9E5190693DDA3C7 /* CanvasInteractionTests.swift in Sources */,
+				DBD13638F0D056096EEF0010 /* ClaudeSSHBackendTests.swift in Sources */,
 				709DF9F29CAA44C3B5895AEB /* ContextAssemblyTests.swift in Sources */,
 				AB4823C5919FC8AD5DA8B6FB /* DepthVerificationTests.swift in Sources */,
+				13D62AFC79D178F757EFEF85 /* FakeBox.swift in Sources */,
+				4A5DB52747FD02464CD3E816 /* PairingFlowTests.swift in Sources */,
 				3BB895D23E65C9F50A12FBF2 /* RadiantLayoutTests.swift in Sources */,
+				8C6D8024CAC6AB80FA821523 /* ReadOnlyGatingTests.swift in Sources */,
 				EE3EAB130AEBAC21C2A847FF /* SayStreamExtractorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -503,35 +544,38 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58F7CAC4B90A5915A3176E99 /* BoxConfig.swift in Sources */,
+				CCDD077079DC62FFC76576D6 /* BoxPairing.swift in Sources */,
+				ADA0C2388A29B2E42615A5D4 /* BoxSync.swift in Sources */,
 				78D0E08A978FE7A20AF17AF3 /* BreadcrumbView.swift in Sources */,
 				4DE2EEF1409A0CE8BF4DFE80 /* CameraFit.swift in Sources */,
 				4CB38C58403F94C73E2A07EB /* CanvasPicking.swift in Sources */,
 				E6561A8E5129D4F76D214F4D /* CanvasView.swift in Sources */,
 				E0B59712270BD3883A20ED56 /* ChatSurfaceView.swift in Sources */,
+				DC8EF2A16449906A0DDAA8BD /* CitadelBox.swift in Sources */,
+				B9F62222C2C55EFD6A5EC605 /* ClaudeSSHBackend.swift in Sources */,
 				2070AD9EEE8D257C247084B7 /* ConstellationView.swift in Sources */,
 				7C2293221464A7E689ED60A9 /* ContextAssembly.swift in Sources */,
 				33AC68935400D86C6060AD23 /* EVFormatter.swift in Sources */,
 				4F00A6E30DB1508516DE93B7 /* Haptics.swift in Sources */,
 				F56C26A71FE33B9418318022 /* IgnitionView.swift in Sources */,
 				00E5933041461DDB6B67FAF9 /* InputPillView.swift in Sources */,
-				B863E0539A461AF1207261FE /* KeychainStore.swift in Sources */,
+				03E6680CE342B7F525FC9AF0 /* KeychainStore.swift in Sources */,
 				E4D60127572F9A6AF5357BA7 /* LegendView.swift in Sources */,
 				892D8501593EED1379B69ECC /* ModelClient.swift in Sources */,
-				1C707118DF44F51F245D9EEA /* ModelTurnSchema.swift in Sources */,
 				DEDB5C176D9AF194B8FE4F69 /* Nebula.swift in Sources */,
 				DC17568124177D3D02DEA89C /* NodeFooterView.swift in Sources */,
-				A77AEA8FBCB2F6E2C195CF89 /* OpenAIAuth.swift in Sources */,
+				3A05538E4CCCAF04885D7C19 /* PairingSheetView.swift in Sources */,
 				1AAAFE12A11E5B6B8F73FE16 /* PrimeRadiantApp.swift in Sources */,
 				74DB23BCC0A4236ED13EAD64 /* RadiantLayout.swift in Sources */,
 				99922AF79B468C30FD440997 /* RadiantMaterials.swift in Sources */,
 				23EF2C9A135CB7F79B49CA23 /* RadiantScene.swift in Sources */,
 				0DEC1CAD5C97BC9D1D80225D /* ReduceMotion.swift in Sources */,
-				33C382EDA6B163725B8FB569 /* RemoteConfig.swift in Sources */,
+				55185428A4EA0F3D647FDF4E /* SSHBox.swift in Sources */,
 				CBA8C5D3B759A3E6A76420C6 /* ScenarioStore.swift in Sources */,
 				33E06850E9BA0A59DE7A8E52 /* ScenarioView.swift in Sources */,
 				CBD977560BEE726183D08D4A /* SpeechInput.swift in Sources */,
 				61F6E681DCFDBB83A23D0E5D /* StoredScenario.swift in Sources */,
-				00D63D08A0E8AD283CA2F775 /* SyncClient.swift in Sources */,
 				13DCCFD9DEDD74849C1C0273 /* Tokens.swift in Sources */,
 				94D06A525274993D17A1F89C /* WorldModel.swift in Sources */,
 			);
@@ -828,6 +872,17 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		2C34359AEF177F4D7BD50059 /* XCRemoteSwiftPackageReference "Citadel" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/orlandos-nl/Citadel";
+			requirement = {
+				kind = exactVersion;
+				version = 0.9.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		09725AE442F6D36090823A14 /* PrimeRadiantCore */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -836,6 +891,11 @@
 		5988FCD82EF1E95785B0A494 /* PrimeRadiantCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PrimeRadiantCore;
+		};
+		94540588E5BDD72A35D86B91 /* Citadel */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C34359AEF177F4D7BD50059 /* XCRemoteSwiftPackageReference "Citadel" */;
+			productName = Citadel;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

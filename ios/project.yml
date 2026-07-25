@@ -17,6 +17,11 @@ options:
 packages:
   PrimeRadiantCore:
     path: PrimeRadiantCore
+  # SSH transport (pivot v3): exec channels + SFTP to the paired box. Citadel
+  # (SwiftNIO-SSH-based) provides both with no custom protocol code; pinned.
+  Citadel:
+    url: https://github.com/orlandos-nl/Citadel
+    exactVersion: 0.9.2
 
 settings:
   base:
@@ -58,10 +63,10 @@ targets:
       # OFL releases. File names must match UIAppFonts below.
     dependencies:
       - package: PrimeRadiantCore
+      - package: Citadel
       - sdk: SceneKit.framework
       - sdk: Speech.framework
       - sdk: AVFoundation.framework
-      - sdk: AuthenticationServices.framework
     info:
       path: PrimeRadiant/Resources/Info.plist
       properties:
@@ -90,13 +95,6 @@ targets:
           - CormorantGaramond-SemiBold.ttf
           - IBMPlexMono-Light.ttf
           - IBMPlexMono-Medium.ttf
-        CFBundleURLTypes:
-          # PKCE OAuth redirect (handoff §2.1). Scheme must match
-          # RemoteConfig.oauth.redirectURI. TODO(M2): confirm the registered
-          # redirect against OpenAI's app registration before ship.
-          - CFBundleURLName: app.primeradiant.oauth
-            CFBundleURLSchemes:
-              - primeradiant
 
   PrimeRadiantTests:
     type: bundle.unit-test

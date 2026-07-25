@@ -2,23 +2,23 @@ import PrimeRadiantCore
 import SwiftData
 import SwiftUI
 
-/// App entry. Routing (§2.1–§2.3): ignition (onboarding/OAuth) → constellation
-/// home → scenario canvas. Scenarios persist locally in SwiftData (client is
-/// source of truth while open, §6) and sync to the Worker in the background.
+/// App entry. Routing (pivot v3): ignition (pairing) → constellation home →
+/// scenario canvas. Scenarios persist locally in SwiftData (client is source
+/// of truth while open) and sync to the paired box over SFTP in the background.
+/// If the box is beyond reach the app opens read-only — quietly (pivot §3).
 @main
 struct PrimeRadiantApp: App {
-    private let config: RemoteConfig
-    @State private var auth: OpenAIAuth
+    private let config: BoxConfig
+    @State private var session: BoxSession
 
     init() {
-        let config = RemoteConfig.load()
-        self.config = config
-        _auth = State(initialValue: OpenAIAuth(config: config.oauth))
+        config = BoxConfig.load()
+        _session = State(initialValue: BoxSession())
     }
 
     var body: some Scene {
         WindowGroup {
-            RootView(auth: auth, config: config)
+            RootView(session: session, config: config)
                 .preferredColorScheme(.dark)
         }
         .modelContainer(for: StoredScenario.self)
@@ -26,8 +26,8 @@ struct PrimeRadiantApp: App {
 }
 
 struct RootView: View {
-    @Bindable var auth: OpenAIAuth
-    let config: RemoteConfig
+    @Bindable var session: BoxSession
+    let config: BoxConfig
 
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \StoredScenario.updatedAt, order: .reverse)
@@ -41,35 +41,45 @@ struct RootView: View {
     /// Canvas overlays hide during flights (chrome crossfades at the
     /// endpoints only — notes §3).
     @State private var overlaysVisible = true
-    @State private var sync: SyncClient?
+    @State private var sync: BoxSync?
+    @State private var showSettings = false
 
     var body: some View {
         Group {
-            if isSignedIn || Self.debugSampleMode {
+            if session.isPaired || Self.debugSampleMode {
                 home
             } else {
-                // Revocation/unlink lands back here — the ignition screen (§2.1).
-                IgnitionView(auth: auth)
+                // Unpair lands back here — the ignition screen (pivot v3:
+                // anywhere-tap opens the pairing sheet).
+                IgnitionView(session: session)
             }
         }
-        .animation(.easeInOut(duration: 0.3), value: auth.state == .signedOut)
-        .onChange(of: isSignedIn, initial: true) { _, signedIn in
-            if signedIn {
-                sync = makeSyncClient()
-                Task { await pullOnOpen() }
+        .animation(.easeInOut(duration: 0.3), value: session.isPaired)
+        .onChange(of: session.isPaired, initial: true) { _, paired in
+            if paired {
+                sync = makeSync()
+                Task {
+                    await session.ensureConnected()
+                    await pullOnOpen()
+                }
             } else {
                 sync = nil
                 if !Self.debugSampleMode { openStore = nil }
             }
+        }
+        .onChange(of: session.reachable) { _, reachable in
+            // Box unreachable → read-only, "the radiant is beyond reach"; no
+            // dialogs, ever (pivot §3). Debug sample mode stays interactive.
+            openStore?.isReadOnly = !reachable && !Self.debugSampleMode
         }
         .task { seedDebugSampleIfNeeded() }
     }
 
     /// Dev-only canvas entry (M1): `-PRDebugSample` seeds the bundled sample
     /// scenario plus two synthetic siblings (so home is a real constellation)
-    /// and opens the sample directly, skipping auth. `-PRDebugHome` seeds the
-    /// same set but stays home. Chat and sync stay dark. Never compiled into
-    /// release builds; no fallback auth mode exists (§2.1).
+    /// and opens the sample directly, bypassing pairing the way it bypassed
+    /// auth. `-PRDebugHome` seeds the same set but stays home. Chat and sync
+    /// stay dark. Never compiled into release builds.
     static var debugSampleMode: Bool {
         #if DEBUG
             ProcessInfo.processInfo.arguments.contains("-PRDebugSample")
@@ -109,11 +119,6 @@ struct RootView: View {
         #endif
     }
 
-    private var isSignedIn: Bool {
-        if case .signedIn = auth.state { return true }
-        return false
-    }
-
     /// One persistent SCNView over the one persistent scene; only the
     /// overlays and the interaction mode change between home and canvas.
     @ViewBuilder
@@ -139,6 +144,7 @@ struct RootView: View {
                     onDelete: { delete(id: $0) },
                     onUndoDelete: { undoDelete(id: $0) })
                     .transition(.opacity)
+                    .overlay(alignment: .bottomTrailing) { settingsButton }
             }
         }
         .background(Tokens.Role.background)
@@ -150,6 +156,10 @@ struct RootView: View {
             world.setScenarios(activeScenarios)
             world.onZoomOutToHome = { goHome() }
             world.onZoomIntoCluster = { open(id: $0) }
+        }
+        .sheet(isPresented: $showSettings) {
+            BoxSettingsView(session: session)
+                .presentationDetents([.medium])
         }
     }
 
@@ -195,6 +205,25 @@ struct RootView: View {
                 .contentShape(Rectangle())
         }
         .accessibilityLabel("constellation")
+    }
+
+    /// Quiet corner entry to the paired-box surface (paired box + unpair).
+    @ViewBuilder
+    private var settingsButton: some View {
+        if session.isPaired {
+            Button {
+                showSettings = true
+            } label: {
+                Text("· box ·")
+                    .font(Tokens.Fonts.mono(10))
+                    .tracking(1.5)
+                    .foregroundStyle(Tokens.Role.secondaryInfo.opacity(0.5))
+                    .padding(16)
+                    .contentShape(Rectangle())
+            }
+            .accessibilityLabel("the box")
+            .accessibilityIdentifier("home.box")
+        }
     }
 
     private var activeScenarios: [Scenario] {
@@ -249,14 +278,16 @@ struct RootView: View {
     }
 
     private func makeStore(for scenario: Scenario) -> ScenarioStore {
-        let backend = OpenAIResponsesBackend(
-            config: config.openAI,
-            accessToken: { try await auth.validAccessToken() })
-        return ScenarioStore(
+        let backend = ClaudeSSHBackend(
+            box: session.box,
+            ensureConnected: { @MainActor in await session.ensureConnected() })
+        let store = ScenarioStore(
             scenario: scenario,
-            modelSession: ModelSession(backend: backend, config: config.openAI),
+            modelSession: ModelSession(backend: backend, config: config),
             radiant: world,
             onPersist: { persist($0) })
+        store.isReadOnly = session.isPaired && !session.reachable && !Self.debugSampleMode
+        return store
     }
 
     /// Autosave every patch locally, then push-on-change (LWW) in the background.
@@ -273,18 +304,18 @@ struct RootView: View {
         }
         guard let sync else { return }
         Task {
-            if case .superseded(let server) = try? await sync.push(scenario) {
-                adopt(server)
+            if case .superseded(let box) = try? await sync.push(scenario) {
+                adopt(box)
             }
         }
     }
 
-    private func adopt(_ server: Scenario) {
-        if let existing = stored.first(where: { $0.id == server.id }) {
-            try? existing.update(from: server)
+    private func adopt(_ newer: Scenario) {
+        if let existing = stored.first(where: { $0.id == newer.id }) {
+            try? existing.update(from: newer)
             try? modelContext.save()
         }
-        // If it's the open scenario, the next open picks up the server copy;
+        // If it's the open scenario, the next open picks up the box copy;
         // live in-place merge is M3 sync hardening.
     }
 
@@ -294,40 +325,44 @@ struct RootView: View {
     }
 
     private func delete(id: String) {
-        stored.first(where: { $0.id == id })?.deletedAt = Date()
+        guard let record = stored.first(where: { $0.id == id }) else { return }
+        record.deletedAt = Date()
         try? modelContext.save()
-        Task { try? await sync?.delete(id: id) }
+        if let scenario = record.decoded() {
+            Task { try? await sync?.softDelete(scenario) }
+        }
     }
 
     private func undoDelete(id: String) {
         stored.first(where: { $0.id == id })?.deletedAt = nil
         try? modelContext.save()
-        Task { try? await sync?.restore(id: id) }
+        Task { _ = try? await sync?.restore(id: id) }
     }
 
-    // MARK: - Sync (pull on open, §6)
+    // MARK: - Sync (pull on open, LWW — handoff §6 over SFTP)
 
-    private func makeSyncClient() -> SyncClient {
-        SyncClient(
-            baseURL: config.sync.baseURL,
-            identityToken: { await auth.identityToken })
+    private func makeSync() -> BoxSync {
+        BoxSync(
+            box: session.box,
+            ensureConnected: { @MainActor in await session.ensureConnected() })
     }
 
     private func pullOnOpen() async {
         guard let sync else { return }
-        guard let remote = try? await sync.listScenarios() else { return }
-        for metadata in remote {
-            let local = stored.first(where: { $0.id == metadata.id })
-            let remoteUpdated = ISO8601DateFormatter.flexible(metadata.updatedAt)
-            if let local, let remoteUpdated, remoteUpdated <= local.updatedAt { continue }
-            if let scenario = try? await sync.fetchScenario(id: metadata.id) {
-                adoptOrInsert(scenario)
+        guard let remote = try? await sync.pullAll() else { return }
+        for scenario in remote {
+            if let local = stored.first(where: { $0.id == scenario.id }),
+                scenario.updatedAt <= local.updatedAt {
+                continue
             }
+            adoptOrInsert(scenario)
         }
+        // Opportunistic 30-day trash purge (pivot v3: the app is the only agent).
+        try? await sync.purgeTrash()
     }
 
     private func pullNewerCopy(id: String) async {
-        guard let sync, let scenario = try? await sync.fetchScenario(id: id) else { return }
+        guard let sync, let scenario = try? await sync.pull(id: id) else { return }
         if let local = stored.first(where: { $0.id == id }),
             scenario.updatedAt > local.updatedAt {
             adoptOrInsert(scenario)
@@ -415,11 +450,3 @@ struct RootView: View {
         }
     }
 #endif
-
-extension ISO8601DateFormatter {
-    static func flexible(_ string: String) -> Date? {
-        let fractional = ISO8601DateFormatter()
-        fractional.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return fractional.date(from: string) ?? ISO8601DateFormatter().date(from: string)
-    }
-}

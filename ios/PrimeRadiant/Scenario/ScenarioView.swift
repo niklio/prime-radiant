@@ -34,7 +34,8 @@ struct ScenarioView: View {
                 InputPillView(
                     speech: speech,
                     onOpenChat: { store.openChat(focusedNodeId: nil) },
-                    onSend: { store.send(text: $0) })
+                    onSend: { store.send(text: $0) },
+                    statusLine: store.composerStatusLine)
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 8)

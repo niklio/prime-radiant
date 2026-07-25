@@ -28,6 +28,20 @@ final class ScenarioStore {
 
     var lastError: String?
 
+    // Quiet states (pivot §3) — no dialogs, one line in the composer slot.
+
+    /// Box beyond reach: canvas renders read-only, composer + marking disable.
+    var isReadOnly = false
+    /// Usage window exhausted: composing pauses until the cycle renews.
+    private(set) var resting = false
+
+    /// The one status line, shown in the composer placeholder slot.
+    var composerStatusLine: String? {
+        if isReadOnly { return "the radiant is beyond reach" }
+        if resting { return "the radiant rests until the cycle renews" }
+        return nil
+    }
+
     /// The shared world scene (one scene, one camera — notes §1). Owned by
     /// RootView; the store only drives its focused scenario's constellation.
     let radiant: RadiantScene
@@ -85,6 +99,7 @@ final class ScenarioStore {
     }
 
     func completeHold(id: String, intent: HoldIntent) {
+        guard !isReadOnly else { return }  // marking disabled quietly (pivot §3)
         do {
             switch intent {
             case .mark:
@@ -136,10 +151,9 @@ final class ScenarioStore {
     func send(text: String) {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, !isStreaming else { return }
-        guard let modelSession else {
-            lastError = "sign in to speak to the radiant"
-            return
-        }
+        // Composer is quietly disabled while read-only or resting (pivot §3).
+        guard composerStatusLine == nil else { return }
+        guard let modelSession else { return }
 
         scenario.transcript.append(Message(role: .user, content: trimmed, timestamp: Date()))
         persist()
@@ -163,7 +177,16 @@ final class ScenarioStore {
             } catch {
                 self.isStreaming = false
                 self.streamingSay = ""
-                self.lastError = "the radiant lost the thread · try again"
+                // Quiet states, not dialogs (pivot §3): the status line in the
+                // composer slot carries them.
+                switch error as? ModelClientError {
+                case .budgetExhausted:
+                    self.resting = true
+                case .boxUnreachable:
+                    self.isReadOnly = true
+                default:
+                    self.lastError = "the radiant lost the thread · try again"
+                }
             }
         }
     }

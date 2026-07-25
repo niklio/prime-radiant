@@ -26,7 +26,8 @@ struct ChatSurfaceView: View {
                     speech: speech,
                     onOpenChat: {},
                     onSend: { store.send(text: $0) },
-                    typesInline: true)
+                    typesInline: true,
+                    statusLine: store.composerStatusLine)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 8)
             }
