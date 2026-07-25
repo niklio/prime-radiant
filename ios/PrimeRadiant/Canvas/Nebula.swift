@@ -39,7 +39,7 @@ final class Nebula {
                 seed: seeds[index % seeds.count],
                 // Outer layers: sparse dim haze. Inner: the visible smokescape
                 // with the big occluding rifts.
-                alphaScale: inner ? 0.34 : 0.16,
+                alphaScale: inner ? 0.52 : 0.28,
                 riftCount: inner ? 4 : 2,
                 occludesBehind: inner)
 
@@ -142,7 +142,7 @@ final class Nebula {
         let n = size
         var pixels = [UInt8](repeating: 0, count: n * n * 4)
         // Grey-brown smoke tint (dimmer than every node core by construction).
-        let tint = (r: 0.66, g: 0.56, b: 0.42)
+        let tint = (r: 0.72, g: 0.62, b: 0.47)
         for py in 0..<n {
             for px in 0..<n {
                 let fx = Double(px) / Double(n)
@@ -159,7 +159,7 @@ final class Nebula {
                 }
                 // Smooth density shaping: most of the sky stays near-black;
                 // only the fBm crests read as billows. Smoothstep, no clipping.
-                var density = smooth(max(0, min(1, (value - 0.46) * 2.3)))
+                var density = smooth(max(0, min(1, (value - 0.40) * 2.4)))
 
                 // The rifts: huge near-void discs. They both clear this layer's
                 // smoke and (on the alpha-blended inner layer) occlude the
