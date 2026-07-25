@@ -16,6 +16,14 @@ struct CanvasCallbacks {
     var onHoldCompleted: (String, HoldIntent) -> Void = { _, _ in }
     /// Home mode: tapping a cluster dives into it (notes §2).
     var onTapCluster: (String) -> Void = { _ in }
+    /// Home mode: tapping blank void (dismisses a pending unborn node, §2).
+    var onVoidTap: () -> Void = {}
+    /// Hold-to-birth (ux-update §2): permitted only on the home constellation.
+    var birthAllowed: () -> Bool = { false }
+    /// True while a birth hold fills (drives the label dim alongside the
+    /// scene's 60% constellation dim); false on release either way.
+    var onBirthHoldChanged: (Bool) -> Void = { _ in }
+    var onBirthCompleted: (CGPoint) -> Void = { _ in }
 }
 
 #if DEBUG
@@ -145,6 +153,14 @@ struct CanvasView: UIViewRepresentable {
         private var ring: HoldRingLayer?
         private let holdHaptics = HapticRamp()
 
+        // Hold-to-birth state (home void, ux-update §2).
+        private var birthPoint: CGPoint?
+        private var birthStart: CFTimeInterval = 0
+        private var birthProgress: Double = 0
+        private var birthLink: CADisplayLink?
+        private var birthRing: HoldRingLayer?
+        private var condensing: CondensingNodeLayer?
+
         init(radiant: RadiantScene, callbacks: CanvasCallbacks) {
             self.radiant = radiant
             self.callbacks = callbacks
@@ -180,7 +196,9 @@ struct CanvasView: UIViewRepresentable {
 
         @objc func tap(_ gesture: UITapGestureRecognizer) {
             // A release after the hold ring started is the hold ending, not a tap.
-            guard holdNodeId == nil, holdProgress < 0.05 else { return }
+            guard holdNodeId == nil, holdProgress < 0.05, birthPoint == nil,
+                birthProgress < 0.05
+            else { return }
             guard let view = gesture.view as? SCNView else { return }
             radiant.noteInteraction()
             let point = gesture.location(in: view)
@@ -193,7 +211,11 @@ struct CanvasView: UIViewRepresentable {
                     let d = hypot(p.x - point.x, p.y - point.y)
                     if d < 80, best == nil || d < best!.d { best = (id, d) }
                 }
-                if let best { callbacks.onTapCluster(best.id) }
+                if let best {
+                    callbacks.onTapCluster(best.id)
+                } else {
+                    callbacks.onVoidTap()
+                }
             case .canvas:
                 let picked = pickNode(at: point, in: view)
                 // Tapping the void deselects (§2.3).
@@ -225,18 +247,40 @@ struct CanvasView: UIViewRepresentable {
 
         @objc func hold(_ gesture: UILongPressGestureRecognizer) {
             guard let view = gesture.view as? SCNView else { return }
-            // Hold-to-mark exists only on the canvas; home holds are the
-            // cluster-lift gesture, handled by the SwiftUI overlays.
-            guard radiant.currentMode == .canvas else { return }
-            switch gesture.state {
-            case .began:
-                guard let id = pickNode(at: gesture.location(in: view), in: view) else { return }
-                beginHold(on: id, in: view)
-            case .ended, .cancelled, .failed:
-                // Releasing early cancels harmlessly (§2.3).
-                cancelHold()
-            default:
-                break
+            switch radiant.currentMode {
+            case .canvas:
+                switch gesture.state {
+                case .began:
+                    guard let id = pickNode(at: gesture.location(in: view), in: view)
+                    else { return }
+                    beginHold(on: id, in: view)
+                case .ended, .cancelled, .failed:
+                    // Releasing early cancels harmlessly (§2.3).
+                    cancelHold()
+                default:
+                    break
+                }
+            case .home:
+                // Cluster holds are the SwiftUI lift-and-drag gesture (their
+                // overlays consume those touches); blank void is birth (§2).
+                switch gesture.state {
+                case .began:
+                    let point = gesture.location(in: view)
+                    guard callbacks.birthAllowed(), isBlankVoid(point, in: view)
+                    else { return }
+                    beginBirthHold(at: point, on: view)
+                case .ended, .cancelled, .failed:
+                    cancelBirthHold()
+                default:
+                    break
+                }
+            }
+        }
+
+        /// Blank stretch of void: not over any cluster's projected extent.
+        private func isBlankVoid(_ point: CGPoint, in view: SCNView) -> Bool {
+            radiant.clusterScreenPoints(in: view).allSatisfy { _, p in
+                hypot(p.x - point.x, p.y - point.y) > 90
             }
         }
 
@@ -331,6 +375,81 @@ struct CanvasView: UIViewRepresentable {
         private func flashRing() {
             ring?.flash()
             ring = nil
+        }
+
+        // MARK: Hold-to-birth: the same ring, ~900ms, condensing node beneath
+        // (ux-update §2/§3 — deliberately longer than the 700ms mark).
+
+        private func beginBirthHold(at point: CGPoint, on view: SCNView) {
+            radiant.noteInteraction()
+            birthPoint = point
+            birthStart = CACurrentMediaTime()
+            birthProgress = 0
+
+            // The identical shared ring — geometry unchanged (§3).
+            let ring = HoldRingLayer()
+            ring.position = point
+            view.layer.addSublayer(ring)
+            birthRing = ring
+
+            let node = CondensingNodeLayer()
+            node.position = point
+            view.layer.insertSublayer(node, below: ring)
+            condensing = node
+
+            radiant.setBirthDimming(true)
+            callbacks.onBirthHoldChanged(true)
+            holdHaptics.begin()
+
+            let link = CADisplayLink(target: self, selector: #selector(birthTick))
+            link.add(to: .main, forMode: .common)
+            birthLink = link
+        }
+
+        @objc private func birthTick() {
+            guard birthPoint != nil else { return }
+            let elapsed = CACurrentMediaTime() - birthStart
+            birthProgress = min(1, elapsed / Tokens.Motion.birthHoldSeconds)
+            birthRing?.progress = birthProgress
+            condensing?.progress = birthProgress
+            holdHaptics.update(progress: birthProgress)
+            if birthProgress >= 1 {
+                completeBirthHold()
+            }
+        }
+
+        private func completeBirthHold() {
+            guard let point = birthPoint else { return }
+            birthRing?.flash()
+            birthRing = nil
+            condensing?.removeFromSuperlayer()
+            condensing = nil
+            // Distinct double-pop — never the mark's thud (§3).
+            Haptics.birthPop()
+            teardownBirthHold()
+            Task { @MainActor in self.birthProgress = 0 }
+            callbacks.onBirthCompleted(point)
+        }
+
+        private func cancelBirthHold() {
+            guard birthPoint != nil else { return }
+            // Early release: ring drains fast, the node dissolves back into
+            // cloud, nothing is created (§2/§3).
+            birthRing?.drain()
+            birthRing = nil
+            condensing?.dissolve()
+            condensing = nil
+            teardownBirthHold()
+            Task { @MainActor in self.birthProgress = 0 }
+        }
+
+        private func teardownBirthHold() {
+            birthLink?.invalidate()
+            birthLink = nil
+            birthPoint = nil
+            holdHaptics.end()
+            radiant.setBirthDimming(false)
+            callbacks.onBirthHoldChanged(false)
         }
 
         // MARK: - UI-test hooks overlay (-PRUITestHooks, DEBUG only)

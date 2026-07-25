@@ -100,18 +100,84 @@ struct SayStreamExtractor {
     }
 }
 
+// MARK: - Turn engine surface
+
+/// One conversational turn, whatever the transport (SSH `claude` exec or the
+/// gateway's /v1/chat SSE). ScenarioStore depends on this only; the transport
+/// ladder routes between implementations at call time.
+protocol TurnEngine: Sendable {
+    func runTurn(
+        scenario: Scenario,
+        userText: String?,
+        focusedNodeId: String?,
+        useRestructureModel: Bool,
+        onSayDelta: @escaping @Sendable (String) -> Void
+    ) async throws -> ModelTurn
+}
+
+extension TurnEngine {
+    func runTurn(
+        scenario: Scenario,
+        userText: String?,
+        focusedNodeId: String?,
+        onSayDelta: @escaping @Sendable (String) -> Void
+    ) async throws -> ModelTurn {
+        try await runTurn(
+            scenario: scenario, userText: userText, focusedNodeId: focusedNodeId,
+            useRestructureModel: false, onSayDelta: onSayDelta)
+    }
+}
+
 // MARK: - Turn loop
 
 /// Runs one conversational turn end to end: context assembly → streaming call →
 /// validation against the live scenario → retry (≤2) with the validator error
 /// in-context (§5.3).
-final class ModelSession: Sendable {
+final class ModelSession: TurnEngine, Sendable {
     private let backend: any ModelBackend
     private let config: BoxConfig
 
     init(backend: any ModelBackend, config: BoxConfig) {
         self.backend = backend
         self.config = config
+    }
+
+    /// Shared context assembly (SSH and gateway transports send the identical
+    /// conversation; the gateway assembles its own prompt around it).
+    static func assembleContext(
+        scenario: Scenario,
+        userText: String?,
+        focusedNodeId: String?,
+        treeContextBudgetBytes: Int,
+        validatorFeedback: String? = nil
+    ) -> [ContextAssembly.ContextItem] {
+        var context = ContextAssembly.transcriptItems(scenario.transcript)
+        context.append(
+            ContextAssembly.ContextItem(
+                role: .system,
+                text: "current tree:\n"
+                    + ContextAssembly.treeContext(
+                        scenario: scenario,
+                        focusedNodeId: focusedNodeId,
+                        budgetBytes: treeContextBudgetBytes)))
+        if let focusedNodeId,
+            let focus = ContextAssembly.focusEvent(scenario: scenario, focusedNodeId: focusedNodeId) {
+            context.append(focus)
+        }
+        if let position = ContextAssembly.positionEvent(scenario: scenario) {
+            context.append(position)
+        }
+        if let userText {
+            context.append(ContextAssembly.ContextItem(role: .user, text: userText))
+        }
+        if let validatorFeedback {
+            context.append(
+                ContextAssembly.ContextItem(
+                    role: .system,
+                    text: "your previous output failed validation: \(validatorFeedback). "
+                        + "emit a corrected {say, patch} turn."))
+        }
+        return context
     }
 
     /// The shipped developer instruction (§5.2) — bundled verbatim from
@@ -137,32 +203,12 @@ final class ModelSession: Sendable {
         var validatorFeedback: String?
 
         for attempt in 0...2 {
-            var context = ContextAssembly.transcriptItems(scenario.transcript)
-            context.append(
-                ContextAssembly.ContextItem(
-                    role: .system,
-                    text: "current tree:\n"
-                        + ContextAssembly.treeContext(
-                            scenario: scenario,
-                            focusedNodeId: focusedNodeId,
-                            budgetBytes: config.treeContextBudgetBytes)))
-            if let focusedNodeId,
-                let focus = ContextAssembly.focusEvent(scenario: scenario, focusedNodeId: focusedNodeId) {
-                context.append(focus)
-            }
-            if let position = ContextAssembly.positionEvent(scenario: scenario) {
-                context.append(position)
-            }
-            if let userText {
-                context.append(ContextAssembly.ContextItem(role: .user, text: userText))
-            }
-            if let validatorFeedback {
-                context.append(
-                    ContextAssembly.ContextItem(
-                        role: .system,
-                        text: "your previous output failed validation: \(validatorFeedback). "
-                            + "emit a corrected {say, patch} turn."))
-            }
+            let context = Self.assembleContext(
+                scenario: scenario,
+                userText: userText,
+                focusedNodeId: focusedNodeId,
+                treeContextBudgetBytes: config.treeContextBudgetBytes,
+                validatorFeedback: validatorFeedback)
 
             let request = TurnRequest(
                 model: useRestructureModel ? config.restructureModel : config.interactiveModel,

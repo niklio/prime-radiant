@@ -30,6 +30,7 @@ struct RootView: View {
     let config: BoxConfig
 
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.scenePhase) private var scenePhase
     @Query(sort: \StoredScenario.updatedAt, order: .reverse)
     private var stored: [StoredScenario]
 
@@ -41,8 +42,22 @@ struct RootView: View {
     /// Canvas overlays hide during flights (chrome crossfades at the
     /// endpoints only — notes §3).
     @State private var overlaysVisible = true
-    @State private var sync: BoxSync?
+    @State private var sync: (any ScenarioSyncing)?
     @State private var showSettings = false
+
+    /// The transport ladder (gateway → ssh → offline), health-gated on
+    /// app foreground.
+    @State private var transport: TransportController?
+    private let gatewayAPI = LiveGatewayClient()
+
+    /// Hold-to-birth (ux-update §2): ring filling → labels dim with the scene;
+    /// completed → the unborn star waits at its chosen shell direction for the
+    /// first utterance. Nothing exists until something is said.
+    @State private var birthHolding = false
+    @State private var pendingBirthDirection: SIMD3<Double>?
+
+    /// Settings' quiet re-provision runs the same staged surface (1c2).
+    @State private var reprovision: PairingController?
 
     var body: some View {
         Group {
@@ -50,29 +65,77 @@ struct RootView: View {
                 home
             } else {
                 // Unpair lands back here — the ignition screen (pivot v3:
-                // anywhere-tap opens the pairing sheet).
-                IgnitionView(session: session)
+                // anywhere-tap opens the full-screen pairing flow).
+                IgnitionView(session: session, world: world)
             }
         }
         .animation(.easeInOut(duration: 0.3), value: session.isPaired)
         .onChange(of: session.isPaired, initial: true) { _, paired in
             if paired {
+                let transportController = makeTransport()
+                transport = transportController
                 sync = makeSync()
                 Task {
-                    await session.ensureConnected()
+                    await transportController.refresh()
+                    applyTransport()
                     await pullOnOpen()
                 }
             } else {
                 sync = nil
+                transport = nil
                 if !Self.debugSampleMode { openStore = nil }
             }
         }
-        .onChange(of: session.reachable) { _, reachable in
-            // Box unreachable → read-only, "the radiant is beyond reach"; no
-            // dialogs, ever (pivot §3). Debug sample mode stays interactive.
-            openStore?.isReadOnly = !reachable && !Self.debugSampleMode
+        .onChange(of: scenePhase) { _, phase in
+            // Health-gate on foreground (server/README): /v1/health, repair
+            // over SSH once on failure, then fall back quietly.
+            guard phase == .active, let transport else { return }
+            Task {
+                await transport.refresh()
+                applyTransport()
+            }
+        }
+        .onChange(of: session.reachable) { _, _ in
+            applyTransport()
         }
         .task { seedDebugSampleIfNeeded() }
+    }
+
+    // MARK: - Transport ladder (gateway primary, SSH fallback, offline quiet)
+
+    private func makeTransport() -> TransportController {
+        TransportController(
+            hasGateway: {
+                session.paired?.gatewayBaseURL != nil && session.paired?.deviceToken != nil
+            },
+            health: { [gatewayAPI] in
+                guard let base = session.paired?.gatewayBaseURL else { return nil }
+                return await gatewayAPI.health(base: base)
+            },
+            sshEnsure: {
+                guard session.paired?.flavor != .gateway else { return false }
+                return await session.ensureConnected()
+            },
+            sshRepair: {
+                // One quiet kickstart over the repair channel (server/README).
+                guard
+                    let result = try? await session.box.execText(
+                        loginShellCommand(GatewayRepair.kickstartCommand))
+                else { return false }
+                return result.exitCode == 0
+            })
+    }
+
+    /// Push the ladder's verdict into the quiet states (pivot §3): offline →
+    /// read-only; budget resting → the standing status line.
+    private func applyTransport() {
+        guard !Self.debugSampleMode else { return }
+        if let transport {
+            openStore?.isReadOnly = transport.transport == .offline
+            openStore?.setResting(transport.budgetResting)
+        } else {
+            openStore?.isReadOnly = session.isPaired && !session.reachable
+        }
     }
 
     /// Dev-only canvas entry (M1): `-PRDebugSample` seeds the bundled sample
@@ -88,8 +151,19 @@ struct RootView: View {
             let flags = [
                 "-PRDebugSample", "-PRDebugHome", "-PRDebugEmpty", "-PRDebugSelect",
                 "-PRDebugDistribution", "-PRDebugMark", "-PRDebugChat", "-PRDebugVoice",
+                "-PRDebugBirth",
             ]
             return flags.contains { ProcessInfo.processInfo.arguments.contains($0) }
+        #else
+            return false
+        #endif
+    }
+
+    /// `-PRDebugBirth`: the frozen mid-hold birth state (mock 10b) — ~60% ring,
+    /// condensing node, constellations dimmed. DEBUG capture only.
+    static var debugBirthFrozen: Bool {
+        #if DEBUG
+            return ProcessInfo.processInfo.arguments.contains("-PRDebugBirth")
         #else
             return false
         #endif
@@ -116,6 +190,13 @@ struct RootView: View {
             persist(sample)
             for extra in DebugSeed.extraScenarios() { persist(extra) }
             world.setScenarios(activeScenarios)
+            if args.contains("-PRDebugBirth") {
+                // Frozen mid-hold: the scene dims its constellations; the ring
+                // and condensing node render in the home overlay.
+                birthHolding = true
+                world.setBirthDimming(true)
+                return
+            }
             if args.contains("-PRDebugHome") { return }
             let store = makeStore(for: sample)
             openStore = store
@@ -161,13 +242,19 @@ struct RootView: View {
                     scenarios: activeScenarios,
                     archivedCount: stored.filter { $0.archivedAt != nil && $0.deletedAt == nil }.count,
                     onOpen: { open(id: $0) },
-                    onCreate: createScenario,
+                    onCreate: { createScenario() },
                     onArchive: { archive(id: $0) },
                     onDelete: { delete(id: $0) },
                     onUndoDelete: { undoDelete(id: $0) },
-                    onDescribe: { describeNewScenario($0) })
+                    onDescribe: { describeNewScenario($0) },
+                    birthDimmed: birthHolding,
+                    focusComposer: pendingBirthDirection != nil)
                     .transition(.opacity)
                     .overlay(alignment: .bottomTrailing) { settingsButton }
+            }
+
+            if Self.debugBirthFrozen {
+                frozenBirthOverlay
             }
         }
         .background(Tokens.Role.background)
@@ -181,8 +268,47 @@ struct RootView: View {
             world.onZoomIntoCluster = { open(id: $0) }
         }
         .sheet(isPresented: $showSettings) {
-            BoxSettingsView(session: session)
+            BoxSettingsView(session: session, onReprovision: beginReprovision)
                 .presentationDetents([.medium])
+        }
+        .fullScreenCover(item: $reprovision) { controller in
+            PairingFlowView(controller: controller, radiant: world)
+        }
+    }
+
+    /// `-PRDebugBirth`: the ring at ~60% with the condensing node beneath, at
+    /// the mock's touch point (10b), over the dimmed constellations.
+    @ViewBuilder
+    private var frozenBirthOverlay: some View {
+        GeometryReader { geometry in
+            ZStack {
+                CondensingNodeView(progress: 0.6)
+                HoldRingView(progress: 0.6)
+            }
+            .frame(width: 60, height: 60)
+            .position(
+                x: geometry.size.width * 0.2423,
+                y: geometry.size.height * 0.3371)
+        }
+        .allowsHitTesting(false)
+    }
+
+    /// Settings → quiet update: the same staged surface, provisioning only.
+    private func beginReprovision() {
+        guard let record = session.paired else { return }
+        let controller = PairingController(box: session.box) { updated in
+            session.adopt(updated)
+            reprovision = nil
+            Task {
+                await transport?.refresh()
+                applyTransport()
+            }
+        }
+        reprovision = controller
+        Task {
+            // The repair channel must be live before the bundle streams.
+            await session.ensureConnected()
+            controller.beginReprovision(record: record)
         }
     }
 
@@ -194,7 +320,13 @@ struct RootView: View {
                 onSelect: { openStore?.select($0) },
                 holdIntent: { openStore?.holdIntent(for: $0) ?? .mark },
                 onHoldCompleted: { id, intent in openStore?.completeHold(id: id, intent: intent) },
-                onTapCluster: { open(id: $0) }))
+                onTapCluster: { open(id: $0) },
+                onVoidTap: { dismissPendingBirth() },
+                birthAllowed: {
+                    openStore == nil && pendingBirthDirection == nil && !Self.debugBirthFrozen
+                },
+                onBirthHoldChanged: { birthHolding = $0 },
+                onBirthCompleted: { completeBirth(at: $0) }))
         #if DEBUG
             // UI-test hooks (§8): per-node accessibility elements + canvas state,
             // only under `-PRUITestHooks` (mirrors -PRDebugSample gating).
@@ -248,6 +380,7 @@ struct RootView: View {
     // MARK: - Scenario lifecycle (flights, not swaps — notes §3)
 
     private func open(id: String) {
+        dismissPendingBirth()
         guard openStore == nil || openStore?.scenario.id != id else { return }
         guard let scenario = stored.first(where: { $0.id == id })?.decoded() else { return }
         let store = makeStore(for: scenario)  // builds the focused constellation
@@ -270,17 +403,46 @@ struct RootView: View {
     }
 
     /// Speech-first creation (ux-update §2): the first utterance seeds the
-    /// scenario; the engine's first patch names and draws it.
+    /// scenario; the engine's first patch names and draws it. A pending birth
+    /// direction (hold-to-birth) anchors the new scenario at the chosen point.
     private func describeNewScenario(_ text: String) {
-        createScenario()
+        let anchor = pendingBirthDirection
+        if anchor != nil {
+            // The real cluster takes over from the unborn star.
+            world.removeUnbornStar()
+            pendingBirthDirection = nil
+        }
+        createScenario(anchor: anchor)
         openStore?.send(text: text)
     }
 
-    private func createScenario() {
+    // MARK: - Hold-to-birth (ux-update §2: place-first creation)
+
+    /// The completed hold ignites the node AT those shell coordinates (screen
+    /// point → shell direction unproject) and focuses the capsule; nothing is
+    /// created until something is said.
+    private func completeBirth(at point: CGPoint) {
+        guard
+            let view = world.hostView,
+            let direction = world.shellDirection(at: point, in: view)
+        else { return }
+        world.showUnbornStar(at: direction)
+        pendingBirthDirection = direction
+    }
+
+    /// Dismissing without describing: the node dissolves (~450ms) back into
+    /// cloud, nothing created (§2).
+    private func dismissPendingBirth() {
+        guard pendingBirthDirection != nil else { return }
+        world.dissolveUnbornStar()
+        pendingBirthDirection = nil
+    }
+
+    private func createScenario(anchor: SIMD3<Double>? = nil) {
         // A blank canvas still has a root: turn 1 elicits or draws over it (§2.4);
         // the model retitles via `retitle_scenario`.
         let now = Date()
-        let scenario = Scenario(
+        var scenario = Scenario(
             id: ULID.generate(),
             title: "untitled",
             createdAt: now,
@@ -288,6 +450,12 @@ struct RootView: View {
             payoffUnit: PayoffUnit(kind: .currency, label: "USD"),
             status: .modeling,
             tree: Node(id: ULID.generate(), label: "the decision", p: 1, actor: .user))
+        if let anchor {
+            // Birth-placed: the scenario carries its chosen shell direction,
+            // overriding the ULID hash (§2), and the flight aims there.
+            scenario.anchorOverride = anchor
+            world.setAnchorOverride(scenarioId: scenario.id, direction: anchor)
+        }
         persist(scenario)
         let store = makeStore(for: scenario)
         openStore = store
@@ -301,12 +469,33 @@ struct RootView: View {
         let backend = ClaudeSSHBackend(
             box: session.box,
             ensureConnected: { @MainActor in await session.ensureConnected() })
+        let sshEngine = ModelSession(backend: backend, config: config)
+        // Gateway-first turn routing: say deltas stream from /v1/chat; the
+        // validated turn event is re-checked client-side; transport failures
+        // fall back to the SSH engine quietly (server/README hybrid posture).
+        let engine = RoutedTurnEngine(
+            transport: { transport?.transport ?? .ssh },
+            gatewayEngine: { [gatewayAPI, config] in
+                guard
+                    let base = session.paired?.gatewayBaseURL,
+                    let token = session.paired?.deviceToken
+                else { return nil }
+                return GatewayTurnEngine(
+                    gateway: gatewayAPI, base: base, token: token, config: config)
+            },
+            sshEngine: sshEngine,
+            onGatewayFailure: { transport?.noteGatewayFailure() })
         let store = ScenarioStore(
             scenario: scenario,
-            modelSession: ModelSession(backend: backend, config: config),
+            modelSession: engine,
             radiant: world,
             onPersist: { persist($0) })
-        store.isReadOnly = session.isPaired && !session.reachable && !Self.debugSampleMode
+        if !Self.debugSampleMode {
+            store.isReadOnly =
+                session.isPaired
+                && (transport.map { $0.transport == .offline } ?? !session.reachable)
+            store.setResting(transport?.budgetResting ?? false)
+        }
         return store
     }
 
@@ -359,12 +548,23 @@ struct RootView: View {
         Task { _ = try? await sync?.restore(id: id) }
     }
 
-    // MARK: - Sync (pull on open, LWW — handoff §6 over SFTP)
+    // MARK: - Sync (pull on open, LWW — /v1/scenarios primary, SFTP fallback)
 
-    private func makeSync() -> BoxSync {
-        BoxSync(
+    private func makeSync() -> any ScenarioSyncing {
+        let sshSync = BoxSync(
             box: session.box,
             ensureConnected: { @MainActor in await session.ensureConnected() })
+        return RoutedSync(
+            transport: { transport?.transport ?? .ssh },
+            gatewaySync: { [gatewayAPI] in
+                guard
+                    let base = session.paired?.gatewayBaseURL,
+                    let token = session.paired?.deviceToken
+                else { return nil }
+                return GatewaySync(gateway: gatewayAPI, base: base, token: token)
+            },
+            sshSync: sshSync,
+            onGatewayFailure: { transport?.noteGatewayFailure() })
     }
 
     private func pullOnOpen() async {

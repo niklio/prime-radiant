@@ -33,7 +33,13 @@ final class ScenarioStore {
     /// Box beyond reach: canvas renders read-only, composer + marking disable.
     var isReadOnly = false
     /// Usage window exhausted: composing pauses until the cycle renews.
+    /// Set by a failed turn or by the gateway's health/budget report.
     private(set) var resting = false
+
+    /// The gateway health gate reports budget "resting"/ok (server/README).
+    func setResting(_ value: Bool) {
+        resting = value
+    }
 
     /// The one status line, shown in the composer placeholder slot.
     var composerStatusLine: String? {
@@ -46,12 +52,13 @@ final class ScenarioStore {
     /// RootView; the store only drives its focused scenario's constellation.
     let radiant: RadiantScene
 
-    private let modelSession: ModelSession?
+    /// Transport-agnostic turn engine (SSH or gateway; routed per the ladder).
+    private let modelSession: (any TurnEngine)?
     private let onPersist: @MainActor (Scenario) -> Void
 
     init(
         scenario: Scenario,
-        modelSession: ModelSession?,
+        modelSession: (any TurnEngine)?,
         radiant: RadiantScene,
         onPersist: @escaping @MainActor (Scenario) -> Void
     ) {

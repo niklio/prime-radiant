@@ -14,7 +14,10 @@ import SwiftUI
 /// Mode) the static poster/void stands in.
 struct IgnitionView: View {
     @Bindable var session: BoxSession
-    @State private var showPairing = false
+    /// The persistent world scene: the pairing surface renders over its nebula
+    /// void (ux-update §1 — the same void full-screen, no sheet chrome).
+    var world: RadiantScene?
+    @State private var pairing: PairingController?
 
     var body: some View {
         ZStack {
@@ -49,12 +52,50 @@ struct IgnitionView: View {
         }
         .contentShape(Rectangle())
         .onTapGesture {
-            showPairing = true
+            beginPairing()
         }
-        .sheet(isPresented: $showPairing) {
-            PairingSheetView(session: session)
+        #if DEBUG
+            // `-PRDebugPairing` presents the pairing surface immediately;
+            // `-PRDebugPairingState=<address|unreachable|credentials|
+            // provisioning|code|paired>` renders each state deterministically
+            // with representative content (mock capture loop).
+            .onAppear {
+                let args = ProcessInfo.processInfo.arguments
+                if args.contains("-PRDebugPairing") {
+                    beginPairing()
+                } else if let state = PairingController.debugStateArgument() {
+                    beginPairing(debugState: state)
+                }
+            }
+        #endif
+        .fullScreenCover(item: $pairing) { controller in
+            PairingFlowView(
+                controller: controller,
+                radiant: world,
+                frozen: Self.debugFrozen)
         }
         .statusBarHidden()
+    }
+
+    private static var debugFrozen: Bool {
+        #if DEBUG
+            return PairingController.debugStateArgument() != nil
+        #else
+            return false
+        #endif
+    }
+
+    private func beginPairing(debugState: String? = nil) {
+        let controller = PairingController(box: session.box) { record in
+            session.adopt(record)
+            pairing = nil
+        }
+        #if DEBUG
+            if let debugState {
+                controller.applyDebugState(debugState)
+            }
+        #endif
+        pairing = controller
     }
 
     private static var loopURL: URL? {

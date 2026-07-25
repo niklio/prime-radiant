@@ -56,6 +56,13 @@ targets:
       - path: ../shared/samples/job-offer.json
         buildPhase: resources
         group: SharedResources
+      # The combined provisioning artifact (provision.sh + base64 gateway
+      # payload, ~430KB). Bundled so the app installs the server itself by
+      # streaming this over the SSH channel (`sh -s`) — fully self-contained.
+      # Regenerate with `cd server && npm run build`.
+      - path: ../server/dist/provision-bundle.sh
+        buildPhase: resources
+        group: SharedResources
       # TODO: vend the OFL font files (Cormorant Garamond Light/SemiBold, IBM Plex
       # Mono Light/Medium) into PrimeRadiant/Resources/Fonts before first build —
       # the PrimeRadiant source path above bundles them automatically once present.
@@ -82,6 +89,10 @@ targets:
           - UIInterfaceOrientationLandscapeRight
         UIUserInterfaceStyle: Dark
         ITSAppUsesNonExemptEncryption: false
+        # The gateway speaks plain HTTP on the tailnet (http://100.x:7717) —
+        # the WireGuard tunnel is the transport security; ATS must not block it.
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
         # Permission copy in the app's voice (handoff §10): sparse, lowercase-calm,
         # states what happens — no apologies, no exclamation points.
         NSMicrophoneUsageDescription: >-

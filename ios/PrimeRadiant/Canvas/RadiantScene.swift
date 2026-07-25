@@ -120,6 +120,13 @@ final class RadiantScene: NSObject, @unchecked Sendable {
     /// Latch so a single pinch fires at most one mode-change request.
     private var pinchLatched = false
 
+    /// Birth-hold focus language (ux-update §2): existing constellations dim
+    /// to ~60% while the ring fills. Eased per frame toward the target.
+    private var birthDimTarget: CGFloat = 1
+    private var birthDimCurrent: CGFloat = 1
+    /// The unborn star between hold completion and the first utterance.
+    private var unbornNode: SCNNode?
+
     /// Continuous-zoom mode-change requests (notes §2: pinch-out far enough on
     /// canvas begins the flight home; pinch into a home cluster dives).
     var onZoomOutToHome: (@MainActor () -> Void)?
@@ -196,8 +203,14 @@ final class RadiantScene: NSObject, @unchecked Sendable {
             clusters.removeValue(forKey: id)
             lock.unlock()
         }
-        // Set-aware anchors keep clusters (and their labels) apart (mock 10).
-        let anchors = WorldModel.anchorDirections(ulids: scenarios.map(\.id))
+        // Set-aware anchors keep clusters (and their labels) apart (mock 10);
+        // birth-placed scenarios carry their chosen direction and win verbatim.
+        var overrides: [String: SIMD3<Double>] = [:]
+        for scenario in scenarios {
+            if let anchor = scenario.anchorOverride { overrides[scenario.id] = anchor }
+        }
+        let anchors = WorldModel.anchorDirections(
+            ulids: scenarios.map(\.id), overrides: overrides)
         lock.lock()
         for (id, direction) in anchors { clusters[id]?.anchor = direction }
         pendingAnchors = anchors
@@ -672,6 +685,100 @@ final class RadiantScene: NSObject, @unchecked Sendable {
         lock.unlock()
     }
 
+    // MARK: - Hold-to-birth (ux-update §2)
+
+    /// Existing constellations dim to ~60% while a birth hold fills; released
+    /// or completed, they breathe back. Eased on the render thread.
+    func setBirthDimming(_ active: Bool) {
+        lock.lock()
+        birthDimTarget = active ? CGFloat(Tokens.Motion.birthDimLevel) : 1
+        if reduceMotion { birthDimCurrent = birthDimTarget }
+        lock.unlock()
+    }
+
+    /// Screen point → shell direction (the birth anchor): a ray through the
+    /// touch point intersected with the shell. Uses the live SCNView projection
+    /// so the math matches what the finger saw.
+    func shellDirection(at point: CGPoint, in view: SCNView) -> SIMD3<Double>? {
+        let near = view.unprojectPoint(SCNVector3(Float(point.x), Float(point.y), 0))
+        let far = view.unprojectPoint(SCNVector3(Float(point.x), Float(point.y), 1))
+        let origin = SIMD3(Double(near.x), Double(near.y), Double(near.z))
+        let target = SIMD3(Double(far.x), Double(far.y), Double(far.z))
+        let direction = target - origin
+        guard simd_length(direction) > 1e-9 else { return nil }
+        return WorldModel.shellIntersection(
+            origin: origin, direction: simd_normalize(direction))
+    }
+
+    /// The ignited unborn star at its chosen shell coordinates — lives between
+    /// hold completion and the first utterance (nothing exists until something
+    /// is said).
+    func showUnbornStar(at direction: SIMD3<Double>) {
+        removeUnbornStar()
+        let container = SCNNode()
+        let world = direction * Tokens.World.shellRadius
+        container.position = SCNVector3(world.x, world.y, world.z)
+
+        let glowMaterial = RadiantMaterials.glowMaterial(color: TokenColors.ignitedGold)
+        glowMaterial.multiply.contents = TokenColors.ignitedGold.withAlphaComponent(1)
+        let plane = SCNPlane(width: 7, height: 7)
+        plane.materials = [glowMaterial]
+        let glow = SCNNode(geometry: plane)
+        glow.constraints = [SCNBillboardConstraint()]
+        container.addChildNode(glow)
+
+        let coreMaterial = RadiantMaterials.coreMaterial(color: TokenColors.ignitedGold)
+        let sphere = SCNSphere(radius: 0.6)
+        sphere.segmentCount = 12
+        sphere.materials = [coreMaterial]
+        container.addChildNode(SCNNode(geometry: sphere))
+
+        if !reduceMotion {
+            container.opacity = 0
+            container.runAction(.fadeIn(duration: 0.2))
+        }
+        scene.rootNode.addChildNode(container)
+        lock.lock()
+        unbornNode = container
+        lock.unlock()
+    }
+
+    /// Early dismissal: the node dissolves back into cloud (~450ms, §2).
+    func dissolveUnbornStar() {
+        lock.lock()
+        let node = unbornNode
+        unbornNode = nil
+        lock.unlock()
+        guard let node else { return }
+        if reduceMotion {
+            node.removeFromParentNode()
+        } else {
+            node.runAction(
+                .sequence([
+                    .fadeOut(duration: Tokens.Motion.birthDissolveSeconds),
+                    .removeFromParentNode(),
+                ]))
+        }
+    }
+
+    /// The real cluster takes over (first utterance landed).
+    func removeUnbornStar() {
+        lock.lock()
+        let node = unbornNode
+        unbornNode = nil
+        lock.unlock()
+        node?.removeFromParentNode()
+    }
+
+    /// Seed a birth-chosen anchor before the scenario exists in the store, so
+    /// the creation flight aims at the chosen point, not the ULID hash.
+    func setAnchorOverride(scenarioId: String, direction: SIMD3<Double>) {
+        lock.lock()
+        pendingAnchors[scenarioId] = direction
+        clusters[scenarioId]?.anchor = direction
+        lock.unlock()
+    }
+
     func noteInteraction() {
         lock.lock()
         lastInteraction = lastFrameTime ?? 0
@@ -854,13 +961,25 @@ final class RadiantScene: NSObject, @unchecked Sendable {
         let focusDepth = simd_length(pose.aim - pose.position)
         lock.lock()
         defer { lock.unlock() }
+        // Birth-hold dimming eases toward its target (the §2 focus language).
+        if abs(birthDimCurrent - birthDimTarget) > 0.005 {
+            birthDimCurrent += (birthDimTarget - birthDimCurrent) * 0.14
+        } else {
+            birthDimCurrent = birthDimTarget
+        }
+        let dim = birthDimCurrent
         for (_, cluster) in clusters {
             for (_, visual) in cluster.visuals {
                 let p = visual.container.simdPosition
                 let world = SIMD3<Double>(Double(p.x), Double(p.y), Double(p.z))
                 let depth = simd_dot(world - pose.position, pose.forward)
                 let scale = WorldModel.projectedScale(depth: depth, focusDepth: focusDepth)
-                visual.container.opacity = CGFloat(WorldModel.depthOpacity(projectedScale: scale))
+                visual.container.opacity =
+                    CGFloat(WorldModel.depthOpacity(projectedScale: scale)) * dim
+            }
+            if dim < 1 || cluster.filaments.values.first?.node.opacity != 1 {
+                for (_, filament) in cluster.filaments { filament.node.opacity = dim }
+                for (_, glow) in cluster.underglows { glow.node.opacity = dim }
             }
         }
     }

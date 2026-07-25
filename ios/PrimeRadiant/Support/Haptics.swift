@@ -45,4 +45,24 @@ enum Haptics {
     static func settle() {
         UIImpactFeedbackGenerator(style: .soft).impactOccurred(intensity: 0.6)
     }
+
+    /// Birth completes with a distinct double-pop — never the mark's single
+    /// strong thud (ux-update §3).
+    static func birthPop() {
+        let generator = UIImpactFeedbackGenerator(style: .rigid)
+        generator.impactOccurred(intensity: 0.9)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.09) {
+            generator.impactOccurred(intensity: 1)
+        }
+    }
+
+    /// Pairing success (1d: node ignites, rings expand).
+    static func success() {
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+    }
+
+    /// Wrong pairing code: shake-and-clear + error haptic (1c).
+    static func error() {
+        UINotificationFeedbackGenerator().notificationOccurred(.error)
+    }
 }

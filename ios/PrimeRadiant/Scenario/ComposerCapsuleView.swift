@@ -30,6 +30,9 @@ struct ComposerCapsuleView: View {
     var typesInline = false
     /// Quiet state line (pivot §3): occupies the placeholder slot; composer disables.
     var statusLine: String?
+    /// Rising edge focuses the inline field (hold-to-birth completes → the
+    /// capsule focuses and the first utterance seeds the scenario, §2).
+    var focusTrigger = false
 
     @State private var draft = ""
     @FocusState private var focused: Bool
@@ -44,6 +47,9 @@ struct ComposerCapsuleView: View {
                 transcriptView
             }
             capsule
+        }
+        .onChange(of: focusTrigger) { _, triggered in
+            if triggered { focused = true }
         }
     }
 

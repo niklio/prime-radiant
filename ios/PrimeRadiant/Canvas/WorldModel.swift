@@ -51,11 +51,22 @@ enum WorldModel {
     /// ULID order (time-ordered, so existing placements stay put as new
     /// scenarios arrive): re-salt any anchor closer than ~0.34×cap to an
     /// earlier one, up to 8 tries, keeping determinism for a given set.
-    static func anchorDirections(ulids: [String]) -> [String: SIMD3<Double>] {
+    ///
+    /// `overrides` carries explicit anchors (hold-to-birth, ux-update §2: the
+    /// user chose *where* on the shell that future lives) — they are placed
+    /// first, verbatim, and hashed anchors avoid them.
+    static func anchorDirections(
+        ulids: [String], overrides: [String: SIMD3<Double>] = [:]
+    ) -> [String: SIMD3<Double>] {
         let minSeparation = anchorCapRadians * 0.55
         var placed: [SIMD3<Double>] = []
         var result: [String: SIMD3<Double>] = [:]
-        for ulid in ulids.sorted() {
+        for ulid in ulids where overrides[ulid] != nil {
+            let direction = simd_normalize(overrides[ulid]!)
+            placed.append(direction)
+            result[ulid] = direction
+        }
+        for ulid in ulids.sorted() where result[ulid] == nil {
             var best = anchorDirection(ulid: ulid)
             var bestClearance = -Double.infinity
             for salt in 0..<16 {
@@ -302,5 +313,74 @@ enum WorldModel {
     /// asserted by the depth-verification test.
     static func isBlurred(projectedScale: Double) -> Bool {
         projectedScale < Tokens.World.dofBlurBelowProjectedScale
+    }
+
+    // MARK: - Screen → shell (hold-to-birth, ux-update §2)
+
+    /// Inverse of `project`: the shell direction under a normalized viewport
+    /// point (|u|,|v| ≤ 1). The view ray from the camera through the point is
+    /// intersected with the shell sphere (radius R about the origin); the
+    /// near-side hit facing the camera wins. nil when the ray misses the shell.
+    static func unprojectToShell(
+        u: Double, v: Double, pose: Pose,
+        fovDegrees: Double, viewportAspect: Double
+    ) -> SIMD3<Double>? {
+        let tanV = tan(fovDegrees / 2 * .pi / 180)
+        let tanH = tanV * viewportAspect
+        let direction = simd_normalize(
+            pose.forward + pose.right * (u * tanH) + pose.up * (v * tanV))
+        return shellIntersection(origin: pose.position, direction: direction)
+    }
+
+    /// Ray–sphere intersection with the shell, returned as a unit direction.
+    static func shellIntersection(
+        origin: SIMD3<Double>, direction: SIMD3<Double>
+    ) -> SIMD3<Double>? {
+        // |o + t·d|² = R²  →  t² + 2t(o·d) + |o|² − R² = 0
+        let b = simd_dot(origin, direction)
+        let c = simd_dot(origin, origin) - R * R
+        let discriminant = b * b - c
+        guard discriminant >= 0 else { return nil }
+        let root = discriminant.squareRoot()
+        // Nearest hit in front of the camera.
+        let near = -b - root
+        let far = -b + root
+        let t = near > 1e-6 ? near : (far > 1e-6 ? far : nil as Double?)
+        guard let t else { return nil }
+        return simd_normalize(origin + direction * t)
+    }
+}
+
+// MARK: - Scenario-carried anchor (hold-to-birth)
+
+/// A scenario born by hold-to-birth carries its chosen shell direction and it
+/// overrides the ULID hash forever (ux-update §2). It rides in `cameraState`
+/// — the schema's opaque per-device framing blob (scenario.schema.json:
+/// "Opaque to the server", additionalProperties: true) — so the wire format
+/// and the shared schema stay untouched.
+extension Scenario {
+    var anchorOverride: SIMD3<Double>? {
+        get {
+            guard
+                let state = cameraState,
+                let x = state["anchorX"], let y = state["anchorY"], let z = state["anchorZ"]
+            else { return nil }
+            let vector = SIMD3(x, y, z)
+            guard simd_length(vector) > 1e-9 else { return nil }
+            return simd_normalize(vector)
+        }
+        set {
+            var state = cameraState ?? [:]
+            if let direction = newValue {
+                state["anchorX"] = direction.x
+                state["anchorY"] = direction.y
+                state["anchorZ"] = direction.z
+            } else {
+                state.removeValue(forKey: "anchorX")
+                state.removeValue(forKey: "anchorY")
+                state.removeValue(forKey: "anchorZ")
+            }
+            cameraState = state.isEmpty ? nil : state
+        }
     }
 }

@@ -142,6 +142,21 @@ enum Tokens {
         static let composerCompressSeconds = 0.2
         static let unbornPulsePeriodSeconds = 2.4
         static let unbornPulseGlowDelta = 0.2
+
+        // Onboarding + creation (ux-update doc §1–§3; not yet in tokens.json).
+        /// Birth hold is deliberately longer than the 700ms mark so the two
+        /// can't collide in muscle memory (ux-update §3).
+        static let birthHoldSeconds = 0.9
+        /// Unborn node dissolves back into cloud when nothing is said (§2).
+        static let birthDissolveSeconds = 0.45
+        /// Existing constellations dim to ~60% during the birth hold (§2).
+        static let birthDimLevel = 0.6
+        /// Address-probe node pulse (~1/s — no spinner exists in this app, §1).
+        static let probePulsePeriodSeconds = 1.0
+        /// Unreachable line fade-in (§1, 1b2).
+        static let unreachableFadeSeconds = 0.4
+        /// Paired rings expand over ~700ms (§1, 1d).
+        static let pairedRingsSeconds = 0.7
     }
 }
 

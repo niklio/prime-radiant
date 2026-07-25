@@ -21,6 +21,10 @@ struct ConstellationView: View {
     var onUndoDelete: (String) -> Void
     /// Home capsule submit: the described decision creates + seeds a scenario.
     var onDescribe: (String) -> Void
+    /// Birth hold in progress: labels join the scene's ~60% dim (ux-update §2).
+    var birthDimmed = false
+    /// An unborn node awaits its first utterance: the capsule focuses.
+    var focusComposer = false
 
     @State private var speech = SpeechInput()
 
@@ -36,6 +40,10 @@ struct ConstellationView: View {
                     EmptyConstellation(onCreate: onCreate)
                 } else {
                     clusterOverlays
+                        .opacity(birthDimmed ? Tokens.Motion.birthDimLevel : 1)
+                        .animation(
+                            Motion.isReduced ? nil : .easeOut(duration: 0.25),
+                            value: birthDimmed)
                 }
 
                 homeCapsule
@@ -76,7 +84,8 @@ struct ConstellationView: View {
                 onOpenChat: {},
                 onSend: onDescribe,
                 typesInline: true,
-                statusLine: nil)
+                statusLine: nil,
+                focusTrigger: focusComposer)
                 .padding(.horizontal, 20)
                 .padding(.bottom, 20)
         }

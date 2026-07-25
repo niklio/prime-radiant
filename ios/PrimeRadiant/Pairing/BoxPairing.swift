@@ -15,6 +15,8 @@ struct PairedBox: Codable, Equatable, Sendable {
         case tailscale
         /// Native sshd: the app's own ed25519 key, installed during pairing.
         case key
+        /// Hand-installed gateway paired by code (1c): no SSH channel at all.
+        case gateway
     }
 
     var address: String
@@ -27,14 +29,23 @@ struct PairedBox: Codable, Equatable, Sendable {
     /// `ANTHROPIC_API_KEY` was present in the box's login-shell environment at
     /// pairing — turns would silently bill API credits (pivot §5). Warn, allow.
     var apiKeyWarning: Bool
+    /// Gateway base URL from provisioning's `##addr` (or the probed base for
+    /// code pairings). Persisted in the Keychain with the rest of the record.
+    var gatewayAddress: String?
+    /// Gateway device token from `##token` / POST /v1/pair. Keychain-only.
+    var deviceToken: String?
 
     var auth: BoxAuth {
         switch flavor {
-        case .tailscale:
+        case .tailscale, .gateway:
             return .none(username: username)
         case .key:
             return .privateKey(username: username, privateKeyRaw: privateKeyRaw ?? Data())
         }
+    }
+
+    var gatewayBaseURL: URL? {
+        gatewayAddress.flatMap(URL.init(string:))
     }
 }
 
@@ -186,7 +197,10 @@ final class BoxSession {
         self.box = box
         self.keychain = keychain
         #if DEBUG
-            if ProcessInfo.processInfo.arguments.contains("-PRResetPairing") {
+            let arguments = ProcessInfo.processInfo.arguments
+            // `-PRDebugPairingState=` captures must always start unpaired.
+            if arguments.contains("-PRResetPairing")
+                || arguments.contains(where: { $0.hasPrefix("-PRDebugPairingState=") }) {
                 keychain.delete(key: Self.recordKey)
             }
         #endif
@@ -220,6 +234,12 @@ final class BoxSession {
     @discardableResult
     func ensureConnected() async -> Bool {
         guard let record = paired else {
+            reachable = false
+            return false
+        }
+        // Code-paired boxes have no SSH channel at all (1c fallback): the
+        // gateway is the only transport; "reachable" means the gateway ladder.
+        guard record.flavor != .gateway else {
             reachable = false
             return false
         }
