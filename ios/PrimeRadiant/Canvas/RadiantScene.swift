@@ -158,7 +158,7 @@ final class RadiantScene: NSObject, @unchecked Sendable {
         camera.vignettingIntensity = 1.0
         camera.vignettingPower = 0.55
         // Gentle bloom keeps star cores hot without washing the void.
-        camera.bloomIntensity = 0.55
+        camera.bloomIntensity = 0.72
         camera.bloomThreshold = 0.65
         camera.bloomBlurRadius = 6
         // DoF focused at the selection distance (depth cue 3); the projected-
@@ -376,9 +376,9 @@ final class RadiantScene: NSObject, @unchecked Sendable {
         // Star scale (mocks 4/10): small emissive cores, ~3–6pt at canvas
         // distance, size still encoding cumulative probability. Tight halo
         // (~8–14pt), a star point — never a glow blob.
-        let coreRadius = 0.22 + 0.30 * CGFloat(cumulative)
+        let coreRadius = 0.26 + 0.34 * CGFloat(cumulative)
         (visual.core.geometry as? SCNSphere)?.radius = coreRadius
-        let haloSize = 1.2 + 1.1 * CGFloat(cumulative)
+        let haloSize = 2.0 + 1.8 * CGFloat(cumulative)
         (visual.glow.geometry as? SCNPlane).map {
             $0.width = haloSize
             $0.height = haloSize
@@ -398,8 +398,8 @@ final class RadiantScene: NSObject, @unchecked Sendable {
             intensity = 0.85
         }
         intensity *= cluster.luminance
-        visual.glowMaterial.multiply.contents = baseColor.withAlphaComponent(intensity * 0.9)
-        visual.coreMaterial.emission.contents = baseColor.withAlphaComponent(min(1, intensity + 0.15))
+        visual.glowMaterial.multiply.contents = baseColor.withAlphaComponent(intensity)
+        visual.coreMaterial.emission.contents = baseColor.withAlphaComponent(min(1, intensity + 0.35))
 
         if let parentId {
             cluster.parentIds[node.id] = parentId
@@ -439,7 +439,7 @@ final class RadiantScene: NSObject, @unchecked Sendable {
             let ignited = onSelectionPath || onRealizedPath
             // Thin chords (mock 4): ~1–2pt at canvas distance, width encoding
             // probability; ignited/realized run slightly heavier.
-            let emphasis: Float = ignited ? 1.4 : 1.0
+            let emphasis: Float = ignited ? 1.15 : 1.0
             cluster.filamentRadii[node.id] = (0.07 + 0.10 * Float(node.p)) * emphasis
             // Ignited path is a clean *straight* chord (notes §4).
             cluster.filamentBows[node.id] = 0
@@ -904,7 +904,7 @@ final class RadiantScene: NSObject, @unchecked Sendable {
             let radius = (cluster.filamentRadii[childId] ?? 0.1) * widthFactor
             let bow = cluster.filamentBows[childId] ?? 0
             filament.update(from: a, to: b, radius: radius, bow: bow)
-            cluster.underglows[childId]?.update(from: a, to: b, radius: radius * 2.4, bow: bow)
+            cluster.underglows[childId]?.update(from: a, to: b, radius: radius * 1.6, bow: bow)
         }
     }
 
