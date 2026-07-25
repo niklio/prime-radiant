@@ -1,19 +1,18 @@
 import PrimeRadiantCore
 import SwiftUI
 
-/// The scenario canvas (§2.3): the tree owns the full screen. No headers, no
-/// chrome bars — exactly three overlays: input pill, node footer, breadcrumb
-/// (legend stands in for the footer when nothing is selected). No coach marks,
-/// no hint text, no gesture instructions, anywhere.
+/// The scenario canvas overlays (§2.3): the tree owns the full screen. The
+/// SCNView itself is hosted persistently by RootView (one scene, one camera —
+/// notes §1); this view carries only the UI chrome. No headers, no chrome
+/// bars — exactly three overlays: input pill, node footer, breadcrumb (legend
+/// stands in for the footer when nothing is selected). No coach marks, no
+/// hint text, no gesture instructions, anywhere.
 struct ScenarioView: View {
     @Bindable var store: ScenarioStore
     @State private var speech = SpeechInput()
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            canvas
-                .ignoresSafeArea()
-
             VStack(alignment: .leading, spacing: 14) {
                 // Footer and breadcrumb are ONE stacked container: overlap is
                 // structurally impossible (§2.3, asserted by snapshot test §8).
@@ -40,7 +39,6 @@ struct ScenarioView: View {
             .padding(.horizontal, 20)
             .padding(.bottom, 8)
         }
-        .background(Tokens.Role.background)
         .toolbar(.hidden, for: .navigationBar)
         .statusBarHidden()
         .onChange(of: speech.isListening) { _, listening in
@@ -56,33 +54,6 @@ struct ScenarioView: View {
                 .presentationBackground(Tokens.Role.background)
         }
         .errorToast($store.lastError)
-    }
-
-    private var canvas: CanvasView {
-        var canvas = CanvasView(
-            radiant: store.radiant,
-            interactive: true,
-            callbacks: CanvasCallbacks(
-                onSelect: { store.select($0) },
-                holdIntent: { store.holdIntent(for: $0) },
-                onHoldCompleted: { id, intent in store.completeHold(id: id, intent: intent) }))
-        #if DEBUG
-            // UI-test hooks (§8): per-node accessibility elements + canvas state,
-            // only under `-PRUITestHooks` (mirrors -PRDebugSample gating).
-            if UITestHooks.enabled {
-                let store = self.store
-                canvas.hooksState = {
-                    var labels: [String: String] = [:]
-                    Tree.forEach(store.scenario.tree) { labels[$0.id] = $0.label }
-                    return CanvasHooksState(
-                        nodeLabels: labels,
-                        stateValue:
-                            "selected=\(store.selectedNodeId ?? "none") reached=\(store.scenario.realizedPath.count)"
-                    )
-                }
-            }
-        #endif
-        return canvas
     }
 }
 

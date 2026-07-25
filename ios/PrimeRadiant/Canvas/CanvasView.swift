@@ -14,6 +14,8 @@ struct CanvasCallbacks {
     var onSelect: (String?) -> Void = { _ in }
     var holdIntent: (String) -> HoldIntent = { _ in .mark }
     var onHoldCompleted: (String, HoldIntent) -> Void = { _, _ in }
+    /// Home mode: tapping a cluster dives into it (notes §2).
+    var onTapCluster: (String) -> Void = { _ in }
 }
 
 #if DEBUG
@@ -65,6 +67,7 @@ struct CanvasView: UIViewRepresentable {
         let view = CanvasSCNView()
         view.onLayoutSize = { [weak radiant] size in radiant?.setViewportSize(size) }
         view.scene = radiant.scene
+        if interactive { radiant.hostView = view }
         view.backgroundColor = UIColor(hex: 0x050510)
         view.antialiasingMode = .multisampling2X
         view.preferredFramesPerSecond = 60
@@ -108,6 +111,14 @@ struct CanvasView: UIViewRepresentable {
 
     func updateUIView(_ view: SCNView, context: Context) {
         context.coordinator.callbacks = callbacks
+        #if DEBUG
+            // The SCNView persists across home↔canvas mode changes now; the
+            // hooks provider must track the current store, not the one that
+            // existed at makeUIView time.
+            if let hooksState {
+                context.coordinator.updateHooksProvider(hooksState)
+            }
+        #endif
     }
 
     static func dismantleUIView(_ view: SCNView, coordinator: Coordinator) {
@@ -173,9 +184,22 @@ struct CanvasView: UIViewRepresentable {
             guard holdNodeId == nil, holdProgress < 0.05 else { return }
             guard let view = gesture.view as? SCNView else { return }
             radiant.noteInteraction()
-            let picked = pickNode(at: gesture.location(in: view), in: view)
-            // Tapping the void deselects (§2.3).
-            callbacks.onSelect(picked)
+            let point = gesture.location(in: view)
+            switch radiant.currentMode {
+            case .home:
+                // Tap a cluster → dive (the same scene; only the camera flies).
+                let points = radiant.clusterScreenPoints(in: view)
+                var best: (id: String, d: CGFloat)?
+                for (id, p) in points {
+                    let d = hypot(p.x - point.x, p.y - point.y)
+                    if d < 80, best == nil || d < best!.d { best = (id, d) }
+                }
+                if let best { callbacks.onTapCluster(best.id) }
+            case .canvas:
+                let picked = pickNode(at: point, in: view)
+                // Tapping the void deselects (§2.3).
+                callbacks.onSelect(picked)
+            }
         }
 
         @objc func twoFingerTap(_ gesture: UITapGestureRecognizer) {
@@ -191,12 +215,20 @@ struct CanvasView: UIViewRepresentable {
         }
 
         @objc func pinch(_ gesture: UIPinchGestureRecognizer) {
-            radiant.zoom(scale: gesture.scale)
+            switch gesture.state {
+            case .ended, .cancelled, .failed:
+                radiant.pinchEnded()
+            default:
+                radiant.zoom(scale: gesture.scale)
+            }
             gesture.scale = 1
         }
 
         @objc func hold(_ gesture: UILongPressGestureRecognizer) {
             guard let view = gesture.view as? SCNView else { return }
+            // Hold-to-mark exists only on the canvas; home holds are the
+            // cluster-lift gesture, handled by the SwiftUI overlays.
+            guard radiant.currentMode == .canvas else { return }
             switch gesture.state {
             case .began:
                 guard let id = pickNode(at: gesture.location(in: view), in: view) else { return }
@@ -272,6 +304,23 @@ struct CanvasView: UIViewRepresentable {
         }
 
         private func cancelHold() {
+            // Early release: the ring drains fast (~150ms), no haptic thud
+            // (notes §3).
+            if let track = ringTrack, let fill = ringFill {
+                let drain = CABasicAnimation(keyPath: "strokeEnd")
+                drain.fromValue = fill.strokeEnd
+                drain.toValue = 0
+                drain.duration = Tokens.Motion.markCancelDrainSeconds
+                fill.strokeEnd = 0
+                fill.add(drain, forKey: "drain")
+                ringTrack = nil
+                ringFill = nil
+                DispatchQueue.main.asyncAfter(
+                    deadline: .now() + Tokens.Motion.markCancelDrainSeconds
+                ) {
+                    track.removeFromSuperlayer()
+                }
+            }
             teardownHold()
             Task { @MainActor in self.holdProgress = 0 }
         }
@@ -359,6 +408,13 @@ struct CanvasView: UIViewRepresentable {
                     minimum: 8, maximum: 15, preferred: 10)
                 link.add(to: .main, forMode: .common)
                 hooksLink = link
+            }
+
+            /// The provider is replaced on every SwiftUI update so hook state
+            /// follows the live store across the persistent view's lifetime.
+            func updateHooksProvider(_ provider: @escaping @MainActor () -> CanvasHooksState) {
+                guard hooksOverlay != nil else { return }
+                hooksStateProvider = provider
             }
 
             /// Invalidates the display link (which retains the coordinator);

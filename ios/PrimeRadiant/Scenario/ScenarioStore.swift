@@ -28,6 +28,8 @@ final class ScenarioStore {
 
     var lastError: String?
 
+    /// The shared world scene (one scene, one camera — notes §1). Owned by
+    /// RootView; the store only drives its focused scenario's constellation.
     let radiant: RadiantScene
 
     private let modelSession: ModelSession?
@@ -36,14 +38,15 @@ final class ScenarioStore {
     init(
         scenario: Scenario,
         modelSession: ModelSession?,
+        radiant: RadiantScene,
         onPersist: @escaping @MainActor (Scenario) -> Void
     ) {
         self.scenario = scenario
         self.modelSession = modelSession
+        self.radiant = radiant
         self.onPersist = onPersist
         self.analytics = TreeAnalytics(
             tree: scenario.tree, realizedPath: scenario.realizedPath, unit: scenario.payoffUnit)
-        self.radiant = RadiantScene(reduceMotion: Motion.isReduced)
         refreshScene(animated: false)
     }
 
@@ -205,12 +208,14 @@ final class ScenarioStore {
 
     private func refreshScene(animated: Bool) {
         radiant.setScenario(
+            scenarioId: scenario.id,
             tree: scenario.tree,
             analytics: analytics,
             realizedPath: scenario.realizedPath,
             selectedId: selectedNodeId,
             unit: scenario.payoffUnit,
-            animated: animated)
+            animated: animated,
+            resolved: scenario.status == .resolved)
     }
 
     private func persist() {

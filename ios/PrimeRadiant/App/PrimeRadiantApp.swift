@@ -33,8 +33,14 @@ struct RootView: View {
     @Query(sort: \StoredScenario.updatedAt, order: .reverse)
     private var stored: [StoredScenario]
 
+    /// The one world scene (notes §1): home and canvas are the same scene
+    /// viewed from two camera states. Created once, never swapped.
+    @State private var world = RadiantScene(reduceMotion: Motion.isReduced)
     /// The open scenario's store; nil means the constellation is home.
     @State private var openStore: ScenarioStore?
+    /// Canvas overlays hide during flights (chrome crossfades at the
+    /// endpoints only — notes §3).
+    @State private var overlaysVisible = true
     @State private var sync: SyncClient?
 
     var body: some View {
@@ -60,12 +66,14 @@ struct RootView: View {
     }
 
     /// Dev-only canvas entry (M1): `-PRDebugSample` seeds the bundled sample
-    /// scenario and opens it directly, skipping auth. Chat and sync stay dark —
-    /// this exists so canvas work and UI tests don't need a live OAuth client.
-    /// Never compiled into release builds; no fallback auth mode exists (§2.1).
+    /// scenario plus two synthetic siblings (so home is a real constellation)
+    /// and opens the sample directly, skipping auth. `-PRDebugHome` seeds the
+    /// same set but stays home. Chat and sync stay dark. Never compiled into
+    /// release builds; no fallback auth mode exists (§2.1).
     static var debugSampleMode: Bool {
         #if DEBUG
             ProcessInfo.processInfo.arguments.contains("-PRDebugSample")
+                || ProcessInfo.processInfo.arguments.contains("-PRDebugHome")
         #else
             false
         #endif
@@ -81,7 +89,23 @@ struct RootView: View {
             decoder.dateDecodingStrategy = .iso8601
             guard let sample = try? decoder.decode(Scenario.self, from: data) else { return }
             persist(sample)
-            openStore = makeStore(for: sample)
+            for extra in DebugSeed.extraScenarios() { persist(extra) }
+            world.setScenarios(activeScenarios)
+            if ProcessInfo.processInfo.arguments.contains("-PRDebugHome") { return }
+            let store = makeStore(for: sample)
+            openStore = store
+            world.flyToCanvas(scenarioId: sample.id)
+            // `-PRDebugMark` / `-PRDebugSelect`: render the mark-reached and
+            // node-selected states deterministically (screenshot-compare loop
+            // against mocks 7 and 5).
+            if let counter = (sample.tree.children ?? []).max(by: { $0.p < $1.p }) {
+                if ProcessInfo.processInfo.arguments.contains("-PRDebugMark") {
+                    store.completeHold(id: counter.id, intent: .mark)
+                }
+                if ProcessInfo.processInfo.arguments.contains("-PRDebugSelect") {
+                    store.select(counter.id)
+                }
+            }
         #endif
     }
 
@@ -90,30 +114,80 @@ struct RootView: View {
         return false
     }
 
+    /// One persistent SCNView over the one persistent scene; only the
+    /// overlays and the interaction mode change between home and canvas.
     @ViewBuilder
     private var home: some View {
-        if let store = openStore {
-            ScenarioView(store: store)
-                .transition(.opacity)
-                .overlay(alignment: .topLeading) { homeButton }
-        } else {
-            ConstellationView(
-                scenarios: activeScenarios,
-                archivedCount: stored.filter { $0.archivedAt != nil && $0.deletedAt == nil }.count,
-                onOpen: { open(id: $0) },
-                onCreate: createScenario,
-                onArchive: { archive(id: $0) },
-                onDelete: { delete(id: $0) },
-                onUndoDelete: { undoDelete(id: $0) })
+        ZStack {
+            canvas
+                .ignoresSafeArea()
+
+            if let store = openStore {
+                if overlaysVisible {
+                    ScenarioView(store: store)
+                        .transition(.opacity)
+                        .overlay(alignment: .topLeading) { homeButton }
+                }
+            } else {
+                ConstellationView(
+                    radiant: world,
+                    scenarios: activeScenarios,
+                    archivedCount: stored.filter { $0.archivedAt != nil && $0.deletedAt == nil }.count,
+                    onOpen: { open(id: $0) },
+                    onCreate: createScenario,
+                    onArchive: { archive(id: $0) },
+                    onDelete: { delete(id: $0) },
+                    onUndoDelete: { undoDelete(id: $0) })
+                    .transition(.opacity)
+            }
         }
+        .background(Tokens.Role.background)
+        .animation(.easeInOut(duration: 0.25), value: overlaysVisible)
+        .onChange(of: activeScenarios.map(\.updatedAt)) {
+            world.setScenarios(activeScenarios)
+        }
+        .onAppear {
+            world.setScenarios(activeScenarios)
+            world.onZoomOutToHome = { goHome() }
+            world.onZoomIntoCluster = { open(id: $0) }
+        }
+    }
+
+    private var canvas: CanvasView {
+        var canvas = CanvasView(
+            radiant: world,
+            interactive: true,
+            callbacks: CanvasCallbacks(
+                onSelect: { openStore?.select($0) },
+                holdIntent: { openStore?.holdIntent(for: $0) ?? .mark },
+                onHoldCompleted: { id, intent in openStore?.completeHold(id: id, intent: intent) },
+                onTapCluster: { open(id: $0) }))
+        #if DEBUG
+            // UI-test hooks (§8): per-node accessibility elements + canvas state,
+            // only under `-PRUITestHooks` (mirrors -PRDebugSample gating).
+            if UITestHooks.enabled {
+                let openStore = self.openStore
+                canvas.hooksState = {
+                    guard let store = openStore else {
+                        return CanvasHooksState(nodeLabels: [:], stateValue: "home")
+                    }
+                    var labels: [String: String] = [:]
+                    Tree.forEach(store.scenario.tree) { labels[$0.id] = $0.label }
+                    return CanvasHooksState(
+                        nodeLabels: labels,
+                        stateValue:
+                            "selected=\(store.selectedNodeId ?? "none") reached=\(store.scenario.realizedPath.count)"
+                    )
+                }
+            }
+        #endif
+        return canvas
     }
 
     /// Single quiet exit from the canvas back to the constellation. Sparse by
     /// design; the canvas itself carries no chrome bars (§2.3).
     private var homeButton: some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.35)) { openStore = nil }
-        } label: {
+        Button(action: goHome) {
             Text("‹")
                 .font(Tokens.Fonts.mono(20))
                 .foregroundStyle(Tokens.Role.secondaryInfo.opacity(0.7))
@@ -129,12 +203,28 @@ struct RootView: View {
             .compactMap { $0.decoded() }
     }
 
-    // MARK: - Scenario lifecycle
+    // MARK: - Scenario lifecycle (flights, not swaps — notes §3)
 
     private func open(id: String) {
+        guard openStore == nil || openStore?.scenario.id != id else { return }
         guard let scenario = stored.first(where: { $0.id == id })?.decoded() else { return }
-        openStore = makeStore(for: scenario)
+        let store = makeStore(for: scenario)  // builds the focused constellation
+        openStore = store
+        overlaysVisible = false
+        world.flyToCanvas(scenarioId: scenario.id) {
+            overlaysVisible = true
+        }
         Task { await pullNewerCopy(id: id) }
+    }
+
+    private func goHome() {
+        openStore?.select(nil)
+        overlaysVisible = false
+        world.flyHome {
+            openStore = nil
+            overlaysVisible = true
+            world.setScenarios(activeScenarios)
+        }
     }
 
     private func createScenario() {
@@ -150,7 +240,12 @@ struct RootView: View {
             status: .modeling,
             tree: Node(id: ULID.generate(), label: "the decision", p: 1, actor: .user))
         persist(scenario)
-        openStore = makeStore(for: scenario)
+        let store = makeStore(for: scenario)
+        openStore = store
+        overlaysVisible = false
+        world.flyToCanvas(scenarioId: scenario.id) {
+            overlaysVisible = true
+        }
     }
 
     private func makeStore(for scenario: Scenario) -> ScenarioStore {
@@ -160,6 +255,7 @@ struct RootView: View {
         return ScenarioStore(
             scenario: scenario,
             modelSession: ModelSession(backend: backend, config: config.openAI),
+            radiant: world,
             onPersist: { persist($0) })
     }
 
@@ -249,6 +345,76 @@ struct RootView: View {
         try? modelContext.save()
     }
 }
+
+#if DEBUG
+    /// Synthetic companion scenarios for `-PRDebugSample` / `-PRDebugHome`:
+    /// home must read as a constellation field (mock 10), so the bundled sample
+    /// gets two stable siblings. Fixed ids → stable shell coordinates.
+    enum DebugSeed {
+        static func extraScenarios() -> [Scenario] {
+            let unit = PayoffUnit(kind: .currency, label: "USD")
+            let past = Date(timeIntervalSinceNow: -86_400 * 2)
+
+            func node(
+                _ id: String, _ label: String, p: Double,
+                payoff: Double? = nil, children: [Node]? = nil
+            ) -> Node {
+                Node(
+                    id: id, label: label, p: p, actor: .counterpart,
+                    payoff: payoff.map { .scalar($0) }, children: children)
+            }
+
+            let launch = Scenario(
+                id: "01J0PRSEEDLAVNCH0000000001",
+                title: "Launch timing",
+                createdAt: past, updatedAt: past,
+                payoffUnit: unit, status: .modeling,
+                tree: node(
+                    "01J0PRSEEDLAVNCH00000000R0", "ship now or wait", p: 1,
+                    children: [
+                        node(
+                            "01J0PRSEEDLAVNCH00000000A0", "ship this month", p: 0.55,
+                            children: [
+                                node("01J0PRSEEDLAVNCH00000000A1", "press covers it", p: 0.4, payoff: 9000),
+                                node("01J0PRSEEDLAVNCH00000000A2", "quiet launch", p: 0.6, payoff: 2500),
+                            ]),
+                        node(
+                            "01J0PRSEEDLAVNCH00000000B0", "wait for the fair", p: 0.45,
+                            children: [
+                                node("01J0PRSEEDLAVNCH00000000B1", "rival ships first", p: 0.35, payoff: -4000),
+                                node("01J0PRSEEDLAVNCH00000000B2", "bigger splash", p: 0.65, payoff: 12000),
+                            ]),
+                    ]))
+
+            let vendor = Scenario(
+                id: "01J0PRSEEDVEND0R0000000002",
+                title: "Vendor renewal",
+                createdAt: past, updatedAt: Date(timeIntervalSinceNow: -86_400 * 5),
+                payoffUnit: unit, status: .resolved,
+                tree: node(
+                    "01J0PRSEEDVEND0R00000000R0", "renew or switch", p: 1,
+                    children: [
+                        node(
+                            "01J0PRSEEDVEND0R00000000A0", "renew at list", p: 0.3,
+                            payoff: -6000),
+                        node(
+                            "01J0PRSEEDVEND0R00000000B0", "negotiate", p: 0.7,
+                            children: [
+                                node("01J0PRSEEDVEND0R00000000B1", "they discount", p: 0.6, payoff: 8000),
+                                node("01J0PRSEEDVEND0R00000000B2", "they hold", p: 0.4, payoff: -1500),
+                            ]),
+                    ]),
+                realizedPath: [
+                    "01J0PRSEEDVEND0R00000000R0",
+                    "01J0PRSEEDVEND0R00000000B0",
+                    "01J0PRSEEDVEND0R00000000B1",
+                ],
+                resolvedPayoff: 8000)
+
+            return [launch, vendor]
+        }
+    }
+#endif
 
 extension ISO8601DateFormatter {
     static func flexible(_ string: String) -> Date? {

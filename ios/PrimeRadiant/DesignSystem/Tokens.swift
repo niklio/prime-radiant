@@ -79,6 +79,59 @@ enum Tokens {
         static let chatSurfaceTreeOpacity = 0.15
         static let distributionMaxBins = 6
     }
+
+    // MARK: - World (shared/tokens.json → world; notes §1)
+
+    /// Single-void world model: one scene, one camera, all content at persistent
+    /// coordinates on a spherical shell. Scene-unit scale: 1 SceneKit scene unit
+    /// == 1 layout unit (R = 280 keeps every coordinate well inside Float
+    /// precision; the camera's zFar is sized to cover the nebula spheres).
+    enum World {
+        static let shellRadius = 280.0
+        /// Camera distance from the aimed shell point, as factors of R.
+        static let homeDistanceFactor = 1.5
+        static let homeTiltRadians = 0.22
+        static let canvasDistanceFactor = 0.4
+        static let canvasTiltRadians = 0.58
+
+        /// Depth cues (notes §1, priority order).
+        static let nearFarSizeRatio = 1.4
+        static let minAssertedSizeRatio = 1.3
+        static let dimmingExponent = 1.9
+        static let dimmingFloor = 0.34
+        static let dofBlurBelowProjectedScale = 0.88
+
+        static let nebulaParallaxFactors = [0.15, 0.35, 0.6]
+        static let nebulaDriftMinutes = 4.0
+        static let resolvedClusterLuminance = 0.42
+    }
+
+    // MARK: - Motion (shared/tokens.json → motion; notes §3 — targets, not laws)
+
+    enum Motion {
+        /// Selection reflow window [min, max]; the scene uses the tokens' layout
+        /// reflowDurationSeconds (1.0) which sits inside it.
+        static let reflowSeconds = 0.9...1.1
+        static let igniteSweepSeconds = 0.35
+        static let markRingSeconds = 0.7
+        static let markCancelDrainSeconds = 0.15
+        static let realizeSweepSeconds = 0.25
+        static let ghostDownSeconds = 0.4
+        static let evTickSeconds = 0.3
+        static let diveFlightSeconds = 0.9
+        static let chatEnterSeconds = 0.35
+        static let chatSettleSeconds = 0.6
+        static let peekReturnTravelFraction = 0.4
+        static let peekSnapBackSeconds = 0.25
+        static let ridgeExpandSeconds = 0.3
+        static let ridgeDrawSeconds = 0.4
+        static let ridgeCollapseSeconds = 0.2
+        static let voicePulsePeriodSeconds = 1.6
+        static let voiceTreeBrighten = 0.15
+        static let composerCompressSeconds = 0.2
+        static let unbornPulsePeriodSeconds = 2.4
+        static let unbornPulseGlowDelta = 0.2
+    }
 }
 
 extension Color {

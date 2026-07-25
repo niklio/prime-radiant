@@ -98,55 +98,74 @@ final class CanvasInteractionTests: XCTestCase {
         XCTAssertFalse(CanvasPicking.shouldReceiveTouch(on: nil))
     }
 
-    // MARK: - Gentle-pan invariant (§8)
+    // MARK: - Gentle-pan invariant (notes §3: pan, never zoom, on selection)
 
     /// Matches the SCNCamera configured in RadiantScene.
-    private let fovDegrees = 55.0
-    /// Compact iPhone portrait (390×844) and the RadiantScene default.
-    private let aspects = [390.0 / 844.0, 0.47]
+    private let fovDegrees = RadiantScene.fovDegrees
+    /// Compact iPhone portrait (390×844) and a slightly narrower guard.
+    private let aspects = [390.0 / 844.0, 0.44]
+    private var canvasDistance: Double {
+        Tokens.World.canvasDistanceFactor * Tokens.World.shellRadius
+    }
+    private var canvasTilt: Double { Tokens.World.canvasTiltRadians }
 
-    /// After selection reflow + camera fit, every target position must project
-    /// inside the viewport for the sample tree — for *every* possible selection.
-    func testEverySelectionKeepsAllTargetsInsideViewport() throws {
+    /// For *every* possible selection, the pan chosen by CameraFit must keep
+    /// the selected node and its children inside the viewport at the FIXED
+    /// canvas distance — the camera pans, it never zooms (the distance is not
+    /// even an output of the fit).
+    func testEverySelectionPansSelectedNodeAndChildrenIntoViewport() throws {
         let scenario = try sampleScenario()
-        var selections: [String?] = [nil]
-        selections += Tree.allIds(scenario.tree).map { Optional($0) }
+        let branchOf = WorldModel.branchMap(tree: scenario.tree)
 
         for aspect in aspects {
-            for selection in selections {
-                let targets = RadiantLayout.targets(tree: scenario.tree, selectedId: selection)
-                let framing = try XCTUnwrap(
-                    CameraFit.framing(
-                        positions: Array(targets.values),
-                        fovDegrees: fovDegrees,
-                        viewportAspect: aspect))
-                for (id, position) in targets {
-                    XCTAssertTrue(
-                        CameraFit.projectsInsideViewport(
-                            position, framing: framing,
-                            fovDegrees: fovDegrees, viewportAspect: aspect),
-                        "node \(id) escaped the viewport with \(selection ?? "nothing") "
-                            + "selected (aspect \(aspect))")
-                }
+            for selection in Tree.allIds(scenario.tree) {
+                let layout = RadiantLayout.targets(tree: scenario.tree, selectedId: selection)
+                let locals = WorldModel.treeLocalPositions(
+                    layout: layout, rootId: scenario.tree.id, branchOf: branchOf)
+                let selected = try XCTUnwrap(Tree.find(scenario.tree, id: selection))
+                let keepIds = [selection] + (selected.children ?? []).map(\.id)
+                let keep = keepIds.compactMap { locals[$0] }
+                let offset = try XCTUnwrap(
+                    CameraFit.aimOffset(
+                        keep: keep, distance: canvasDistance, tilt: canvasTilt,
+                        fovDegrees: fovDegrees, viewportAspect: aspect))
+                XCTAssertTrue(
+                    CameraFit.fits(
+                        keep: keep, aimOffset: offset, distance: canvasDistance,
+                        tilt: canvasTilt, fovDegrees: fovDegrees, viewportAspect: aspect),
+                    "selection \(selection) escaped the viewport (aspect \(aspect))")
             }
         }
     }
 
-    func testFramingClampsToMinimumDistanceForTinyTrees() throws {
-        // Zero margin isolates the clamp: a single point needs no distance at
-        // all, so the minimum wins (the camera never rams the root).
-        let framing = try XCTUnwrap(
-            CameraFit.framing(
-                positions: [RadiantLayout.Vector3(x: 0, y: 0, z: 0)],
-                fovDegrees: fovDegrees,
-                viewportAspect: 0.47,
-                margin: 0))
-        XCTAssertEqual(framing.distance, 3)
-        XCTAssertEqual(framing.centerY, 0)
+    /// With nothing selected the whole constellation is framed by the same
+    /// pan-only fit (arrival framing after the dive).
+    func testIdleFramingKeepsWholeTreeInViewport() throws {
+        let scenario = try sampleScenario()
+        let layout = RadiantLayout.targets(tree: scenario.tree, selectedId: nil)
+        let locals = WorldModel.treeLocalPositions(
+            layout: layout, rootId: scenario.tree.id,
+            branchOf: WorldModel.branchMap(tree: scenario.tree))
+        let keep = Array(locals.values)
+
+        for aspect in aspects {
+            let offset = try XCTUnwrap(
+                CameraFit.aimOffset(
+                    keep: keep, distance: canvasDistance, tilt: canvasTilt,
+                    fovDegrees: fovDegrees, viewportAspect: aspect))
+            XCTAssertTrue(
+                CameraFit.fits(
+                    keep: keep, aimOffset: offset, distance: canvasDistance,
+                    tilt: canvasTilt, fovDegrees: fovDegrees, viewportAspect: aspect),
+                "idle framing escaped the viewport (aspect \(aspect))")
+        }
     }
 
-    func testFramingIsEmptySafe() {
-        XCTAssertNil(CameraFit.framing(positions: [], fovDegrees: fovDegrees, viewportAspect: 0.47))
+    func testAimOffsetIsEmptySafe() {
+        XCTAssertNil(
+            CameraFit.aimOffset(
+                keep: [], distance: canvasDistance, tilt: canvasTilt,
+                fovDegrees: fovDegrees, viewportAspect: 0.47))
     }
 
     // MARK: - Support

@@ -20,7 +20,9 @@ enum RadiantMaterials {
     }
 
     /// White radial gradient on clear, tinted per-node via material multiply.
-    /// Cached — one texture serves every glow sprite in the app.
+    /// Star-point falloff (new art direction): a hot pinpoint with a *tight*
+    /// halo that dies fast — nodes are small stars, not glow blobs.
+    /// Cached — one texture serves every halo sprite in the app.
     static let glowTexture: UIImage = radialGlow(diameter: 128)
 
     private static func radialGlow(diameter: CGFloat) -> UIImage {
@@ -28,14 +30,15 @@ enum RadiantMaterials {
         return renderer.image { context in
             let colors = [
                 UIColor(white: 1, alpha: 1).cgColor,
-                UIColor(white: 1, alpha: 0.35).cgColor,
+                UIColor(white: 1, alpha: 0.55).cgColor,
+                UIColor(white: 1, alpha: 0.10).cgColor,
                 UIColor(white: 1, alpha: 0).cgColor,
             ]
             guard
                 let gradient = CGGradient(
                     colorsSpace: CGColorSpaceCreateDeviceRGB(),
                     colors: colors as CFArray,
-                    locations: [0, 0.25, 1])
+                    locations: [0, 0.10, 0.42, 1])
             else { return }
             let center = CGPoint(x: diameter / 2, y: diameter / 2)
             context.cgContext.drawRadialGradient(
@@ -159,14 +162,15 @@ final class FilamentGeometry {
 
     /// Re-lay the tube along a quadratic Bézier `from` → `to`, thickness `radius`.
     /// Writes vertices in place; on the Metal path SceneKit picks the new data up
-    /// without any geometry allocation.
-    func update(from start: SCNVector3, to end: SCNVector3, radius: Float) {
+    /// without any geometry allocation. `bow` curves the chord sideways; the
+    /// ignited path passes 0 — a clean straight gold chord (notes §4).
+    func update(from start: SCNVector3, to end: SCNVector3, radius: Float, bow bowAmount: Float = 0.14) {
         let p0 = SIMD3<Float>(start)
         let p2 = SIMD3<Float>(end)
         // Control point bows the filament sideways in the fan plane (§3 curved tubes).
         let mid = (p0 + p2) * 0.5
         let delta = p2 - p0
-        let bow = SIMD3<Float>(-delta.y, delta.x, 0) * 0.16
+        let bow = SIMD3<Float>(-delta.y, delta.x, 0) * bowAmount
         let p1 = mid + bow
 
         let referenceUp = SIMD3<Float>(0, 0, 1)
