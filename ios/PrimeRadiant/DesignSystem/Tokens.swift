@@ -55,12 +55,22 @@ enum Tokens {
         static let monoLightName = "IBMPlexMono-Light"
         static let monoMediumName = "IBMPlexMono-Medium"
 
+        /// Until the OFL binaries are vended, fall back to the same built-in
+        /// faces the mocks render with (Georgia serif / Menlo mono) instead of
+        /// the SF system font — the chrome's mono/serif hierarchy is part of
+        /// the mock contract (`.custom` alone would silently fall back to SF).
+        private static func available(_ name: String) -> Bool {
+            UIFont(name: name, size: 12) != nil
+        }
+
         static func display(_ size: CGFloat, semibold: Bool = false) -> Font {
-            .custom(semibold ? displaySemiboldName : displayLightName, size: size)
+            let name = semibold ? displaySemiboldName : displayLightName
+            return .custom(available(name) ? name : "Georgia", size: size)
         }
 
         static func mono(_ size: CGFloat, medium: Bool = false) -> Font {
-            .custom(medium ? monoMediumName : monoLightName, size: size)
+            let name = medium ? monoMediumName : monoLightName
+            return .custom(available(name) ? name : "Menlo", size: size)
         }
 
         /// Generous letterspacing for mono labels (handoff §3: labels track wide).
@@ -77,6 +87,7 @@ enum Tokens {
         static let markHoldDurationSeconds = 0.7
         static let idleRotationDelaySeconds = 5.0
         static let chatSurfaceTreeOpacity = 0.15
+        static let chatSurfacePatchTreeOpacity = 0.35
         static let distributionMaxBins = 6
     }
 

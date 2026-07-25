@@ -142,8 +142,7 @@ struct CanvasView: UIViewRepresentable {
         private var holdStart: CFTimeInterval = 0
         private var holdProgress: Double = 0
         private var holdLink: CADisplayLink?
-        private var ringTrack: CAShapeLayer?
-        private var ringFill: CAShapeLayer?
+        private var ring: HoldRingLayer?
         private let holdHaptics = HapticRamp()
 
         init(radiant: RadiantScene, callbacks: CanvasCallbacks) {
@@ -283,8 +282,7 @@ struct CanvasView: UIViewRepresentable {
             let elapsed = CACurrentMediaTime() - holdStart
             holdProgress = min(1, elapsed / Tokens.Layout.markHoldDurationSeconds)
             // Unmark drains the ring instead of filling it (§2.3).
-            let visual = holdIntent == .unmark ? 1 - holdProgress : holdProgress
-            ringFill?.strokeEnd = visual
+            ring?.progress = holdIntent == .unmark ? 1 - holdProgress : holdProgress
             holdHaptics.update(progress: holdProgress)
             if holdProgress >= 1 {
                 completeHold()
@@ -306,21 +304,8 @@ struct CanvasView: UIViewRepresentable {
         private func cancelHold() {
             // Early release: the ring drains fast (~150ms), no haptic thud
             // (notes §3).
-            if let track = ringTrack, let fill = ringFill {
-                let drain = CABasicAnimation(keyPath: "strokeEnd")
-                drain.fromValue = fill.strokeEnd
-                drain.toValue = 0
-                drain.duration = Tokens.Motion.markCancelDrainSeconds
-                fill.strokeEnd = 0
-                fill.add(drain, forKey: "drain")
-                ringTrack = nil
-                ringFill = nil
-                DispatchQueue.main.asyncAfter(
-                    deadline: .now() + Tokens.Motion.markCancelDrainSeconds
-                ) {
-                    track.removeFromSuperlayer()
-                }
-            }
+            ring?.drain()
+            ring = nil
             teardownHold()
             Task { @MainActor in self.holdProgress = 0 }
         }
@@ -330,46 +315,22 @@ struct CanvasView: UIViewRepresentable {
             holdLink = nil
             holdNodeId = nil
             holdHaptics.end()
-            ringTrack?.removeFromSuperlayer()
-            ringTrack = nil
+            ring?.removeFromSuperlayer()
+            ring = nil
         }
 
         private func addRing(at center: CGPoint, on view: SCNView) {
-            let radius: CGFloat = 32
-            let path = UIBezierPath(
-                arcCenter: .zero, radius: radius,
-                startAngle: -.pi / 2, endAngle: 1.5 * .pi, clockwise: true)
-
-            let track = CAShapeLayer()
-            track.path = path.cgPath
-            track.position = center
-            track.strokeColor = UIColor(hex: 0xFFD98A).withAlphaComponent(0.2).cgColor
-            track.fillColor = nil
-            track.lineWidth = 2
-
-            let fill = CAShapeLayer()
-            fill.path = path.cgPath
-            fill.strokeColor = UIColor(hex: 0xFFD98A).cgColor
-            fill.fillColor = nil
-            fill.lineWidth = 3
-            fill.lineCap = .round
-            fill.strokeEnd = holdIntent == .unmark ? 1 : 0
-            // Drive strokeEnd directly from the display link, no implicit animation.
-            fill.actions = ["strokeEnd": NSNull()]
-            track.addSublayer(fill)
-
-            view.layer.addSublayer(track)
-            ringTrack = track
-            ringFill = fill
+            // The one shared hold-ring (ux-update §3) — identical everywhere.
+            let ring = HoldRingLayer()
+            ring.position = center
+            ring.progress = holdIntent == .unmark ? 1 : 0
+            view.layer.addSublayer(ring)
+            self.ring = ring
         }
 
         private func flashRing() {
-            guard let track = ringTrack else { return }
-            let flash = CABasicAnimation(keyPath: "opacity")
-            flash.fromValue = 1
-            flash.toValue = 0
-            flash.duration = 0.35
-            track.add(flash, forKey: "flash")
+            ring?.flash()
+            ring = nil
         }
 
         // MARK: - UI-test hooks overlay (-PRUITestHooks, DEBUG only)

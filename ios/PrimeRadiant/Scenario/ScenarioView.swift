@@ -3,43 +3,41 @@ import SwiftUI
 
 /// The scenario canvas overlays (§2.3): the tree owns the full screen. The
 /// SCNView itself is hosted persistently by RootView (one scene, one camera —
-/// notes §1); this view carries only the UI chrome. No headers, no chrome
-/// bars — exactly three overlays: input pill, node footer, breadcrumb (legend
-/// stands in for the footer when nothing is selected). No coach marks, no
-/// hint text, no gesture instructions, anywhere.
+/// notes §1); this view carries only the bottom chrome: the path ribbon and the
+/// composer capsule (one stacked container — overlap structurally impossible).
+/// While the radiant listens, the capsule gives way to the voice surface
+/// (mock 9). No coach marks, no hint text, no gesture instructions, anywhere.
 struct ScenarioView: View {
     @Bindable var store: ScenarioStore
     @State private var speech = SpeechInput()
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            VStack(alignment: .leading, spacing: 14) {
-                // Footer and breadcrumb are ONE stacked container: overlap is
-                // structurally impossible (§2.3, asserted by snapshot test §8).
-                if let node = store.selectedNode {
-                    NodeFooterView(
-                        node: node,
-                        nodeAnalytics: store.selectedAnalytics,
-                        unit: store.scenario.payoffUnit,
-                        isDistributionExpanded: $store.isDistributionExpanded,
-                        onOpenChat: { store.openChat(focusedNodeId: node.id) })
-                    Divider().overlay(Tokens.Role.displayText.opacity(0.12))
-                    BreadcrumbView(labels: store.breadcrumb)
-                } else {
-                    LegendView()
+            if speech.isListening {
+                VoiceListeningView(speech: speech)
+            } else {
+                VStack(alignment: .leading, spacing: 12) {
+                    // Ribbon on its own line above the capsule (mock 5): the
+                    // real selected path, root ancestors › current.
+                    if !store.ribbon.isEmpty {
+                        RibbonView(crumbs: store.ribbon) { store.select($0) }
+                    }
+                    ComposerCapsuleView(
+                        context: store.capsuleContext,
+                        isExpanded: $store.isDistributionExpanded,
+                        speech: speech,
+                        placeholder: store.selectedNode == nil
+                            ? "describe the decision…" : "ask about this branch…",
+                        onOpenChat: { store.openChat(focusedNodeId: store.selectedNodeId) },
+                        onSend: { store.send(text: $0) },
+                        statusLine: store.composerStatusLine)
+                        .padding(.horizontal, 20)
                 }
-
-                // Voice sends straight from the canvas — the reply lands as a
-                // reorganized tree; typing routes to the full-screen chat surface.
-                InputPillView(
-                    speech: speech,
-                    onOpenChat: { store.openChat(focusedNodeId: nil) },
-                    onSend: { store.send(text: $0) },
-                    statusLine: store.composerStatusLine)
+                .padding(.bottom, 20)
             }
-            .padding(.horizontal, 20)
-            .padding(.bottom, 8)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+        .ignoresSafeArea(.container, edges: .bottom)
         .toolbar(.hidden, for: .navigationBar)
         .statusBarHidden()
         .onChange(of: speech.isListening) { _, listening in
@@ -55,8 +53,58 @@ struct ScenarioView: View {
                 .presentationBackground(Tokens.Role.background)
         }
         .errorToast($store.lastError)
+        #if DEBUG
+            .overlay { debugOverlays }
+            .onAppear {
+                if ProcessInfo.processInfo.arguments.contains("-PRDebugVoice") {
+                    speech.debugFakeListening(
+                        transcript: "she came back at forty, and honestly the timeline")
+                    store.radiant.setListening(true)
+                }
+            }
+        #endif
     }
+
+    #if DEBUG
+        /// `-PRDebugMark` freezes the shared hold-ring mid-fill over the marked
+        /// node so the ring itself can be screenshot-compared against mock 7.
+        @ViewBuilder
+        private var debugOverlays: some View {
+            if ProcessInfo.processInfo.arguments.contains("-PRDebugMark"),
+                let nodeId = store.scenario.realizedPath.last {
+                DebugFrozenRing(radiant: store.radiant, nodeId: nodeId)
+                    .allowsHitTesting(false)
+            }
+        }
+    #endif
 }
+
+#if DEBUG
+    private struct DebugFrozenRing: View {
+        let radiant: RadiantScene
+        let nodeId: String
+        @State private var point: CGPoint?
+
+        var body: some View {
+            ZStack {
+                if let point {
+                    HoldRingView(progress: 0.72)
+                        .frame(width: 64, height: 64)
+                        .position(point)
+                }
+            }
+            .ignoresSafeArea()
+            .task {
+                while !Task.isCancelled {
+                    if let view = radiant.hostView {
+                        point = radiant.projectedPoint(of: nodeId, in: view)
+                    }
+                    try? await Task.sleep(for: .milliseconds(66))
+                }
+            }
+        }
+    }
+#endif
 
 extension String: @retroactive Identifiable {
     public var id: String { self }

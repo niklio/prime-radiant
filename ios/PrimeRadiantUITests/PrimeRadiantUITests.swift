@@ -34,80 +34,78 @@ final class PrimeRadiantUITests: XCTestCase {
 
     // MARK: - Happy paths
 
-    /// Canvas renders after launch: legend + input pill visible, nothing selected.
+    /// Canvas renders after launch: the composer capsule is docked (idle —
+    /// no ribbon, no title row), nothing selected. No legend exists (mock 4).
     func testCanvasRendersAfterLaunch() throws {
-        XCTAssertTrue(element("canvas.legend").waitForExistence(timeout: 5))
-        XCTAssertTrue(element("input.pill").waitForExistence(timeout: 5))
+        XCTAssertTrue(element("canvas.capsule").waitForExistence(timeout: 5))
+        XCTAssertTrue(element("capsule.composer").waitForExistence(timeout: 5))
         XCTAssertTrue(waitForState { $0.contains("selected=none") })
+        XCTAssertFalse(element("canvas.ribbon").exists)
+        XCTAssertFalse(element("capsule.title").exists)
         // Every sample-tree node got a hook element (13 nodes in job-offer.json).
         XCTAssertTrue(element("node.\(counterId)").exists)
     }
 
-    /// Tap a node → minimal footer: title, one-sentence move, EV line, collapsed
-    /// ▸ DISTRIBUTION, OPEN IN CHAT →; legend replaced (§2.3).
-    func testTapNodeShowsMinimalFooter() throws {
+    /// Tap a node → the capsule gains its context row (mock 5): serif title,
+    /// amber EV line, collapsed ▸ toggle — and the path ribbon appears above.
+    func testTapNodeShowsCapsuleContextAndRibbon() throws {
         selectNode(counterId)
 
-        let title = element("footer.title")
+        let title = element("capsule.title")
         XCTAssertTrue(title.waitForExistence(timeout: 5))
         XCTAssertTrue(
-            title.label.contains("counter at 185k"),
-            "footer title was '\(title.label)'")
+            title.label.contains("ounter at 185k"),
+            "capsule title was '\(title.label)'")
 
-        let move = element("footer.move")
-        XCTAssertTrue(move.exists)
-        XCTAssertEqual(move.label, "Counter with 185k base plus the same equity.")
-
-        let ev = element("footer.ev")
+        let ev = element("capsule.ev")
         XCTAssertTrue(ev.exists)
         XCTAssertTrue(ev.label.hasPrefix("EV ≈"), "EV line was '\(ev.label)'")
 
-        let toggle = element("footer.distribution.toggle")
+        let toggle = element("capsule.distribution.toggle")
         XCTAssertTrue(toggle.exists)
-        XCTAssertTrue(toggle.label.contains("▸ DISTRIBUTION"), "toggle was '\(toggle.label)'")
+        XCTAssertTrue(toggle.label.contains("▸"), "toggle was '\(toggle.label)'")
 
-        XCTAssertTrue(element("footer.openInChat").exists)
-        // The legend is replaced by the footer, not stacked with it.
-        XCTAssertFalse(element("canvas.legend").exists)
+        // Ribbon renders the real selected path, current node last (mock 5).
+        XCTAssertTrue(element("canvas.ribbon").waitForExistence(timeout: 5))
+        XCTAssertTrue(element("ribbon.item.0").label.contains("OFFER IN HAND"))
+        XCTAssertTrue(element("ribbon.item.1").label.contains("COUNTER AT 185K"))
     }
 
-    /// Expand distribution → bars + single caption visible and OPEN IN CHAT is
-    /// displaced; collapse (tap the histogram) restores it (§2.3).
-    func testDistributionExpandDisplacesOpenInChatAndCollapseRestoresIt() throws {
+    /// Tap EV/▸ → the luminous ridge expands inside the capsule with the single
+    /// `…% of futures` caption; tap ▾ → it collapses again (mock 6, notes §2).
+    func testDistributionRidgeExpandsAndCollapses() throws {
         selectNode(counterId)
 
-        let toggle = element("footer.distribution.toggle")
+        let toggle = element("capsule.distribution.toggle")
         XCTAssertTrue(toggle.waitForExistence(timeout: 5))
         toggle.tap()
 
-        let caption = element("footer.distribution.caption")
+        let caption = element("capsule.ridge.caption")
         XCTAssertTrue(caption.waitForExistence(timeout: 5))
         XCTAssertTrue(
-            caption.label.contains("of futures · tap to collapse"),
+            caption.label.hasSuffix("of futures"),
             "caption was '\(caption.label)'")
-        XCTAssertTrue(element("footer.distribution.histogram").exists)
-        XCTAssertTrue(toggle.label.contains("▾ DISTRIBUTION"), "toggle was '\(toggle.label)'")
-        // While expanded, OPEN IN CHAT is temporarily displaced.
-        XCTAssertFalse(element("footer.openInChat").exists)
+        XCTAssertTrue(element("capsule.ridge").exists)
+        XCTAssertTrue(toggle.label.contains("▾"), "toggle was '\(toggle.label)'")
 
-        // The expanded footer collapses from the histogram itself ("tap to collapse").
-        caption.tap()
-        XCTAssertTrue(element("footer.openInChat").waitForExistence(timeout: 5))
-        XCTAssertFalse(element("footer.distribution.caption").exists)
-        XCTAssertTrue(toggle.label.contains("▸ DISTRIBUTION"))
+        toggle.tap()
+        XCTAssertTrue(waitFor { !element("capsule.ridge").exists })
+        XCTAssertTrue(toggle.label.contains("▸"), "toggle was '\(toggle.label)'")
     }
 
-    /// Tapping the void deselects: footer gives way to the legend again (§2.3).
+    /// Tapping the void deselects: ribbon and title row give way; the capsule
+    /// returns to the idle composer (§2.3).
     func testVoidTapDeselects() throws {
         selectNode(counterId)
-        XCTAssertFalse(element("canvas.legend").exists)
+        XCTAssertTrue(element("canvas.ribbon").waitForExistence(timeout: 5))
 
         tapVoid()
         XCTAssertTrue(
             waitForState { $0.contains("selected=none") },
             "void tap did not deselect; state=\(canvasState())")
-        XCTAssertTrue(element("canvas.legend").waitForExistence(timeout: 5))
-        XCTAssertFalse(element("footer.title").exists)
+        XCTAssertTrue(waitFor { !element("canvas.ribbon").exists })
+        XCTAssertFalse(element("capsule.title").exists)
+        XCTAssertTrue(element("canvas.capsule").exists)
     }
 
     /// Press-and-hold ≥700ms marks the node reached (realized path root→node);
@@ -163,6 +161,19 @@ final class PrimeRadiantUITests: XCTestCase {
 
     /// Poll the canvas.state hook until `predicate` holds (generous, retry-based
     /// by design — §8 allows pragmatic waits, not pragmatic assertions).
+    /// Poll an arbitrary condition (element disappearance etc.).
+    @discardableResult
+    private func waitFor(
+        timeout: TimeInterval = 6, _ condition: () -> Bool
+    ) -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if condition() { return true }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.25))
+        }
+        return condition()
+    }
+
     @discardableResult
     private func waitForState(
         timeout: TimeInterval = 6, _ predicate: (String) -> Bool

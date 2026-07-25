@@ -1,10 +1,13 @@
 import PrimeRadiantCore
 import SwiftUI
 
-/// The full-screen chat surface (§2.3): its own screen, never a half sheet.
-/// The tree persists behind at ~15% opacity as ambience; `‹ CANVAS` returns;
-/// messages stream full-width; a patch turn shows "◈ the futures reorganize…"
-/// with a live mini-tree chip; the input pill (with mic) docks at the bottom.
+/// The full-screen chat surface (§2.3, mock 8): its own screen, never a half
+/// sheet. `‹ CANVAS` returns; the scenario title sits centered in serif. User
+/// messages ride right-aligned in dark rounded bubbles wrapped in curly quotes;
+/// assistant prose is plain left-aligned parchment mono, no bubble. A patch turn
+/// shows the `◈ the futures reorganize…` status line while the ghost tree
+/// behind brightens 15% → 35%. The composer capsule docks at the bottom
+/// (placeholder `…` mid-thread).
 struct ChatSurfaceView: View {
     @Bindable var store: ScenarioStore
     @State private var speech = SpeechInput()
@@ -13,24 +16,33 @@ struct ChatSurfaceView: View {
         ZStack(alignment: .bottom) {
             Tokens.Role.background.ignoresSafeArea()
 
-            // Ghosted tree ambience (tokens layout.chatSurfaceTreeOpacity).
+            // Ghosted tree ambience; brightens while a patch reorganizes
+            // (tokens layout.chatSurfaceTreeOpacity / chatSurfacePatchTreeOpacity).
             CanvasView(radiant: store.radiant, interactive: false)
-                .opacity(Tokens.Layout.chatSurfaceTreeOpacity)
+                .opacity(
+                    store.reorganizing
+                        ? Tokens.Layout.chatSurfacePatchTreeOpacity
+                        : Tokens.Layout.chatSurfaceTreeOpacity)
+                .animation(.easeInOut(duration: 0.4), value: store.reorganizing)
                 .allowsHitTesting(false)
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 topBar
                 messageList
-                InputPillView(
+                ComposerCapsuleView(
+                    context: nil,
+                    isExpanded: nil,
                     speech: speech,
+                    placeholder: "…",
                     onOpenChat: {},
                     onSend: { store.send(text: $0) },
                     typesInline: true,
                     statusLine: store.composerStatusLine)
                     .padding(.horizontal, 20)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 20)
             }
+            .ignoresSafeArea(.container, edges: .bottom)
         }
         .statusBarHidden()
         .gesture(
@@ -42,96 +54,107 @@ struct ChatSurfaceView: View {
     private var topBar: some View {
         ZStack {
             Text(store.scenario.title)
-                .font(Tokens.Fonts.display(19))
+                .font(Tokens.Fonts.display(15))
                 .foregroundStyle(Tokens.Role.displayText)
                 .lineLimit(1)
+                .padding(.horizontal, 90)
             HStack {
                 Button(action: { store.closeChat() }) {
                     Text("‹ CANVAS")
-                        .font(Tokens.Fonts.mono(12, medium: true))
-                        .tracking(Tokens.Fonts.labelTracking)
+                        .font(Tokens.Fonts.mono(10))
+                        .tracking(1.8)
                         .foregroundStyle(Tokens.Role.secondaryInfo)
                 }
                 Spacer()
             }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 24)
         .padding(.vertical, 14)
     }
 
     private var messageList: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 18) {
-                    // Node-anchored context, shown once when opened from a node (§2.3 #4).
-                    if let focusedId = store.focusedNodeId,
-                        let node = Tree.find(store.scenario.tree, id: focusedId) {
-                        Text("· about \(node.label) ·")
-                            .font(Tokens.Fonts.mono(11))
-                            .foregroundStyle(Tokens.Role.secondaryInfo.opacity(0.7))
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    }
-
-                    ForEach(Array(store.scenario.transcript.enumerated()), id: \.offset) { _, message in
-                        MessageRow(message: message) {
-                            store.closeChat()  // chip tap returns to the settling tree
-                        }
-                    }
-
-                    if store.isStreaming {
-                        StreamingRow(text: store.streamingSay)
-                            .id("streaming")
-                    }
-
-                    if store.reorganizing {
-                        ReorganizeRow { store.closeChat() }
-                    }
+        GeometryReader { geometry in
+            ScrollViewReader { proxy in
+                ScrollView {
+                    messageStack(minHeight: geometry.size.height)
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
-            }
-            .defaultScrollAnchor(.bottom)
-            .onChange(of: store.streamingSay) {
-                proxy.scrollTo("streaming", anchor: .bottom)
+                .defaultScrollAnchor(.bottom)
+                .onChange(of: store.streamingSay) {
+                    proxy.scrollTo("streaming", anchor: .bottom)
+                }
             }
         }
+    }
+
+    /// Top-aligned while the thread is short (mock 8); bottom-anchored once it
+    /// overflows (streaming stays pinned).
+    private func messageStack(minHeight: CGFloat) -> some View {
+        LazyVStack(alignment: .leading, spacing: 22) {
+            // Node-anchored context, shown once when opened from a node (§2.3 #4).
+            if let focusedId = store.focusedNodeId,
+                let node = Tree.find(store.scenario.tree, id: focusedId) {
+                Text("· about \(node.label) ·")
+                    .font(Tokens.Fonts.mono(11))
+                    .foregroundStyle(Tokens.Role.secondaryInfo.opacity(0.7))
+                    .frame(maxWidth: .infinity, alignment: .center)
+            }
+
+            ForEach(Array(store.scenario.transcript.enumerated()), id: \.offset) { _, message in
+                MessageRow(message: message)
+            }
+
+            if store.isStreaming {
+                StreamingRow(text: store.streamingSay)
+                    .id("streaming")
+            }
+        }
+        .padding(.horizontal, 24)
+        .padding(.vertical, 16)
+        .frame(minHeight: minHeight, alignment: .top)
     }
 }
 
 private struct MessageRow: View {
     let message: Message
-    var onChipTap: () -> Void
 
     var body: some View {
-        VStack(alignment: message.role == .user ? .trailing : .leading, spacing: 10) {
+        VStack(alignment: message.role == .user ? .trailing : .leading, spacing: 14) {
             if message.role == .user {
-                Text("“\(message.content)”")
-                    .font(Tokens.Fonts.mono(14))
+                // Curly typographic quotes around user speech (mock 8).
+                Text("\u{201C}\(message.content)\u{201D}")
+                    .font(Tokens.Fonts.mono(12))
                     .foregroundStyle(Tokens.Role.displayText.opacity(0.95))
+                    .multilineTextAlignment(.trailing)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                     .background(
-                        RoundedRectangle(cornerRadius: 18)
+                        RoundedRectangle(cornerRadius: 16)
                             .fill(Tokens.Role.displayText.opacity(0.07)))
                     .frame(maxWidth: .infinity, alignment: .trailing)
             } else {
                 Text(message.content)
-                    .font(Tokens.Fonts.mono(15))
-                    .foregroundStyle(Tokens.Role.displayText)
+                    .font(Tokens.Fonts.mono(13))
+                    .foregroundStyle(Tokens.Role.displayText.opacity(0.9))
+                    .lineSpacing(5)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 if message.patchApplied != nil {
-                    HStack(alignment: .top, spacing: 14) {
-                        Text("◈ the futures reorganize…")
-                            .font(Tokens.Fonts.mono(12))
-                            .tracking(1)
-                            .foregroundStyle(Tokens.Role.secondaryInfo)
-                        Spacer()
-                        MiniTreeChip(onTap: onChipTap)
-                    }
+                    PatchStatusLine()
                 }
             }
         }
+    }
+}
+
+/// `◈ the futures reorganize…` — the patch status line (mock 8): small diamond,
+/// mono, letterspaced, whisper cyan.
+private struct PatchStatusLine: View {
+    var body: some View {
+        Text("◈ the futures reorganize…")
+            .font(Tokens.Fonts.mono(11))
+            .tracking(1.4)
+            .foregroundStyle(Tokens.Role.secondaryInfo.opacity(0.7))
+            .accessibilityIdentifier("chat.patchline")
     }
 }
 
@@ -139,68 +162,11 @@ private struct StreamingRow: View {
     let text: String
 
     var body: some View {
-        // Streaming reply with a cursor (§2.3).
-        Text(text + "▊")
-            .font(Tokens.Fonts.mono(15))
-            .foregroundStyle(Tokens.Role.displayText)
+        // Streaming reply with a cursor (§2.3, mock 8).
+        Text(text + "▌")
+            .font(Tokens.Fonts.mono(13))
+            .foregroundStyle(Tokens.Role.displayText.opacity(0.9))
+            .lineSpacing(5)
             .frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
-
-private struct ReorganizeRow: View {
-    var onTap: () -> Void
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 14) {
-            Text("◈ the futures reorganize…")
-                .font(Tokens.Fonts.mono(12))
-                .tracking(1)
-                .foregroundStyle(Tokens.Role.secondaryInfo)
-            Spacer()
-            MiniTreeChip(onTap: onTap)
-        }
-    }
-}
-
-/// Mini-tree chip: STUB — a static glyph standing in for the live patch-diff
-/// animation (M2 polish: render the changed subtree animating in miniature).
-/// Tapping it returns to the canvas with the new tree settling.
-private struct MiniTreeChip: View {
-    var onTap: () -> Void
-
-    var body: some View {
-        Button(action: onTap) {
-            VStack(spacing: 6) {
-                MiniTreeGlyph()
-                    .stroke(Tokens.Role.selectedPath, lineWidth: 1.5)
-                    .frame(width: 72, height: 44)
-                Text("VIEW CHANGE")
-                    .font(Tokens.Fonts.mono(9, medium: true))
-                    .tracking(Tokens.Fonts.labelTracking)
-                    .foregroundStyle(Tokens.Role.secondaryInfo)
-            }
-            .padding(12)
-            .background(
-                RoundedRectangle(cornerRadius: 14)
-                    .fill(Tokens.Palette.void.opacity(0.7))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 14)
-                            .strokeBorder(Tokens.Role.edgeNeutral.opacity(0.4), lineWidth: 1)))
-        }
-    }
-}
-
-private struct MiniTreeGlyph: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        let root = CGPoint(x: rect.midX, y: rect.maxY)
-        for (fx, fy) in [(0.2, 0.25), (0.45, 0.05), (0.75, 0.2), (0.95, 0.45)] {
-            let tip = CGPoint(x: rect.minX + rect.width * fx, y: rect.minY + rect.height * fy)
-            path.move(to: root)
-            path.addQuadCurve(
-                to: tip,
-                control: CGPoint(x: (root.x + tip.x) / 2, y: root.y - rect.height * 0.5))
-        }
-        return path
     }
 }

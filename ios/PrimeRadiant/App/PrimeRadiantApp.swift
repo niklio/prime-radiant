@@ -78,20 +78,35 @@ struct RootView: View {
     /// Dev-only canvas entry (M1): `-PRDebugSample` seeds the bundled sample
     /// scenario plus two synthetic siblings (so home is a real constellation)
     /// and opens the sample directly, bypassing pairing the way it bypassed
-    /// auth. `-PRDebugHome` seeds the same set but stays home. Chat and sync
-    /// stay dark. Never compiled into release builds.
+    /// auth. `-PRDebugHome` seeds the same set but stays home; `-PRDebugEmpty`
+    /// stays home with zero scenarios. The capture states (`-PRDebugSelect`,
+    /// `-PRDebugDistribution`, `-PRDebugMark`, `-PRDebugChat`, `-PRDebugVoice`)
+    /// render each mock row deterministically for the screenshot-compare loop.
+    /// Chat and sync stay dark. Never compiled into release builds.
     static var debugSampleMode: Bool {
         #if DEBUG
-            ProcessInfo.processInfo.arguments.contains("-PRDebugSample")
-                || ProcessInfo.processInfo.arguments.contains("-PRDebugHome")
+            let flags = [
+                "-PRDebugSample", "-PRDebugHome", "-PRDebugEmpty", "-PRDebugSelect",
+                "-PRDebugDistribution", "-PRDebugMark", "-PRDebugChat", "-PRDebugVoice",
+            ]
+            return flags.contains { ProcessInfo.processInfo.arguments.contains($0) }
         #else
-            false
+            return false
         #endif
     }
 
     private func seedDebugSampleIfNeeded() {
         #if DEBUG
+            let args = ProcessInfo.processInfo.arguments
             guard Self.debugSampleMode, openStore == nil else { return }
+            // `-PRDebugEmpty`: home with zero scenarios — purge anything a
+            // previous debug run seeded, seed nothing.
+            guard !args.contains("-PRDebugEmpty") else {
+                for record in stored { modelContext.delete(record) }
+                try? modelContext.save()
+                world.setScenarios([])
+                return
+            }
             guard let url = Bundle.main.url(forResource: "job-offer", withExtension: "json"),
                 let data = try? Data(contentsOf: url)
             else { return }
@@ -101,20 +116,28 @@ struct RootView: View {
             persist(sample)
             for extra in DebugSeed.extraScenarios() { persist(extra) }
             world.setScenarios(activeScenarios)
-            if ProcessInfo.processInfo.arguments.contains("-PRDebugHome") { return }
+            if args.contains("-PRDebugHome") { return }
             let store = makeStore(for: sample)
             openStore = store
             world.flyToCanvas(scenarioId: sample.id)
-            // `-PRDebugMark` / `-PRDebugSelect`: render the mark-reached and
-            // node-selected states deterministically (screenshot-compare loop
-            // against mocks 7 and 5).
-            if let counter = (sample.tree.children ?? []).max(by: { $0.p < $1.p }) {
-                if ProcessInfo.processInfo.arguments.contains("-PRDebugMark") {
-                    store.completeHold(id: counter.id, intent: .mark)
-                }
-                if ProcessInfo.processInfo.arguments.contains("-PRDebugSelect") {
-                    store.select(counter.id)
-                }
+
+            // Deterministic capture states over the sample tree.
+            let counter = (sample.tree.children ?? []).max(by: { $0.p < $1.p })
+            if args.contains("-PRDebugMark"), let counter {
+                store.completeHold(id: counter.id, intent: .mark)
+            }
+            if args.contains("-PRDebugSelect") || args.contains("-PRDebugDistribution") {
+                // Two levels deep along max-p so the ribbon shows a real
+                // ancestor run (mock 5) and the ridge has a distribution.
+                let deep = (counter?.children ?? []).max(by: { $0.p < $1.p })
+                store.select((deep ?? counter)?.id)
+            }
+            if args.contains("-PRDebugDistribution") {
+                store.isDistributionExpanded = true
+            }
+            if args.contains("-PRDebugChat") {
+                store.debugSeedChatTranscript(at: Date())
+                store.openChat(focusedNodeId: nil)
             }
         #endif
     }
@@ -131,7 +154,6 @@ struct RootView: View {
                 if overlaysVisible {
                     ScenarioView(store: store)
                         .transition(.opacity)
-                        .overlay(alignment: .topLeading) { homeButton }
                 }
             } else {
                 ConstellationView(
@@ -194,18 +216,8 @@ struct RootView: View {
         return canvas
     }
 
-    /// Single quiet exit from the canvas back to the constellation. Sparse by
-    /// design; the canvas itself carries no chrome bars (§2.3).
-    private var homeButton: some View {
-        Button(action: goHome) {
-            Text("‹")
-                .font(Tokens.Fonts.mono(20))
-                .foregroundStyle(Tokens.Role.secondaryInfo.opacity(0.7))
-                .padding(14)
-                .contentShape(Rectangle())
-        }
-        .accessibilityLabel("constellation")
-    }
+    // The canvas carries no chrome bars and no home button (mocks 4–7, 9):
+    // pinching out far enough is the flight home (gesture lexicon, notes §2).
 
     /// Quiet corner entry to the paired-box surface (paired box + unpair).
     @ViewBuilder

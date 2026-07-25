@@ -58,13 +58,11 @@ struct ConstellationView: View {
 
     // MARK: - Overlays
 
+    // No header text on home (mock 10): the constellations carry the screen;
+    // `+` stays until the creation pass replaces it with hold-to-birth.
     private var topBar: some View {
         VStack {
             HStack {
-                Text("YOUR FUTURES")
-                    .font(Tokens.Fonts.mono(12, medium: true))
-                    .tracking(Tokens.Fonts.labelTracking)
-                    .foregroundStyle(Tokens.Role.edgeNeutral)
                 Spacer()
                 Button(action: onCreate) {
                     Image(systemName: "plus")

@@ -28,6 +28,16 @@ final class SpeechInput {
 
     var isListening: Bool { state == .listening }
 
+    #if DEBUG
+        /// `-PRDebugVoice` capture state: present the listening surface with a
+        /// fixed in-progress transcript, no mic or speech engine. Stopping goes
+        /// through the normal `stop()` path (audio engine is idle; harmless).
+        func debugFakeListening(transcript: String) {
+            self.transcript = transcript
+            state = .listening
+        }
+    #endif
+
     func toggle() {
         isListening ? stop() : start()
     }

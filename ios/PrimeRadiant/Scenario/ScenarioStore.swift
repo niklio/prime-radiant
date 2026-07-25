@@ -72,12 +72,39 @@ final class ScenarioStore {
         selectedNodeId.flatMap { analytics[$0] }
     }
 
-    /// Breadcrumb labels root→selected (§2.3: footer + breadcrumb are one stack).
-    var breadcrumb: [String] {
+    /// Ribbon crumbs root→selected (§2.3: ribbon + capsule are one stack).
+    var ribbon: [RibbonCrumb] {
         guard let id = selectedNodeId, let path = Tree.path(scenario.tree, to: id) else {
             return []
         }
-        return path.compactMap { Tree.find(scenario.tree, id: $0)?.label }
+        return path.compactMap { pathId in
+            Tree.find(scenario.tree, id: pathId).map { RibbonCrumb(id: pathId, label: $0.label) }
+        }
+    }
+
+    /// The capsule's node context (mock 5/6): serif title, EV line, and the
+    /// ridge data. All values come from PrimeRadiantCore analytics.
+    var capsuleContext: CapsuleNodeContext? {
+        guard let node = selectedNode else { return nil }
+        let nodeAnalytics = selectedAnalytics
+        let ev = nodeAnalytics?.conditionedEv ?? nodeAnalytics?.ev
+        let title = node.sub.map { "\(node.label) — \($0)" } ?? node.label
+        return CapsuleNodeContext(
+            title: sentenceCased(title),
+            evLine: EVFormatter.evLine(ev, unit: scenario.payoffUnit),
+            distribution: nodeAnalytics?.conditionedDistribution ?? [],
+            mean: ev,
+            unit: scenario.payoffUnit,
+            caption:
+                "\(EVFormatter.percent(nodeAnalytics?.conditionedCumulativeProbability ?? 0)) of futures"
+        )
+    }
+
+    /// Node labels are lowercase data; the capsule title renders sentence case
+    /// (mock 5: "She accepts the terms").
+    private func sentenceCased(_ label: String) -> String {
+        guard let first = label.first else { return label }
+        return first.uppercased() + label.dropFirst()
     }
 
     // MARK: - Selection (tap / two-finger tap / void tap)
@@ -244,4 +271,32 @@ final class ScenarioStore {
     private func persist() {
         onPersist(scenario)
     }
+
+    // MARK: - Debug capture states (DEBUG only, mirrors -PRDebugSample gating)
+
+    #if DEBUG
+        /// `-PRDebugChat`: a scripted local thread (2 user + 1 assistant, generic
+        /// sample-scenario content, no model calls) with the patch status line
+        /// visible and the ghost tree at patch brightness. Screenshot-compare
+        /// against mock 8; never compiled into release builds.
+        func debugSeedChatTranscript(at date: Date) {
+            scenario.transcript = [
+                Message(
+                    role: .user,
+                    content: "They came back at 180 with the same equity.",
+                    timestamp: date),
+                Message(
+                    role: .assistant,
+                    content:
+                        "Reweighting. At 180, accepting beats one more push: EV +$14k against +$11k for push-once-more. The optimal line is now: take the 180, lock the start date.",
+                    timestamp: date,
+                    patchApplied: ULID.generate()),
+                Message(
+                    role: .user,
+                    content: "Do it. What do I open with?",
+                    timestamp: date),
+            ]
+            reorganizing = true
+        }
+    #endif
 }
