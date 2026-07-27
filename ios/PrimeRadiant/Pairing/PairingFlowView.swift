@@ -9,7 +9,7 @@ import SwiftUI
 /// - 1b2 unreachable: field border warms to ember, node dims, one line fades in
 ///        below — `the radiant is beyond reach`. Editing the field is the retry.
 /// - 1b3 credentials (plain-sshd only): address locked, `user` + password,
-///        whisper `used once, then discarded`.
+///        whisper slot: credential errors only.
 /// - 1c2 provisioning: condensing node above three stage lines driven by the
 ///        provision script's ##stage markers; ##fail halts with the sentence
 ///        verbatim; tap resumes (idempotent).
@@ -136,13 +136,14 @@ struct PairingFlowView: View {
                 .onSubmit { controller.submitCredentials() }
                 .position(x: size.width / 2, y: size.height * 0.6137)
 
-            whisper(
-                controller.credentialLine ?? "used once, then discarded",
-                color: controller.credentialLine == nil
-                    ? Tokens.Role.displayText.opacity(0.45)
-                    : Tokens.Palette.ember.opacity(0.9))
-                .accessibilityIdentifier("pairing.credentials.whisper")
-                .position(x: size.width / 2, y: size.height * 0.6754)
+            // The whisper slot carries only credential errors (owner removed
+            // the "used once, then discarded" line, 2026-07-27 — divergence
+            // from ux-update §1 / mock 1b3).
+            if let line = controller.credentialLine {
+                whisper(line, color: Tokens.Palette.ember.opacity(0.9))
+                    .accessibilityIdentifier("pairing.credentials.whisper")
+                    .position(x: size.width / 2, y: size.height * 0.6754)
+            }
         }
         .contentShape(Rectangle())
         .onAppear {
